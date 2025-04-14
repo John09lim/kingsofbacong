@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ChessIcon, BookOpen, Brain, TrendingUp, Users, Award } from 'lucide-react';
+import { BookOpen, Brain, TrendingUp, Users, Award } from 'lucide-react';
 
 // Custom chess icon
 const ChessIcon = ({ className }: { className?: string }) => (
