@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -6,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Target, ChessRook } from "lucide-react";
+import { BookOpen, Target, Swords } from "lucide-react";
 
 const MiddlegameStrategies = () => {
   const strategies = {
@@ -225,7 +224,7 @@ const StrategyCard = ({ strategy }) => {
       
       <CardFooter>
         <Button className="w-full bg-chess-deep-red hover:bg-chess-dark-maroon">
-          <ChessRook size={16} className="mr-2" />
+          <Swords size={16} className="mr-2" />
           Start Learning
         </Button>
       </CardFooter>

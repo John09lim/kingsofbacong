@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -13,11 +12,44 @@ import {
   PlayCircle, FileDown, ExternalLink, Clock
 } from "lucide-react";
 
+interface BaseResource {
+  id: number;
+  title: string;
+  description: string;
+  author: string;
+  rating: number;
+  reviewCount: number;
+  tags: string[];
+  thumbnail: string;
+  type: string;
+}
+
+interface VideoResource extends BaseResource {
+  type: 'video';
+  duration: string;
+}
+
+interface ArticleResource extends BaseResource {
+  type: 'article';
+  readTime: string;
+}
+
+interface DownloadResource extends BaseResource {
+  type: 'pdf' | 'pgn';
+  size: string;
+}
+
+type Resource = VideoResource | ArticleResource | DownloadResource;
+
 const Resources = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   
-  const resources = {
+  const resources: {
+    videos: VideoResource[];
+    articles: ArticleResource[];
+    downloads: DownloadResource[];
+  } = {
     videos: [
       {
         id: 1,
@@ -134,14 +166,12 @@ const Resources = () => {
     ]
   };
 
-  // Flatten all resources into a single array
-  const allResources = [
+  const allResources: Resource[] = [
     ...resources.videos,
     ...resources.articles,
     ...resources.downloads
   ];
 
-  // Filter resources based on search query and active tab
   const filteredResources = allResources.filter(resource => {
     const matchesSearch = 
       searchQuery === "" || 
@@ -258,19 +288,19 @@ const Resources = () => {
                           {getResourceIcon(resource.type)}
                           <span className="ml-1 capitalize">{resource.type}</span>
                         </div>
-                        {resource.duration && (
+                        {'duration' in resource && (
                           <div className="flex items-center">
                             <Clock className="h-3 w-3 mr-1" />
                             <span>{resource.duration}</span>
                           </div>
                         )}
-                        {resource.readTime && (
+                        {'readTime' in resource && (
                           <div className="flex items-center">
                             <Clock className="h-3 w-3 mr-1" />
                             <span>{resource.readTime}</span>
                           </div>
                         )}
-                        {resource.size && (
+                        {'size' in resource && (
                           <div className="flex items-center">
                             <Download className="h-3 w-3 mr-1" />
                             <span>{resource.size}</span>
@@ -376,7 +406,7 @@ const Resources = () => {
   );
 };
 
-const ResourceCard = ({ resource }) => {
+const ResourceCard = ({ resource }: { resource: Resource }) => {
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all h-full flex flex-col">
       <div className="h-40 overflow-hidden">
@@ -408,9 +438,9 @@ const ResourceCard = ({ resource }) => {
         </div>
         <div className="flex items-center justify-between text-sm text-gray-500">
           <span>By {resource.author}</span>
-          {resource.duration && <span>{resource.duration}</span>}
-          {resource.readTime && <span>{resource.readTime}</span>}
-          {resource.size && <span>{resource.size}</span>}
+          {'duration' in resource && <span>{resource.duration}</span>}
+          {'readTime' in resource && <span>{resource.readTime}</span>}
+          {'size' in resource && <span>{resource.size}</span>}
         </div>
       </CardContent>
       
@@ -437,7 +467,14 @@ const ResourceCard = ({ resource }) => {
   );
 };
 
-const CategoryLink = ({ title, description, count, icon }) => {
+interface CategoryLinkProps {
+  title: string;
+  description: string;
+  count: number;
+  icon: React.ReactNode;
+}
+
+const CategoryLink = ({ title, description, count, icon }: CategoryLinkProps) => {
   return (
     <Button 
       variant="ghost" 
