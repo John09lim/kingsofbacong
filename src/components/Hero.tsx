@@ -13,6 +13,11 @@ const Hero = () => {
             Join the Kings of Bacong Chess Club's comprehensive training platform. 
             Elevate your skills from beginner to master with structured learning paths.
           </p>
+          <blockquote className="border-l-4 border-chess-light-pink pl-4 italic my-8 animate-fade-in">
+            <p className="text-white text-lg">
+              "A strong chess player isn't born overnight. It's built one consistent practice at a time."
+            </p>
+          </blockquote>
           <div className="flex flex-col sm:flex-row gap-4">
             <button className="chess-btn bg-white text-chess-deep-red hover:bg-chess-light-pink animate-fade-in">
               Start Learning
@@ -24,26 +29,11 @@ const Hero = () => {
         </div>
         <div className="md:w-1/2 flex justify-center animate-fade-in">
           <div className="relative">
-            <div className="grid grid-cols-4 grid-rows-4 w-64 h-64 md:w-80 md:h-80 rotate-45 bg-white/20 backdrop-blur-sm rounded-lg p-2">
-              {[...Array(16)].map((_, index) => {
-                const isEven = Math.floor(index / 4) % 2 === 0;
-                const isAlternating = isEven ? index % 2 === 0 : index % 2 === 1;
-                
-                return (
-                  <div 
-                    key={index} 
-                    className={`${isAlternating ? 'bg-chess-deep-red' : 'bg-white'} rounded`}
-                  ></div>
-                );
-              })}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -rotate-45">
-                <img 
-                  src="/lovable-uploads/5fe0e08d-fe57-4d84-a091-26c935749a2f.png"
-                  alt="Kings of Bacong Chess Club"
-                  className="w-40 h-40 md:w-48 md:h-48"
-                />
-              </div>
-            </div>
+            <img 
+              src="/lovable-uploads/46dedfa8-7159-42f0-a0eb-76829b4dc416.png"
+              alt="Kings of Bacong Chess Club"
+              className="max-w-full h-auto"
+            />
           </div>
         </div>
       </div>
