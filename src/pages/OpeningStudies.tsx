@@ -9,12 +9,98 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, BookOpen, Video, ChevronRight } from "lucide-react";
 
+// Separate the opening card as it's used multiple times
+const OpeningCard = ({ opening }) => {
+  return (
+    <Card className="overflow-hidden hover:shadow-lg transition-all flex flex-col h-full">
+      <div className="h-56 overflow-hidden">
+        <img 
+          src={opening.imageUrl} 
+          alt={opening.name} 
+          className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+        />
+      </div>
+      
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <CardTitle>{opening.name}</CardTitle>
+          <Badge className="bg-chess-deep-red text-white">{opening.ecoCode}</Badge>
+        </div>
+        <CardDescription className="font-mono text-sm">{opening.moves}</CardDescription>
+      </CardHeader>
+      
+      <CardContent className="pb-2">
+        <p className="text-sm mb-3">{opening.description}</p>
+        <div className="flex flex-wrap gap-2 mt-3">
+          <Badge variant="outline" className="bg-blue-50">
+            Popularity: {opening.popularity}%
+          </Badge>
+          <Badge variant="outline" className={`
+            ${opening.complexity === "Low" ? "bg-green-50" : 
+              opening.complexity === "Medium" ? "bg-yellow-50" : "bg-red-50"}
+          `}>
+            Complexity: {opening.complexity}
+          </Badge>
+        </div>
+      </CardContent>
+      
+      <CardFooter className="mt-auto">
+        <div className="flex gap-4 w-full">
+          <Button variant="outline" className="flex-1">
+            <BookOpen size={16} className="mr-2" />
+            {opening.lessonsCount} Lessons
+          </Button>
+          <Button variant="outline" className="flex-1">
+            <Video size={16} className="mr-2" />
+            {opening.videoCount} Videos
+          </Button>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+};
+
+// Create separate component for Opening Explorer section
+const OpeningExplorer = () => (
+  <div className="mt-12 border-t border-gray-200 pt-8">
+    <h2 className="text-2xl font-bold mb-6">Opening Explorer</h2>
+    <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm text-center">
+      <p className="text-gray-500 mb-6">
+        Our interactive Opening Explorer is coming soon! You'll be able to:
+      </p>
+      <ul className="text-left max-w-lg mx-auto space-y-2 mb-6">
+        <li className="flex items-center">
+          <ChevronRight className="mr-2 text-chess-deep-red" size={18} />
+          <span>Explore move variations on an interactive board</span>
+        </li>
+        <li className="flex items-center">
+          <ChevronRight className="mr-2 text-chess-deep-red" size={18} />
+          <span>See statistics from master games and online play</span>
+        </li>
+        <li className="flex items-center">
+          <ChevronRight className="mr-2 text-chess-deep-red" size={18} />
+          <span>Learn key concepts for each opening position</span>
+        </li>
+        <li className="flex items-center">
+          <ChevronRight className="mr-2 text-chess-deep-red" size={18} />
+          <span>Save your favorite variations for later study</span>
+        </li>
+      </ul>
+      <Button className="bg-chess-deep-red hover:bg-chess-dark-maroon text-white">
+        Get Notified When Available
+      </Button>
+    </div>
+  </div>
+);
+
+// Main component
 const OpeningStudies = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("popular");
 
   const openings = {
     popular: [
+      // First 4 existing openings
       {
         id: 1,
         name: "Ruy Lopez",
@@ -62,9 +148,59 @@ const OpeningStudies = () => {
         videoCount: 18,
         lessonsCount: 14,
         imageUrl: "https://images.unsplash.com/photo-1613332954647-8720ce9d8b5d?q=80&w=3348&auto=format&fit=crop"
+      },
+      // Additional openings to add
+      {
+        id: 9,
+        name: "Caro-Kann Defense",
+        ecoCode: "B10-B19",
+        moves: "1. e4 c6",
+        description: "A solid and reliable defense for Black, focused on safe development and solid pawn structure.",
+        popularity: 82,
+        complexity: "Medium",
+        videoCount: 16,
+        lessonsCount: 12,
+        imageUrl: "https://images.unsplash.com/photo-1528819622765-d6bcf132f793?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 10,
+        name: "English Opening",
+        ecoCode: "A10-A39",
+        moves: "1. c4",
+        description: "A flexible opening that can transpose into many different setups. Popular with positional players.",
+        popularity: 78,
+        complexity: "Medium",
+        videoCount: 14,
+        lessonsCount: 10,
+        imageUrl: "https://images.unsplash.com/photo-1582692728113-83b15c45d241?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 11,
+        name: "Giuoco Piano",
+        ecoCode: "C50-C54",
+        moves: "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5",
+        description: "A classical Italian game that leads to strategic battles. Popular at club level.",
+        popularity: 75,
+        complexity: "Medium",
+        videoCount: 12,
+        lessonsCount: 10,
+        imageUrl: "https://images.unsplash.com/photo-1605257455659-59af4e9c51db?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 12,
+        name: "Slav Defense",
+        ecoCode: "D10-D19",
+        moves: "1. d4 d5 2. c4 c6",
+        description: "A solid option for Black against the Queen's Gambit, maintaining a strong pawn center.",
+        popularity: 80,
+        complexity: "Medium",
+        videoCount: 15,
+        lessonsCount: 12,
+        imageUrl: "https://images.unsplash.com/photo-1611195973260-08bf9651e84c?q=80&w=3270&auto=format&fit=crop"
       }
     ],
     beginner: [
+      // First 2 existing beginner openings
       {
         id: 5,
         name: "Italian Game",
@@ -88,9 +224,83 @@ const OpeningStudies = () => {
         videoCount: 12,
         lessonsCount: 10,
         imageUrl: "https://images.unsplash.com/photo-1586165368502-1bad197a6461?q=80&w=3258&auto=format&fit=crop"
+      },
+      // Additional beginner openings to add
+      {
+        id: 13,
+        name: "Four Knights Game",
+        ecoCode: "C46-C49",
+        moves: "1. e4 e5 2. Nf3 Nc6 3. Nc3 Nf6",
+        description: "A symmetrical opening that focuses on rapid development. Simple to understand for beginners.",
+        popularity: 70,
+        complexity: "Low",
+        videoCount: 10,
+        lessonsCount: 8,
+        imageUrl: "https://images.unsplash.com/photo-1513159446162-54eb8bdaa79b?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 14,
+        name: "Queen's Pawn Game",
+        ecoCode: "D00",
+        moves: "1. d4 d5",
+        description: "A flexible opening system that avoids complicated theory. Perfect for beginners.",
+        popularity: 65,
+        complexity: "Low",
+        videoCount: 8,
+        lessonsCount: 6,
+        imageUrl: "https://images.unsplash.com/photo-1565039320828-e90b61a7e80f?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 15,
+        name: "Scandinavian Defense",
+        ecoCode: "B01",
+        moves: "1. e4 d5",
+        description: "A straightforward defense where Black immediately challenges White's center. Easy to learn.",
+        popularity: 60,
+        complexity: "Low",
+        videoCount: 7,
+        lessonsCount: 5,
+        imageUrl: "https://images.unsplash.com/photo-1580541631971-ab0fef2145c8?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 16,
+        name: "Vienna Game",
+        ecoCode: "C25-C29",
+        moves: "1. e4 e5 2. Nc3",
+        description: "A classical opening that develops a knight early and prepares for king-side activity.",
+        popularity: 55,
+        complexity: "Low",
+        videoCount: 6,
+        lessonsCount: 5,
+        imageUrl: "https://images.unsplash.com/photo-1586103114630-5b88528b6de4?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 17,
+        name: "King's Gambit Declined",
+        ecoCode: "C30",
+        moves: "1. e4 e5 2. f4 Bc5",
+        description: "A safer way to meet the aggressive King's Gambit. Suitable for beginners learning counter-attacking.",
+        popularity: 50,
+        complexity: "Low",
+        videoCount: 5,
+        lessonsCount: 4,
+        imageUrl: "https://images.unsplash.com/photo-1585995603666-5ab4f8079564?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 18,
+        name: "Philidor Defense",
+        ecoCode: "C41",
+        moves: "1. e4 e5 2. Nf3 d6",
+        description: "A solid but slightly passive defense that beginners can use to learn positional concepts.",
+        popularity: 45,
+        complexity: "Low",
+        videoCount: 4,
+        lessonsCount: 4,
+        imageUrl: "https://images.unsplash.com/photo-1580974852861-c381510bc98a?q=80&w=3270&auto=format&fit=crop"
       }
     ],
     advanced: [
+      // First 2 existing advanced openings
       {
         id: 7,
         name: "King's Indian Defense",
@@ -114,6 +324,91 @@ const OpeningStudies = () => {
         videoCount: 24,
         lessonsCount: 20,
         imageUrl: "https://images.unsplash.com/photo-1604948501466-4e9c339b9c24?q=80&w=3270&auto=format&fit=crop"
+      },
+      // Additional advanced openings to add
+      {
+        id: 19,
+        name: "Grünfeld Defense",
+        ecoCode: "D70-D99",
+        moves: "1. d4 Nf6 2. c4 g6 3. Nc3 d5",
+        description: "A hypermodern opening that immediately counters in the center. Popular at grandmaster level.",
+        popularity: 85,
+        complexity: "High",
+        videoCount: 25,
+        lessonsCount: 20,
+        imageUrl: "https://images.unsplash.com/photo-1611483164359-0184a7f18061?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 20,
+        name: "Benko Gambit",
+        ecoCode: "A57-A59",
+        moves: "1. d4 Nf6 2. c4 c5 3. d5 b5",
+        description: "A dynamic queen's side gambit where Black sacrifices a pawn for long-term positional pressure.",
+        popularity: 60,
+        complexity: "High",
+        videoCount: 18,
+        lessonsCount: 15,
+        imageUrl: "https://images.unsplash.com/photo-1614889727750-9e79bb16b8bd?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 21,
+        name: "Alekhine's Defense",
+        ecoCode: "B02-B05",
+        moves: "1. e4 Nf6",
+        description: "A provocative defense that lures White's pawns forward, aiming to undermine them later.",
+        popularity: 55,
+        complexity: "High",
+        videoCount: 16,
+        lessonsCount: 14,
+        imageUrl: "https://images.unsplash.com/photo-1613487700156-67fd5ef1ea07?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 22,
+        name: "Modern Defense",
+        ecoCode: "B06",
+        moves: "1. e4 g6",
+        description: "A hypermodern approach giving White the center, then attacking it with fianchettoed bishops.",
+        popularity: 50,
+        complexity: "High",
+        videoCount: 15,
+        lessonsCount: 12,
+        imageUrl: "https://images.unsplash.com/photo-1581380397559-345639b4e3f5?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 23,
+        name: "Catalan Opening",
+        ecoCode: "E01-E09",
+        moves: "1. d4 Nf6 2. c4 e6 3. g3",
+        description: "A positional system that combines Queen's Gambit with a kingside fianchetto. Requires deep understanding.",
+        popularity: 78,
+        complexity: "High",
+        videoCount: 20,
+        lessonsCount: 18,
+        imageUrl: "https://images.unsplash.com/photo-1637495741005-636834702af0?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 24,
+        name: "Benoni Defense",
+        ecoCode: "A60-A79",
+        moves: "1. d4 Nf6 2. c4 c5 3. d5",
+        description: "An asymmetrical opening with dynamic counterplay. Popular with tactically aggressive players.",
+        popularity: 65,
+        complexity: "High",
+        videoCount: 19,
+        lessonsCount: 16,
+        imageUrl: "https://images.unsplash.com/photo-1580541631294-30a73a9ea64c?q=80&w=3270&auto=format&fit=crop"
+      },
+      {
+        id: 25,
+        name: "Najdorf Sicilian",
+        ecoCode: "B90-B99",
+        moves: "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6",
+        description: "The most theoretically dense variation of the Sicilian. Extremely complex and double-edged.",
+        popularity: 90,
+        complexity: "Very High",
+        videoCount: 35,
+        lessonsCount: 30,
+        imageUrl: "https://images.unsplash.com/photo-1543092587-d8b8feaf362b?q=80&w=3270&auto=format&fit=crop"
       }
     ]
   };
@@ -167,115 +462,38 @@ const OpeningStudies = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {searchQuery ? (
-              filteredOpenings.length > 0 ? (
-                filteredOpenings.map(opening => (
+          {searchQuery ? (
+            filteredOpenings.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredOpenings.map(opening => (
                   <OpeningCard key={opening.id} opening={opening} />
-                ))
-              ) : (
-                <div className="col-span-full text-center py-10">
-                  <h3 className="text-xl font-medium mb-2">No openings found</h3>
-                  <p className="text-gray-500">Try searching with different terms</p>
-                </div>
-              )
-            ) : (
-              // Here's the fix: Wrap all Tabs related content in a Tabs component
-              <Tabs value={activeTab} className="w-full">
-                {Object.keys(openings).map(category => (
-                  <TabsContent key={category} value={category} className="mt-0">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {openings[category].map(opening => (
-                        <OpeningCard key={opening.id} opening={opening} />
-                      ))}
-                    </div>
-                  </TabsContent>
                 ))}
-              </Tabs>
-            )}
-          </div>
+              </div>
+            ) : (
+              <div className="col-span-full text-center py-10">
+                <h3 className="text-xl font-medium mb-2">No openings found</h3>
+                <p className="text-gray-500">Try searching with different terms</p>
+              </div>
+            )
+          ) : (
+            <Tabs value={activeTab} className="w-full">
+              {Object.keys(openings).map(category => (
+                <TabsContent key={category} value={category} className="mt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {openings[category].map(opening => (
+                      <OpeningCard key={opening.id} opening={opening} />
+                    ))}
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
+          )}
 
-          <div className="mt-12 border-t border-gray-200 pt-8">
-            <h2 className="text-2xl font-bold mb-6">Opening Explorer</h2>
-            <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm text-center">
-              <p className="text-gray-500 mb-6">
-                Our interactive Opening Explorer is coming soon! You'll be able to:
-              </p>
-              <ul className="text-left max-w-lg mx-auto space-y-2 mb-6">
-                <li className="flex items-center">
-                  <ChevronRight className="mr-2 text-chess-deep-red" size={18} />
-                  <span>Explore move variations on an interactive board</span>
-                </li>
-                <li className="flex items-center">
-                  <ChevronRight className="mr-2 text-chess-deep-red" size={18} />
-                  <span>See statistics from master games and online play</span>
-                </li>
-                <li className="flex items-center">
-                  <ChevronRight className="mr-2 text-chess-deep-red" size={18} />
-                  <span>Learn key concepts for each opening position</span>
-                </li>
-                <li className="flex items-center">
-                  <ChevronRight className="mr-2 text-chess-deep-red" size={18} />
-                  <span>Save your favorite variations for later study</span>
-                </li>
-              </ul>
-              <Button className="bg-chess-deep-red hover:bg-chess-dark-maroon text-white">
-                Get Notified When Available
-              </Button>
-            </div>
-          </div>
+          <OpeningExplorer />
         </div>
       </main>
       <Footer />
     </div>
-  );
-};
-
-const OpeningCard = ({ opening }) => {
-  return (
-    <Card className="overflow-hidden hover:shadow-lg transition-all">
-      <div className="h-48 overflow-hidden">
-        <img 
-          src={opening.imageUrl} 
-          alt={opening.name} 
-          className="w-full h-full object-cover"
-        />
-      </div>
-      
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <CardTitle>{opening.name}</CardTitle>
-          <Badge className="bg-chess-deep-red text-white">{opening.ecoCode}</Badge>
-        </div>
-        <CardDescription className="font-mono text-sm">{opening.moves}</CardDescription>
-      </CardHeader>
-      
-      <CardContent className="pb-2">
-        <p className="text-sm mb-3">{opening.description}</p>
-        <div className="flex flex-wrap gap-2 mt-3">
-          <Badge variant="outline" className="bg-blue-50">
-            Popularity: {opening.popularity}%
-          </Badge>
-          <Badge variant="outline" className={`
-            ${opening.complexity === "Low" ? "bg-green-50" : 
-              opening.complexity === "Medium" ? "bg-yellow-50" : "bg-red-50"}
-          `}>
-            Complexity: {opening.complexity}
-          </Badge>
-        </div>
-      </CardContent>
-      
-      <CardFooter className="flex gap-4">
-        <Button variant="outline" className="flex-1">
-          <BookOpen size={16} className="mr-2" />
-          {opening.lessonsCount} Lessons
-        </Button>
-        <Button variant="outline" className="flex-1">
-          <Video size={16} className="mr-2" />
-          {opening.videoCount} Videos
-        </Button>
-      </CardFooter>
-    </Card>
   );
 };
 

@@ -57,7 +57,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link to="/" className="flex items-center space-x-2">
           <img 
-            src="/lovable-uploads/46dedfa8-7159-42f0-a0eb-76829b4dc416.png" 
+            src="/lovable-uploads/40fd7632-589e-44da-bd7f-d66a49ea58e1.png" 
             alt="Kings of Bacong Chess Club" 
             className="h-12 w-auto object-contain"
           />

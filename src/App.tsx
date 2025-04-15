@@ -31,7 +31,7 @@ const App = () => {
   useEffect(() => {
     // Preload the logo image
     const preloadImage = new Image();
-    preloadImage.src = "/lovable-uploads/f1e63ef7-1bfa-4e62-b7ee-9a5ecf99af6e.png";
+    preloadImage.src = "/lovable-uploads/40fd7632-589e-44da-bd7f-d66a49ea58e1.png";
   }, []);
 
   return (

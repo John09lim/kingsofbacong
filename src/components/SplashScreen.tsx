@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const SplashScreen = ({ finishLoading }: { finishLoading: () => void }) => {
@@ -31,7 +31,7 @@ const SplashScreen = ({ finishLoading }: { finishLoading: () => void }) => {
         className="w-64 h-64 md:w-80 md:h-80 relative"
       >
         <img 
-          src="/lovable-uploads/f1e63ef7-1bfa-4e62-b7ee-9a5ecf99af6e.png" 
+          src="/lovable-uploads/40fd7632-589e-44da-bd7f-d66a49ea58e1.png" 
           alt="Kings of Bacong Chess Club" 
           className="w-full h-full object-contain"
         />
