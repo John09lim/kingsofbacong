@@ -180,15 +180,18 @@ const OpeningStudies = () => {
                 </div>
               )
             ) : (
-              Object.keys(openings).map(category => (
-                <TabsContent key={category} value={category} className="mt-0">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {openings[category].map(opening => (
-                      <OpeningCard key={opening.id} opening={opening} />
-                    ))}
-                  </div>
-                </TabsContent>
-              ))
+              // Here's the fix: Wrap all Tabs related content in a Tabs component
+              <Tabs value={activeTab} className="w-full">
+                {Object.keys(openings).map(category => (
+                  <TabsContent key={category} value={category} className="mt-0">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {openings[category].map(opening => (
+                        <OpeningCard key={opening.id} opening={opening} />
+                      ))}
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
             )}
           </div>
 
