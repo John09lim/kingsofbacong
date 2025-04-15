@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, BookOpen, ChessRook, ChessBishop, ChessKnight, ChessQueen } from 'lucide-react';
+import { ChevronDown, ChevronUp, BookOpen, Crown, Target, Trophy, Swords } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -9,7 +9,7 @@ const learningPathData = {
   beginner: {
     title: "Beginner",
     description: "Master the fundamentals of chess and develop consistent strategic thinking",
-    icon: <ChessRook className="text-chess-light-pink h-8 w-8" />,
+    icon: <Target className="text-chess-light-pink h-8 w-8" />,
     color: "bg-chess-deep-red",
     content: [
       {
@@ -43,7 +43,7 @@ const learningPathData = {
   intermediate: {
     title: "Intermediate",
     description: "Refine your strategic understanding and improve your calculation abilities",
-    icon: <ChessBishop className="text-chess-light-pink h-8 w-8" />,
+    icon: <Swords className="text-chess-light-pink h-8 w-8" />,
     color: "bg-chess-dark-maroon",
     content: [
       {
@@ -77,7 +77,7 @@ const learningPathData = {
   advanced: {
     title: "Advanced",
     description: "Study high-level chess concepts and refine your understanding of complex positions",
-    icon: <ChessQueen className="text-chess-light-pink h-8 w-8" />,
+    icon: <Crown className="text-chess-light-pink h-8 w-8" />,
     color: "bg-chess-dark-blue",
     content: [
       {
