@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from "@/components/ui/button";
@@ -10,13 +10,67 @@ import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { 
   Trophy, Star, TrendingUp, Timer, Brain, Zap, 
-  Sword, Target, Crosshair, Gauge, CheckCircle2
+  Sword, Target, Crosshair, Gauge, CheckCircle2,
+  Loader2, RefreshCw, Info
 } from "lucide-react";
+import ChessBoard from "@/components/ChessBoard";
+import { usePuzzle } from "@/hooks/usePuzzle";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "@/hooks/use-toast";
 
 const TacticalPuzzles = () => {
   const [difficulty, setDifficulty] = useState(1200);
   const [solvedCount, setSolvedCount] = useState(42);
-  const [activeTab, setActiveTab] = useState("themes");
+  const [activeTab, setActiveTab] = useState("daily");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const { 
+    puzzleData, 
+    isPuzzleLoading, 
+    dashboardData, 
+    isDashboardLoading,
+    fetchNextPuzzle,
+    markPuzzleSolved,
+    userRating,
+    setCurrentPuzzleId
+  } = usePuzzle({ autoFetch: true });
+
+  // Update solved count from localStorage on load
+  useEffect(() => {
+    const storedSolvedCount = localStorage.getItem('puzzlesSolvedCount');
+    if (storedSolvedCount) {
+      setSolvedCount(parseInt(storedSolvedCount));
+    }
+  }, []);
+
+  // Handle puzzle solved
+  const handlePuzzleSolved = () => {
+    if (puzzleData?.puzzle) {
+      markPuzzleSolved(puzzleData.puzzle.id);
+      const newCount = solvedCount + 1;
+      setSolvedCount(newCount);
+      localStorage.setItem('puzzlesSolvedCount', newCount.toString());
+    }
+  };
+
+  // Handle get next puzzle
+  const handleGetNextPuzzle = async () => {
+    try {
+      setIsRefreshing(true);
+      const nextPuzzle = await fetchNextPuzzle();
+      if (nextPuzzle) {
+        toast({
+          title: "New puzzle loaded",
+          description: "A new tactical puzzle is ready for you to solve."
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching next puzzle:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const puzzleThemes = [
     {
@@ -132,110 +186,190 @@ const TacticalPuzzles = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
-              <Card>
-                <CardHeader className="pb-4">
-                  <CardTitle>Puzzle Generator</CardTitle>
-                  <CardDescription>Start solving puzzles tailored to your level</CardDescription>
-                </CardHeader>
-                <CardContent className="pb-4">
-                  <div className="mb-6">
-                    <div className="flex justify-between mb-2">
-                      <span className="font-medium">Difficulty: {difficulty} Elo</span>
-                      <span className="text-sm text-gray-500">
-                        {difficulty < 1400 ? 'Beginner' : difficulty < 1800 ? 'Intermediate' : 'Advanced'}
-                      </span>
-                    </div>
-                    <div className="px-4">
-                      <Slider
-                        defaultValue={[1200]}
-                        value={[difficulty]}
-                        onValueChange={(value) => setDifficulty(value[0])}
-                        min={800}
-                        max={2400}
-                        step={50}
-                        className="mb-4"
-                      />
-                    </div>
-                    <div className="flex justify-between text-sm text-gray-500">
-                      <span>Easy</span>
-                      <span>Medium</span>
-                      <span>Hard</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button className="flex-1 bg-chess-deep-red hover:bg-chess-dark-maroon">
-                      <Zap className="mr-2 h-4 w-4" />
-                      Start Puzzle
-                    </Button>
-                    <Button variant="outline" className="flex-1">
-                      <Timer className="mr-2 h-4 w-4" />
-                      Puzzle Rush
-                    </Button>
-                  </div>
-                </CardContent>
-                <CardFooter className="border-t pt-4">
-                  <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-amber-500" />
-                      <span className="text-sm">{solvedCount} puzzles solved</span>
-                    </div>
-                    <div className="flex gap-2">
-                      <Badge variant="outline" className="bg-green-50">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        <span>+24 rating today</span>
-                      </Badge>
-                      <Badge variant="outline" className="bg-amber-50">
-                        <Star className="h-3 w-3 mr-1 text-amber-500" />
-                        <span>5 day streak</span>
-                      </Badge>
-                    </div>
-                  </div>
-                </CardFooter>
-              </Card>
-              
-              <Card className="overflow-hidden">
-                <CardHeader className="pb-2">
-                  <CardTitle>Daily Puzzles</CardTitle>
-                  <CardDescription>Fresh puzzles updated every day</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {dailyPuzzles.map((puzzle) => (
-                      <div key={puzzle.id} className="border rounded-md p-4 hover:border-chess-deep-red transition-colors">
-                        <div className="flex justify-between items-center mb-3">
-                          <div>
-                            <h4 className="font-medium">{puzzle.difficulty} Puzzle</h4>
-                            <div className="text-sm text-gray-500 flex items-center gap-2">
-                              <span>Rating: {puzzle.rating}</span>
-                              <span className="text-xs">•</span>
-                              <span>Theme: {puzzle.theme}</span>
-                            </div>
-                          </div>
-                          <Button size="sm" className="bg-chess-deep-red hover:bg-chess-dark-maroon">Solve</Button>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Progress value={puzzle.solvedPercentage} className="h-2 flex-1" />
-                          <span className="text-xs font-medium">{puzzle.solvedPercentage}% solved</span>
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          {puzzle.solvedCount} players have attempted this puzzle
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Tabs defaultValue="themes" value={activeTab} onValueChange={setActiveTab}>
+              <Tabs defaultValue="daily" value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="mb-4 bg-chess-muted-rose/20">
+                  <TabsTrigger value="daily" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
+                    Daily Puzzle
+                  </TabsTrigger>
+                  <TabsTrigger value="generator" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
+                    Puzzle Generator
+                  </TabsTrigger>
                   <TabsTrigger value="themes" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
                     Tactical Themes
                   </TabsTrigger>
-                  <TabsTrigger value="courses" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
-                    Puzzle Courses
-                  </TabsTrigger>
                 </TabsList>
+
+                <TabsContent value="daily" className="mt-0 space-y-6">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="flex items-center justify-between">
+                        <span>Daily Puzzle Challenge</span>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={handleGetNextPuzzle}
+                          disabled={isRefreshing}
+                          className="flex items-center gap-1"
+                        >
+                          {isRefreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                          New Puzzle
+                        </Button>
+                      </CardTitle>
+                      <CardDescription>
+                        {isPuzzleLoading ? "Loading puzzle..." : (
+                          puzzleData?.puzzle ? (
+                            <>
+                              Rating: {puzzleData.puzzle.rating} • Themes: {puzzleData.puzzle.themes.map((t: string) => 
+                                t.charAt(0).toUpperCase() + t.slice(1)
+                              ).join(', ')}
+                            </>
+                          ) : "Solve today's daily tactical challenge"
+                        )}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {isPuzzleLoading ? (
+                        <div className="flex flex-col items-center gap-4">
+                          <Skeleton className="w-full h-[384px] rounded-md" />
+                          <div className="flex gap-4">
+                            <Skeleton className="h-10 w-24" />
+                            <Skeleton className="h-10 w-24" />
+                          </div>
+                        </div>
+                      ) : puzzleData?.puzzle ? (
+                        <ChessBoard 
+                          fen={puzzleData.puzzle.fen} 
+                          pgn={puzzleData.game.pgn}
+                          solution={puzzleData.puzzle.solution}
+                          initialPly={puzzleData.puzzle.initialPly}
+                          onSolved={handlePuzzleSolved}
+                        />
+                      ) : (
+                        <Alert>
+                          <Info className="h-4 w-4" />
+                          <AlertTitle>No puzzle available</AlertTitle>
+                          <AlertDescription>
+                            We couldn't load a puzzle. Please try refreshing or come back later.
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                    </CardContent>
+                    {puzzleData?.game && (
+                      <CardFooter className="border-t pt-4 flex flex-col sm:flex-row gap-4">
+                        <div className="flex-1">
+                          <h4 className="text-sm font-medium mb-1">Game Info</h4>
+                          <p className="text-xs text-gray-600">
+                            {puzzleData.game.rated ? "Rated" : "Casual"} {puzzleData.game.perf.name} • Clock: {puzzleData.game.clock}
+                          </p>
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-sm font-medium mb-1">Players</h4>
+                          <div className="text-xs">
+                            <div>White: {puzzleData.game.players[0].title || ""} {puzzleData.game.players[0].name} ({puzzleData.game.players[0].rating})</div>
+                            <div>Black: {puzzleData.game.players[1].title || ""} {puzzleData.game.players[1].name} ({puzzleData.game.players[1].rating})</div>
+                          </div>
+                        </div>
+                      </CardFooter>
+                    )}
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="generator" className="mt-0">
+                  <Card>
+                    <CardHeader className="pb-4">
+                      <CardTitle>Puzzle Generator</CardTitle>
+                      <CardDescription>Start solving puzzles tailored to your level</CardDescription>
+                    </CardHeader>
+                    <CardContent className="pb-4">
+                      <div className="mb-6">
+                        <div className="flex justify-between mb-2">
+                          <span className="font-medium">Difficulty: {difficulty} Elo</span>
+                          <span className="text-sm text-gray-500">
+                            {difficulty < 1400 ? 'Beginner' : difficulty < 1800 ? 'Intermediate' : 'Advanced'}
+                          </span>
+                        </div>
+                        <div className="px-4">
+                          <Slider
+                            defaultValue={[1200]}
+                            value={[difficulty]}
+                            onValueChange={(value) => setDifficulty(value[0])}
+                            min={800}
+                            max={2400}
+                            step={50}
+                            className="mb-4"
+                          />
+                        </div>
+                        <div className="flex justify-between text-sm text-gray-500">
+                          <span>Easy</span>
+                          <span>Medium</span>
+                          <span>Hard</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <Button className="flex-1 bg-chess-deep-red hover:bg-chess-dark-maroon">
+                          <Zap className="mr-2 h-4 w-4" />
+                          Start Puzzle
+                        </Button>
+                        <Button variant="outline" className="flex-1">
+                          <Timer className="mr-2 h-4 w-4" />
+                          Puzzle Rush
+                        </Button>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="border-t pt-4">
+                      <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <Trophy className="h-5 w-5 text-amber-500" />
+                          <span className="text-sm">{solvedCount} puzzles solved</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Badge variant="outline" className="bg-green-50">
+                            <TrendingUp className="h-3 w-3 mr-1" />
+                            <span>+24 rating today</span>
+                          </Badge>
+                          <Badge variant="outline" className="bg-amber-50">
+                            <Star className="h-3 w-3 mr-1 text-amber-500" />
+                            <span>5 day streak</span>
+                          </Badge>
+                        </div>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                  
+                  <Card className="mt-6 overflow-hidden">
+                    <CardHeader className="pb-2">
+                      <CardTitle>Daily Puzzles</CardTitle>
+                      <CardDescription>Fresh puzzles updated every day</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {dailyPuzzles.map((puzzle) => (
+                          <div key={puzzle.id} className="border rounded-md p-4 hover:border-chess-deep-red transition-colors">
+                            <div className="flex justify-between items-center mb-3">
+                              <div>
+                                <h4 className="font-medium">{puzzle.difficulty} Puzzle</h4>
+                                <div className="text-sm text-gray-500 flex items-center gap-2">
+                                  <span>Rating: {puzzle.rating}</span>
+                                  <span className="text-xs">•</span>
+                                  <span>Theme: {puzzle.theme}</span>
+                                </div>
+                              </div>
+                              <Button size="sm" className="bg-chess-deep-red hover:bg-chess-dark-maroon">Solve</Button>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Progress value={puzzle.solvedPercentage} className="h-2 flex-1" />
+                              <span className="text-xs font-medium">{puzzle.solvedPercentage}% solved</span>
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {puzzle.solvedCount} players have attempted this puzzle
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
                 
                 <TabsContent value="themes" className="mt-0">
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -264,7 +398,19 @@ const TacticalPuzzles = () => {
                           </div>
                         </CardContent>
                         <CardFooter className="pt-2">
-                          <Button size="sm" className="w-full bg-chess-deep-red hover:bg-chess-dark-maroon">
+                          <Button 
+                            size="sm" 
+                            className="w-full bg-chess-deep-red hover:bg-chess-dark-maroon"
+                            onClick={() => {
+                              toast({
+                                title: `${theme.name} Practice`,
+                                description: `Loading ${theme.name.toLowerCase()} puzzles...`,
+                              });
+                              
+                              // In a real implementation, this would load puzzles by theme
+                              setActiveTab("daily");
+                            }}
+                          >
                             Practice
                           </Button>
                         </CardFooter>
@@ -272,8 +418,14 @@ const TacticalPuzzles = () => {
                     ))}
                   </div>
                 </TabsContent>
-                
-                <TabsContent value="courses" className="mt-0">
+              </Tabs>
+              
+              <Card className="overflow-hidden">
+                <CardHeader className="pb-2">
+                  <CardTitle>Puzzle Courses</CardTitle>
+                  <CardDescription>Structured learning paths to master chess tactics</CardDescription>
+                </CardHeader>
+                <CardContent>
                   <div className="grid gap-4">
                     <Card>
                       <CardHeader className="pb-2">
@@ -331,8 +483,8 @@ const TacticalPuzzles = () => {
                       </CardFooter>
                     </Card>
                   </div>
-                </TabsContent>
-              </Tabs>
+                </CardContent>
+              </Card>
             </div>
             
             <div className="space-y-8">
@@ -375,7 +527,7 @@ const TacticalPuzzles = () => {
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Puzzle Statistics</CardTitle>
+                  <CardTitle>Your Puzzle Statistics</CardTitle>
                   <CardDescription>Your tactical performance</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -383,12 +535,12 @@ const TacticalPuzzles = () => {
                     <div>
                       <div className="flex justify-between text-sm mb-1">
                         <span>Puzzle Rating</span>
-                        <span className="font-medium">{difficulty}</span>
+                        <span className="font-medium">{userRating}</span>
                       </div>
                       <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-gradient-to-r from-chess-deep-red to-chess-dark-maroon"
-                          style={{ width: `${(difficulty / 2400) * 100}%` }}
+                          style={{ width: `${(userRating / 2400) * 100}%` }}
                         ></div>
                       </div>
                       <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -400,19 +552,39 @@ const TacticalPuzzles = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="bg-gray-50 p-3 rounded-lg">
                         <div className="text-sm text-gray-500">Accuracy</div>
-                        <div className="font-bold text-xl">68%</div>
+                        <div className="font-bold text-xl">
+                          {isDashboardLoading ? (
+                            <Skeleton className="h-7 w-16" />
+                          ) : (
+                            dashboardData?.global ? 
+                              `${Math.round((dashboardData.global.firstWins / dashboardData.global.nb) * 100)}%` : 
+                              "68%"
+                          )}
+                        </div>
                       </div>
                       <div className="bg-gray-50 p-3 rounded-lg">
                         <div className="text-sm text-gray-500">Solved Today</div>
-                        <div className="font-bold text-xl">14</div>
+                        <div className="font-bold text-xl">
+                          {isDashboardLoading ? (
+                            <Skeleton className="h-7 w-8" />
+                          ) : "14"}
+                        </div>
                       </div>
                       <div className="bg-gray-50 p-3 rounded-lg">
                         <div className="text-sm text-gray-500">Current Streak</div>
-                        <div className="font-bold text-xl">5 days</div>
+                        <div className="font-bold text-xl">
+                          {isDashboardLoading ? (
+                            <Skeleton className="h-7 w-16" />
+                          ) : "5 days"}
+                        </div>
                       </div>
                       <div className="bg-gray-50 p-3 rounded-lg">
                         <div className="text-sm text-gray-500">Best Time</div>
-                        <div className="font-bold text-xl">4.2s</div>
+                        <div className="font-bold text-xl">
+                          {isDashboardLoading ? (
+                            <Skeleton className="h-7 w-12" />
+                          ) : "4.2s"}
+                        </div>
                       </div>
                     </div>
                   </div>
