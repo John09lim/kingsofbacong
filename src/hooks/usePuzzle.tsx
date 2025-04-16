@@ -9,6 +9,7 @@ import {
   LichessPuzzleDashboard,
   LichessPuzzleTheme
 } from '@/services/lichessService';
+import { lichessApiService } from '@/services/lichessApiService';
 import { toast } from "@/hooks/use-toast";
 import { useChessApi } from '@/hooks/useChessApi';
 
@@ -24,6 +25,28 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
   const [solvedPuzzles, setSolvedPuzzles] = useState<string[]>([]);
   const [userRating, setUserRating] = useState<number>(0); // Starting ELO at 0
   const [currentTheme, setCurrentTheme] = useState<string | undefined>(theme);
+  const [useLiveApi, setUseLiveApi] = useState<boolean>(false);
+
+  // Check if we should use the live API
+  useEffect(() => {
+    const checkLichessApi = async () => {
+      try {
+        const profile = await lichessApiService.getProfile();
+        if (profile) {
+          setUseLiveApi(true);
+          toast({
+            title: "Lichess API Connected",
+            description: `Connected to Lichess as ${profile.username || 'User'}`,
+          });
+        }
+      } catch (error) {
+        console.log("Using mock Lichess service");
+        setUseLiveApi(false);
+      }
+    };
+    
+    checkLichessApi();
+  }, []);
 
   // Load solved puzzles from localStorage on initialization
   useEffect(() => {
@@ -45,9 +68,21 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
     error: puzzleError,
     refetch: refetchPuzzle
   } = useQuery({
-    queryKey: ['puzzle', currentPuzzleId, currentTheme],
+    queryKey: ['puzzle', currentPuzzleId, currentTheme, useLiveApi],
     queryFn: async () => {
       try {
+        // Try to use the live API first if available
+        if (useLiveApi) {
+          if (currentPuzzleId) {
+            const livePuzzle = await lichessApiService.getPuzzleById(currentPuzzleId);
+            if (livePuzzle) return livePuzzle;
+          } else {
+            const dailyPuzzle = await lichessApiService.getPuzzleOfTheDay();
+            if (dailyPuzzle) return dailyPuzzle;
+          }
+        }
+        
+        // Fall back to mock service
         if (currentPuzzleId) {
           return await lichessService.getPuzzleById(currentPuzzleId);
         }
@@ -77,8 +112,14 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
     data: dashboardData, 
     isLoading: isDashboardLoading 
   } = useQuery({
-    queryKey: ['puzzleDashboard'],
-    queryFn: () => lichessService.getPuzzleDashboard(30),
+    queryKey: ['puzzleDashboard', useLiveApi],
+    queryFn: async () => {
+      if (useLiveApi) {
+        const liveDashboard = await lichessApiService.getPuzzleDashboard();
+        if (liveDashboard) return liveDashboard;
+      }
+      return lichessService.getPuzzleDashboard(30);
+    },
     enabled: autoFetch,
     refetchOnWindowFocus: false
   });
@@ -224,6 +265,7 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
     userRating,
     setCurrentPuzzleId,
     currentTheme,
-    setCurrentTheme
+    setCurrentTheme,
+    useLiveApi
   };
 };

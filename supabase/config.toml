@@ -22,3 +22,6 @@ enabled = true
 
 [functions.chess-api]
 verify_jwt = true
+
+[functions.lichess-api]
+verify_jwt = true
