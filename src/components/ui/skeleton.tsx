@@ -43,4 +43,36 @@ function SkeletonCard() {
   )
 }
 
-export { Skeleton, SkeletonText, SkeletonCard }
+// Add a skeleton for lesson discussions
+function SkeletonDiscussion() {
+  return (
+    <div className="space-y-4">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="bg-gray-50/50 p-3 rounded-lg space-y-2">
+          <Skeleton className="h-4 w-32" />
+          <SkeletonText lines={2} className="mt-2" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Add a skeleton for lesson content
+function SkeletonLesson() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-8 w-3/4" />
+      <SkeletonText lines={4} />
+      <div className="mt-6 p-4 bg-amber-50/50 border border-amber-200/50 rounded-md space-y-3">
+        <Skeleton className="h-5 w-48" />
+        <SkeletonText lines={3} />
+      </div>
+      <div className="mt-6 p-4 bg-blue-50/50 border border-blue-200/50 rounded-md space-y-3">
+        <Skeleton className="h-5 w-48" />
+        <SkeletonText lines={5} />
+      </div>
+    </div>
+  )
+}
+
+export { Skeleton, SkeletonText, SkeletonCard, SkeletonDiscussion, SkeletonLesson }
