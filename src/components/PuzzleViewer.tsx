@@ -94,11 +94,14 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between">
           <span>
-            {puzzleData.puzzle.themes.includes('mate') 
-              ? 'Checkmate Puzzle' 
-              : puzzleData.puzzle.themes.includes('fork') 
-                ? 'Fork Puzzle' 
-                : puzzleData.puzzle.themes[0].charAt(0).toUpperCase() + puzzleData.puzzle.themes[0].slice(1) + ' Puzzle'}
+            {puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
+              puzzleData.puzzle.themes.includes('mate') 
+                ? 'Checkmate Puzzle' 
+                : puzzleData.puzzle.themes.includes('fork') 
+                  ? 'Fork Puzzle' 
+                  : puzzleData.puzzle.themes[0].charAt(0).toUpperCase() + puzzleData.puzzle.themes[0].slice(1) + ' Puzzle'
+              : 'Tactical Puzzle'
+            }
           </span>
           <Button 
             variant="outline" 
@@ -112,17 +115,19 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
           </Button>
         </CardTitle>
         <CardDescription>
-          Rating: {puzzleData.puzzle.rating} • Themes: {puzzleData.puzzle.themes.map((t: string) => 
-            t.charAt(0).toUpperCase() + t.slice(1)
-          ).join(', ')}
+          Rating: {puzzleData.puzzle.rating} • Themes: {puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
+            puzzleData.puzzle.themes.map((t: string) => 
+              t.charAt(0).toUpperCase() + t.slice(1)
+            ).join(', ') : 'Tactical'
+          }
         </CardDescription>
       </CardHeader>
       <CardContent>
         <ChessBoard 
-          fen={puzzleData.puzzle.fen} 
-          pgn={puzzleData.game.pgn}
-          solution={puzzleData.puzzle.solution}
-          initialPly={puzzleData.puzzle.initialPly}
+          fen={puzzleData.puzzle.fen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"} 
+          pgn={puzzleData.game?.pgn || ""}
+          solution={puzzleData.puzzle.solution || []}
+          initialPly={puzzleData.puzzle.initialPly || 0}
           onSolved={handlePuzzleSolved}
         />
       </CardContent>
@@ -131,14 +136,14 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
           <div className="flex-1">
             <h4 className="text-sm font-medium mb-1">Game Info</h4>
             <p className="text-xs text-gray-600">
-              {puzzleData.game.rated ? "Rated" : "Casual"} {puzzleData.game.perf.name} • Clock: {puzzleData.game.clock}
+              {puzzleData.game.rated ? "Rated" : "Casual"} {puzzleData.game.perf?.name || "Game"} • Clock: {puzzleData.game.clock || "Standard"}
             </p>
           </div>
           <div className="flex-1">
             <h4 className="text-sm font-medium mb-1">Players</h4>
             <div className="text-xs">
-              <div>White: {puzzleData.game.players[0]?.title || ""} {puzzleData.game.players[0]?.name || "Player 1"} ({puzzleData.game.players[0]?.rating || "?"})</div>
-              <div>Black: {puzzleData.game.players[1]?.title || ""} {puzzleData.game.players[1]?.name || "Player 2"} ({puzzleData.game.players[1]?.rating || "?"})</div>
+              <div>White: {puzzleData.game.players && puzzleData.game.players[0]?.title || ""} {puzzleData.game.players && puzzleData.game.players[0]?.name || "Player 1"} ({puzzleData.game.players && puzzleData.game.players[0]?.rating || "?"})</div>
+              <div>Black: {puzzleData.game.players && puzzleData.game.players[1]?.title || ""} {puzzleData.game.players && puzzleData.game.players[1]?.name || "Player 2"} ({puzzleData.game.players && puzzleData.game.players[1]?.rating || "?"})</div>
             </div>
           </div>
           

@@ -38,7 +38,7 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
     }
   }, []);
 
-  // Fetch a puzzle by ID
+  // Fetch a puzzle by ID or theme or get daily puzzle
   const { 
     data: puzzleData, 
     isLoading: isPuzzleLoading, 
@@ -47,22 +47,29 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
   } = useQuery({
     queryKey: ['puzzle', currentPuzzleId, currentTheme],
     queryFn: async () => {
-      if (currentPuzzleId) {
-        return lichessService.getPuzzleById(currentPuzzleId);
-      }
-      
-      if (currentTheme) {
-        const themeData = await lichessService.getPuzzlesByTheme(30, currentTheme);
-        if (themeData?.replay?.remaining?.length) {
-          const randomIndex = Math.floor(Math.random() * themeData.replay.remaining.length);
-          const puzzleId = themeData.replay.remaining[randomIndex];
-          return lichessService.getPuzzleById(puzzleId);
+      try {
+        if (currentPuzzleId) {
+          return await lichessService.getPuzzleById(currentPuzzleId);
         }
+        
+        if (currentTheme) {
+          const themeData = await lichessService.getPuzzlesByTheme(30, currentTheme);
+          if (themeData?.replay?.remaining?.length) {
+            const randomIndex = Math.floor(Math.random() * themeData.replay.remaining.length);
+            const puzzleId = themeData.replay.remaining[randomIndex];
+            return await lichessService.getPuzzleById(puzzleId);
+          }
+        }
+        
+        return await lichessService.getDailyPuzzle();
+      } catch (error) {
+        console.error("Error fetching puzzle:", error);
+        return null;
       }
-      
-      return lichessService.getDailyPuzzle();
     },
     enabled: autoFetch,
+    retry: 1,
+    refetchOnWindowFocus: false
   });
 
   // Fetch puzzle dashboard data
@@ -73,6 +80,7 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
     queryKey: ['puzzleDashboard'],
     queryFn: () => lichessService.getPuzzleDashboard(30),
     enabled: autoFetch,
+    refetchOnWindowFocus: false
   });
 
   // Fetch theme information
@@ -83,6 +91,7 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
     queryKey: ['puzzleThemes'],
     queryFn: () => lichessService.getPuzzleThemes(),
     enabled: autoFetch,
+    refetchOnWindowFocus: false
   });
 
   // Fetch puzzles by theme
@@ -95,7 +104,7 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
         const randomIndex = Math.floor(Math.random() * themeData.replay.remaining.length);
         const puzzleId = themeData.replay.remaining[randomIndex];
         setCurrentPuzzleId(puzzleId);
-        return lichessService.getPuzzleById(puzzleId);
+        return await lichessService.getPuzzleById(puzzleId);
       } else {
         toast({
           title: "No puzzles found",

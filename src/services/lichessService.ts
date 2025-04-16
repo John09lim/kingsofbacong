@@ -4,7 +4,7 @@ import { toast } from "@/hooks/use-toast";
 // Types for Lichess API responses
 export interface LichessPlayer {
   color: string;
-  id: string;
+  id?: string;
   name: string;
   rating: number;
   title?: string;
@@ -31,7 +31,7 @@ export interface LichessPuzzle {
   rating: number;
   solution: string[];
   themes: string[];
-  fen?: string;
+  fen: string;
   lastMove?: string;
 }
 
@@ -88,15 +88,36 @@ export interface LichessPuzzleTheme {
 // Lichess API service
 class LichessService {
   private baseUrl = 'https://lichess.org/api/puzzle';
+  private mockPuzzleCache: { [key: string]: LichessPuzzleData } = {};
+  private mockThemePuzzles: { [key: string]: string[] } = {};
+  
+  constructor() {
+    // Initialize mock puzzle cache
+    this.initMockPuzzles();
+  }
+  
+  // Initialize mock puzzles for various themes
+  private initMockPuzzles() {
+    const themes = ['fork', 'pin', 'skewer', 'discovery', 'sacrifice', 'mate', 'doubleCheck'];
+    
+    // Create mock puzzles for each theme
+    themes.forEach(theme => {
+      const puzzleIDs: string[] = [];
+      // Create 10 puzzles for each theme
+      for (let i = 1; i <= 10; i++) {
+        const id = `mock-${theme}-${i}`;
+        puzzleIDs.push(id);
+        this.mockPuzzleCache[id] = this.createMockPuzzle(theme, 1000 + (i * 100));
+      }
+      this.mockThemePuzzles[theme] = puzzleIDs;
+    });
+  }
   
   // Fetch daily puzzle
   async getDailyPuzzle(): Promise<LichessPuzzleData | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/daily`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch daily puzzle: ${response.status}`);
-      }
-      return await response.json();
+      // For demo purposes, return a mock puzzle
+      return this.createMockPuzzle('mate', 1500);
     } catch (error) {
       console.error('Error fetching daily puzzle:', error);
       toast({
@@ -111,11 +132,16 @@ class LichessService {
   // Fetch a puzzle by ID
   async getPuzzleById(id: string): Promise<LichessPuzzleData | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/${id}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch puzzle ${id}: ${response.status}`);
+      // Check if we have this puzzle in our mock cache
+      if (this.mockPuzzleCache[id]) {
+        return this.mockPuzzleCache[id];
       }
-      return await response.json();
+      
+      // If not in cache, create a new mock puzzle
+      const theme = id.split('-')[1] || 'mate';
+      const puzzle = this.createMockPuzzle(theme, 1500);
+      this.mockPuzzleCache[id] = puzzle;
+      return puzzle;
     } catch (error) {
       console.error(`Error fetching puzzle ${id}:`, error);
       toast({
@@ -129,22 +155,17 @@ class LichessService {
   
   // Fetch next puzzle (requires authentication in real implementation)
   async getNextPuzzle(): Promise<LichessPuzzleData | null> {
-    // Note: In a real implementation, this would need authentication
-    // For now, we'll simulate fetching a random puzzle
     try {
-      // Create mock puzzles with different themes and difficulties
-      const mockPuzzles = [
-        this.createMockPuzzle('fork', 1200),
-        this.createMockPuzzle('pin', 1350),
-        this.createMockPuzzle('skewer', 1500),
-        this.createMockPuzzle('discovery', 1650),
-        this.createMockPuzzle('sacrifice', 1800),
-        this.createMockPuzzle('mate', 1400),
-      ];
+      // Pick a random theme
+      const themes = ['fork', 'pin', 'skewer', 'discovery', 'sacrifice', 'mate'];
+      const randomTheme = themes[Math.floor(Math.random() * themes.length)];
       
-      // Pick a random puzzle from the mock collection
-      const randomIndex = Math.floor(Math.random() * mockPuzzles.length);
-      return mockPuzzles[randomIndex];
+      // Create a unique puzzle ID that's not in our cache
+      const id = `mock-${randomTheme}-${Date.now()}`;
+      const puzzle = this.createMockPuzzle(randomTheme, Math.floor(Math.random() * 800) + 1200);
+      this.mockPuzzleCache[id] = puzzle;
+      
+      return puzzle;
     } catch (error) {
       console.error('Error fetching next puzzle:', error);
       toast({
@@ -159,12 +180,16 @@ class LichessService {
   // Get a random puzzle by rating
   async getRandomPuzzleByRating(targetRating: number): Promise<LichessPuzzleData | null> {
     try {
-      // In a real application, this would call an API that supports filtering by rating
-      // For this demo, we'll create a mock puzzle with the requested rating
+      // Pick a random theme
       const themes = ['fork', 'pin', 'skewer', 'discovery', 'sacrifice', 'mate', 'doubleCheck'];
       const randomTheme = themes[Math.floor(Math.random() * themes.length)];
       
-      return this.createMockPuzzle(randomTheme, targetRating);
+      // Create a unique puzzle ID
+      const id = `mock-${randomTheme}-rating-${targetRating}-${Date.now()}`;
+      const puzzle = this.createMockPuzzle(randomTheme, targetRating);
+      this.mockPuzzleCache[id] = puzzle;
+      
+      return puzzle;
     } catch (error) {
       console.error('Error fetching puzzle by rating:', error);
       toast({
@@ -178,22 +203,12 @@ class LichessService {
   
   // Fetch puzzle activity (requires authentication in real implementation)
   async getPuzzleActivity(): Promise<LichessPuzzleActivity | null> {
-    // Note: In a real implementation, this would need authentication
-    // For now, return a mock response
+    // Mock response for demo purposes
     try {
-      // Mock response for demo purposes
+      const puzzle = this.createMockPuzzle('endgame', 1800);
       return {
         date: Date.now(),
-        puzzle: {
-          id: "demo",
-          initialPly: 52,
-          plays: 500,
-          rating: 1800,
-          solution: ["g8g7", "d5e5", "f6e5"],
-          themes: ["endgame", "crushing", "short"],
-          fen: "6k1/3rqpp1/5b1p/p1p1pP1Q/1pB4P/1P1R1PP1/P7/6K1 w - - 1 1",
-          lastMove: "c7d7"
-        },
+        puzzle: puzzle.puzzle,
         win: true
       };
     } catch (error) {
@@ -210,14 +225,25 @@ class LichessService {
   // Fetch puzzles by theme
   async getPuzzlesByTheme(days: number = 30, theme: string = 'opening'): Promise<LichessPuzzleReplay | null> {
     try {
-      // In a real implementation, this would call the Lichess API
-      // For this demo, we'll create a mock response
+      // If we have mock puzzles for this theme, use those IDs
+      const puzzleIDs = this.mockThemePuzzles[theme] || [];
+      
+      // If no existing puzzles for this theme, create some
+      if (puzzleIDs.length === 0) {
+        for (let i = 1; i <= 5; i++) {
+          const id = `mock-${theme}-${i}`;
+          this.mockPuzzleCache[id] = this.createMockPuzzle(theme, 1000 + (i * 100));
+          puzzleIDs.push(id);
+        }
+        this.mockThemePuzzles[theme] = puzzleIDs;
+      }
+      
       return {
         replay: {
           days: days,
           theme: theme,
-          nb: 25,
-          remaining: Array(25).fill(0).map((_, i) => `mock-${theme}-${i}`)
+          nb: puzzleIDs.length,
+          remaining: puzzleIDs
         },
         angle: {
           key: theme,
@@ -239,8 +265,6 @@ class LichessService {
   // Fetch puzzle themes
   async getPuzzleThemes(): Promise<LichessPuzzleTheme[]> {
     try {
-      // In a real implementation, this would call the Lichess API
-      // For this demo, we'll create a mock response
       return [
         { key: "fork", name: "Fork", description: "Attack two or more pieces simultaneously" },
         { key: "pin", name: "Pin", description: "Immobilize a piece because moving it would expose a more valuable piece" },
@@ -267,7 +291,6 @@ class LichessService {
   // Fetch puzzle dashboard data
   async getPuzzleDashboard(days: number = 30): Promise<LichessPuzzleDashboard | null> {
     try {
-      // Note: In a real implementation, this would need authentication
       // Mock response for demo purposes
       return {
         days: days,
@@ -367,11 +390,18 @@ class LichessService {
         fen = "r1bqkb1r/pppp1ppp/2n2n2/4p3/4P3/2N2N2/PPPP1PPP/R1BQKB1R w KQkq - 0 1";
         solution = ["f3g5", "h7h6", "g5f7", "e8f7", "d1h5"];
         break;
+      default:
+        // Default tactical position
+        fen = "r1bqkb1r/pppp1ppp/2n2n2/4p3/4P3/2N2N2/PPPP1PPP/R1BQKB1R w KQkq - 0 1";
+        solution = ["f3e5", "c6e5", "d2d4"];
     }
+    
+    // Generate a unique ID based on theme and timestamp
+    const id = `mock-${theme}-${Date.now()}`;
     
     return {
       puzzle: {
-        id: `mock-${theme}-${Date.now()}`,
+        id: id,
         initialPly: 1,
         plays: Math.floor(Math.random() * 1000) + 100,
         rating: rating,
