@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
+import { Skeleton } from "@/components/ui/skeleton"; // Add this import
 import { 
   Trophy, Star, TrendingUp, Timer, Brain, Zap, 
   Sword, Target, Crosshair, Gauge, CheckCircle2,
