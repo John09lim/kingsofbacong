@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,7 +11,7 @@ export type LessonType = {
   title: string;
   content: string;
   discussion: string;
-  detailedExplanation: string; // Added detailed explanation field
+  detailedExplanation: string;
 };
 
 // Mock data for opening lessons
@@ -25,7 +24,7 @@ const generateLessons = (openingName: string, count: number): LessonType[] => {
       title: `${openingName}: Lesson ${i}`,
       content: generateLessonContent(openingName, i),
       discussion: generateDiscussionContent(openingName, i),
-      detailedExplanation: generateDetailedExplanation(openingName, i), // Generate detailed explanation
+      detailedExplanation: generateDetailedExplanation(openingName, i),
     });
   }
   
@@ -185,36 +184,373 @@ const generateDetailedExplanation = (openingName: string, lessonNumber: number):
   return explanationArray[Math.min(lessonNumber - 1, explanationArray.length - 1)] || defaultExplanations[0];
 };
 
-// Generate discussion content based on opening name
+// Generate discussion content based on opening name and lesson number
 const generateDiscussionContent = (openingName: string, lessonNumber: number): string => {
-  return `
-  <div class="space-y-4">
-    <div class="bg-gray-50 p-3 rounded-lg">
-      <p class="font-semibold">GrandmasterX:</p>
-      <p>I've been playing the ${openingName} for years, and I've found that the key to success is understanding the typical middlegame positions. Anyone else have specific preparation against popular responses?</p>
-    </div>
+  // Create an array of different discussions for each lesson number
+  const lessonDiscussions = [
+    // Lesson 1 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ChessMaster92:</p>
+        <p>I've been studying the ${openingName} for beginners, and I'm finding the initial move order quite intuitive. Anyone else start with this opening?</p>
+      </div>
 
-    <div class="bg-gray-50 p-3 rounded-lg">
-      <p class="font-semibold">ChessNewbie2023:</p>
-      <p>I'm struggling with the timing of pawn breaks in this opening. Sometimes I feel like my position gets too cramped. Any advice from experienced players?</p>
-    </div>
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">NewToChess:</p>
+        <p>I struggle with remembering when to develop knights before bishops in this opening. Any memory tricks that helped you?</p>
+      </div>
 
-    <div class="bg-gray-50 p-3 rounded-lg">
-      <p class="font-semibold">Coach_Emma:</p>
-      <p>For beginners learning the ${openingName}, I recommend focusing on proper piece development before worrying about theoretical lines. A common mistake is moving the same pieces multiple times in the opening without completing development.</p>
-    </div>
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">Coach_David:</p>
+        <p>For beginners learning the ${openingName}, focus on the principles: control the center, develop pieces, and castle early. Don't get lost in variations yet.</p>
+      </div>
 
-    <div class="bg-gray-50 p-3 rounded-lg">
-      <p class="font-semibold">TacticalTom:</p>
-      <p>In my experience, this opening leads to rich tactical opportunities around move 15-20. I'd suggest practicing tactical patterns that commonly arise from these positions.</p>
-    </div>
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ChessEnthusiast:</p>
+        <p>What's a common mistake to avoid in the first few moves of this opening? I tend to develop my queen too early.</p>
+      </div>
 
-    <div class="bg-gray-50 p-3 rounded-lg">
-      <p class="font-semibold">EndgameExpert:</p>
-      <p>Don't forget that the ${openingName} often leads to specific endgame types. Understanding these endgame patterns is just as important as knowing the opening theory!</p>
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">GrandmasterFan:</p>
+        <p>The history behind the ${openingName} is fascinating. It was popularized in the early 20th century and has evolved significantly since then!</p>
+      </div>
     </div>
-  </div>
-  `;
+    `,
+    
+    // Lesson 2 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">TacticalPlayer:</p>
+        <p>The pawn structure in the ${openingName} creates interesting tactical opportunities around move 10-15. I've found success with the knight maneuver to e5.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">PawnStructureStudent:</p>
+        <p>When the central pawns get locked in this opening, where should I focus my attention? Kingside or queenside play?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">IM_Sarah:</p>
+        <p>The pawn breaks in the ${openingName} are critical to understand. Timing the c5 or f5 break (depending on which side you're playing) often determines your success.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ChessStudent2023:</p>
+        <p>I always get confused about which pawn structures lead to which middlegame plans. Is there a systematic approach to learning this?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">PawnChain_Pro:</p>
+        <p>Study Kramnik's games in the ${openingName} for perfect examples of how to handle the resulting pawn structures. His positional understanding was unmatched!</p>
+      </div>
+    </div>
+    `,
+    
+    // Lesson 3 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">AttackingChess:</p>
+        <p>The middlegame positions from the ${openingName} offer amazing attacking chances if you know the typical sacrifices. Anyone else love the bishop sacrifice on h7?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">DefensiveMinded:</p>
+        <p>I struggle with defending against the typical kingside attack in this opening. Any advice on prophylactic moves I should consider?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">GM_Analyst:</p>
+        <p>In the ${openingName}'s middlegame, piece coordination is more important than material. Sometimes sacrificing an exchange leads to the strongest attack.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">PatientPlayer:</p>
+        <p>How do you know when to pull the trigger on a tactical sequence vs. building up the position more? I often miscalculate and lose momentum.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ChessTimer:</p>
+        <p>Time management in complex ${openingName} positions is crucial. I recommend practicing the common tactical motifs so you can spot them quickly in games.</p>
+      </div>
+    </div>
+    `,
+    
+    // Lesson 4 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">EndgameMaster:</p>
+        <p>The ${openingName} often leads to specific endgame types. I've been studying the rook endgames that arise when the queens get exchanged around move 20.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">PawnRaceExpert:</p>
+        <p>Does anyone have tips for handling the opposite-colored bishop endings from this opening? I find them much harder to win than they appear.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">FM_Endgames:</p>
+        <p>When transitioning to the endgame in the ${openingName}, remember that the pawn structure often determines whether your bishop or knight is superior.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">RookLift:</p>
+        <p>I've been losing endgames where I have a material advantage but can't break through. Any recommendations for technique improvement?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">KingActivity:</p>
+        <p>The key to many ${openingName} endgames is early king activation. Don't wait until all pieces are off - start marching your king to the center around move 25-30.</p>
+      </div>
+    </div>
+    `,
+    
+    // Lesson 5 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">GrandMaster_Reviewer:</p>
+        <p>Analyzing ${openingName} games from recent super tournaments reveals interesting new ideas. Carlsen's treatment of the position against Caruana last month was revolutionary.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">TheoryBuff:</p>
+        <p>How often should we revisit our opening preparation? I've been using the ${openingName} for years but wonder if my knowledge is outdated.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">IM_Theoretician:</p>
+        <p>The theory in the ${openingName} is constantly evolving. What was considered refuted five years ago is now making a comeback with subtle improvements.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">PracticalPlayer:</p>
+        <p>How deep should club players study this opening? I feel overwhelmed by all the theory but don't want to be caught unprepared.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">EngineAnalyst:</p>
+        <p>Modern engines have revealed surprising resources in positions from the ${openingName} that were previously considered lost. The defensive techniques are fascinating!</p>
+      </div>
+    </div>
+    `,
+    
+    // Lesson 6 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">SideLine_Expert:</p>
+        <p>I've been experimenting with the less common variations of the ${openingName} with surprising results. The sideline with an early h4 is particularly effective at the club level.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">RepertoireBuilder:</p>
+        <p>How do you incorporate unusual lines into your repertoire without getting confused with move orders? I'm trying to add a few surprise weapons.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">GM_Alternative:</p>
+        <p>Don't underestimate sidelines in the ${openingName}. Sometimes avoiding main lines where opponents are well-prepared can yield better practical results.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ClubPlayerPlus:</p>
+        <p>I got destroyed by an unusual move order in this opening last week. How do you handle unexpected deviations without going wrong early?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">CreativeChesster:</p>
+        <p>The most interesting games in the ${openingName} often come from early deviations around move 5-7. These positions are less explored and require original thinking.</p>
+      </div>
+    </div>
+    `,
+    
+    // Lesson 7 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">PsychologyOfChess:</p>
+        <p>Playing the ${openingName} has psychological effects on opponents who aren't familiar with it. I've seen players consume too much time early trying to recall their preparation.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">TournamentTactician:</p>
+        <p>How do you mentally prepare for facing different responses to this opening? I get flustered when my opponent plays something I haven't studied.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">MentalCoach:</p>
+        <p>The ${openingName} creates imbalanced positions where confidence in your calculation ability matters more than memorizing variations. Trust your skills!</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">RatedRising:</p>
+        <p>I notice I play this opening better when I'm relaxed versus when I'm stressed about the outcome. Any mental techniques to stay calm in critical positions?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ChessMindset:</p>
+        <p>The strategic complexity of the ${openingName} requires a clear mind. I recommend meditation before games where you expect to enter these complex positions.</p>
+      </div>
+    </div>
+    `,
+    
+    // Lesson 8 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">OnlinePlayer:</p>
+        <p>Playing the ${openingName} in online blitz is completely different from over-the-board tournaments. I've found simplifying variations work better in faster time controls.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">TimeScramble:</p>
+        <p>How do you handle time pressure in complex ${openingName} positions? I often find myself with less than 5 minutes after just 15 moves.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">IM_Online:</p>
+        <p>For online play in the ${openingName}, having a clear understanding of the typical tactical patterns matters more than memorizing long variations.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">BlitzMaster:</p>
+        <p>I perform much better in this opening when playing 5+3 versus 3+0. The increment makes a huge difference in handling critical positions.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">PracticalTips:</p>
+        <p>For playing the ${openingName} online, I recommend studying the common "mouse slip" positions. Know how to recover if you accidentally play e3 instead of e4!</p>
+      </div>
+    </div>
+    `,
+    
+    // Lesson 9 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">HistoricalGames:</p>
+        <p>The evolution of the ${openingName} through chess history is fascinating. Comparing how Morphy played it versus modern grandmasters shows how the understanding has deepened.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ChessBookworm:</p>
+        <p>What are the best books specifically on this opening? I've read general opening books but want something more specialized.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">GM_Historian:</p>
+        <p>The ${openingName} gained popularity after the famous game between Capablanca and Alekhine in 1927. Their treatment of the resulting middlegame set the standard for decades.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ResearchMinded:</p>
+        <p>I'm working on a database of critical ${openingName} games throughout history. Any suggestions for particularly influential games I shouldn't miss?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ChessArchives:</p>
+        <p>Studying how the ${openingName} was played in the pre-computer era versus today shows interesting differences in evaluation. What was once considered dubious is now mainline!</p>
+      </div>
+    </div>
+    `,
+    
+    // Lesson 10 discussions
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ComputerAnalysis:</p>
+        <p>Engine evaluation of the ${openingName} has shifted dramatically in the last decade. Positions once considered slightly better for White are now seen as equal.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">NeuralNetFan:</p>
+        <p>How has AlphaZero's approach to this opening changed our understanding? I've noticed more emphasis on long-term piece activity.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">IM_Technology:</p>
+        <p>Modern neural network engines have revolutionized our understanding of the ${openingName}. What was considered a weakness (isolated d-pawn) is now seen as dynamic potential.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">ClassicalPlayer:</p>
+        <p>I find I learn more by analyzing these positions myself before checking the engine. How do you balance computer analysis with developing your own understanding?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">EngineSkeptic:</p>
+        <p>Not everything in the ${openingName} is concrete calculation. The artistic and intuitive aspects of these positions can't be fully captured by engine evaluations.</p>
+      </div>
+    </div>
+    `,
+    
+    // Lesson 11+ discussions - for openings with more lessons
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">PersonalStyle:</p>
+        <p>Adapting the ${openingName} to suit your personal style is essential. I've modified the standard approach to include more queenside play since I prefer that tension.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">StyleQuestion:</p>
+        <p>I'm a very tactical player trying to incorporate this opening. Should I aim for the sharpest lines, or would learning the strategic aspects benefit my overall game more?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">Coach_Maria:</p>
+        <p>The ${openingName} can be adapted to any style of play. The key is identifying the plans that resonate with your chess personality and developing expertise in those variations.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">VersatilePlayer:</p>
+        <p>After studying this opening for months, I've found my results improved when I started focusing on understanding plans rather than memorizing moves. Anyone else?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">StrongPreference:</p>
+        <p>Even at the highest levels, we see players bring their unique stamp to the ${openingName}. Study how different elite players handle the same position to expand your understanding.</p>
+      </div>
+    </div>
+    `,
+    
+    `
+    <div class="space-y-4">
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">CompetitiveEdge:</p>
+        <p>Preparing the ${openingName} for tournament play requires a systematic approach. I create a file for each major variation and update it after every game.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">TournamentPrep:</p>
+        <p>How do you prepare against specific opponents who play this opening? I struggle with adjusting my preparation based on my opponent's style.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">GM_Preparation:</p>
+        <p>For tournament success with the ${openingName}, maintain a balance between surprise value and positions you understand well. Don't play lines just because they're theoretically good.</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">WeekendWarrior:</p>
+        <p>As an amateur with limited preparation time, should I focus on one specific line in this opening or have broader but shallower knowledge?</p>
+      </div>
+
+      <div class="bg-gray-50 p-3 rounded-lg">
+        <p class="font-semibold">PragmaticApproach:</p>
+        <p>Tournament success with the ${openingName} often comes down to preparation efficiency. Focus on the variations you're most likely to face at your level.</p>
+      </div>
+    </div>
+    `,
+  ];
+
+  // Use modulo to cycle through the discussions if we have more lessons than discussions
+  const discussionIndex = (lessonNumber - 1) % lessonDiscussions.length;
+  return lessonDiscussions[discussionIndex];
 };
 
 interface OpeningLessonModalProps {
