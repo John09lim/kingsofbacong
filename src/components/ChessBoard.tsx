@@ -307,7 +307,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   };
 
   // Get the square CSS based on position and state
-  const getSquareStyle = (row: number, col: number) => {
+  const getSquareClasses = (row: number, col: number) => {
     const isWhiteSquare = (row + col) % 2 === 1; // Lichess-style alternating pattern
     const square = getSquareName(row, col);
     const isSelected = selectedSquare === square;
@@ -318,19 +318,19 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     const isLastMoveTo = lastMove && lastMove[1] === square;
     
     let baseClasses = `
-      w-12 h-12 flex items-center justify-center text-3xl relative
-      ${isWhiteSquare ? 'bg-[#eeeed2]' : 'bg-[#769656]'} 
+      w-12 h-12 flex items-center justify-center relative
+      ${isWhiteSquare ? 'chess-light-square' : 'chess-dark-square'} 
       cursor-pointer transition-all
     `;
     
     if (isSelected) {
-      baseClasses += ' bg-[#bbcb2b]';
+      baseClasses += ' chess-selected';
     } else if (isLastMoveFrom || isLastMoveTo) {
-      baseClasses += ' bg-[#f7d26c]';
-    } else if (isLegalMove) {
-      baseClasses += ' bg-[#f7f769]';
+      baseClasses += ' chess-highlight';
+    } else if (isLegalMove && board[row][col] === '') {
+      baseClasses += ' chess-legal-move';
     } else if (isHovered && !isSelected) {
-      baseClasses += ' opacity-90';
+      baseClasses += ' hover:opacity-95';
     }
     
     if (isHintSquare) {
@@ -378,26 +378,26 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         </div>
       </div>
       
-      <div className="border rounded-md bg-[#262421] p-2 overflow-hidden">
+      <div className="chess-board">
         <div className="grid grid-cols-8 gap-0 w-full max-w-md mx-auto">
           {/* Render the board according to player's perspective */}
           {isPlayerWhite ? (
             // White's perspective (a1 at bottom left)
             board.map((row, rowIndex) => (
               row.map((piece, colIndex) => {
-                const squareStyle = getSquareStyle(rowIndex, colIndex);
+                const squareClasses = getSquareClasses(rowIndex, colIndex);
                 return (
                   <div 
                     key={`${rowIndex}-${colIndex}`}
                     onClick={() => handleSquareClick(rowIndex, colIndex)}
                     onMouseEnter={() => handleSquareHover(rowIndex, colIndex)}
                     onMouseLeave={() => setHoveredSquare(null)}
-                    className={squareStyle}
+                    className={squareClasses}
                   >
                     {piece && (
                       <span 
                         className={`
-                          ${isWhitePiece(piece) ? 'text-white drop-shadow-md' : 'text-black drop-shadow-md'}
+                          chess-piece ${isWhitePiece(piece) ? 'white' : 'black'}
                           ${selectedSquare && selectedSquare === getSquareName(rowIndex, colIndex) ? 'opacity-70' : ''}
                           ${isAnimating && lastMove && lastMove[1] === getSquareName(rowIndex, colIndex) ? 'animate-scale-in' : ''}
                           text-4xl
@@ -409,12 +409,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                     
                     {/* File and rank labels */}
                     {colIndex === 0 && (
-                      <span className="absolute left-1 top-0 text-xs font-bold opacity-70">
+                      <span className="chess-coordinates chess-rank">
                         {8 - rowIndex}
                       </span>
                     )}
                     {rowIndex === 7 && (
-                      <span className="absolute right-1 bottom-0 text-xs font-bold opacity-70">
+                      <span className="chess-coordinates chess-file">
                         {"abcdefgh"[colIndex]}
                       </span>
                     )}
@@ -428,19 +428,19 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
               [...row].reverse().map((piece, reversedColIndex) => {
                 const rowIndex = 7 - reversedRowIndex;
                 const colIndex = 7 - reversedColIndex;
-                const squareStyle = getSquareStyle(rowIndex, colIndex);
+                const squareClasses = getSquareClasses(rowIndex, colIndex);
                 return (
                   <div 
                     key={`${rowIndex}-${colIndex}-flipped`}
                     onClick={() => handleSquareClick(rowIndex, colIndex)}
                     onMouseEnter={() => handleSquareHover(rowIndex, colIndex)}
                     onMouseLeave={() => setHoveredSquare(null)}
-                    className={squareStyle}
+                    className={squareClasses}
                   >
                     {piece && (
                       <span 
                         className={`
-                          ${isWhitePiece(piece) ? 'text-white drop-shadow-md' : 'text-black drop-shadow-md'}
+                          chess-piece ${isWhitePiece(piece) ? 'white' : 'black'}
                           ${selectedSquare && selectedSquare === getSquareName(rowIndex, colIndex) ? 'opacity-70' : ''}
                           ${isAnimating && lastMove && lastMove[1] === getSquareName(rowIndex, colIndex) ? 'animate-scale-in' : ''}
                           text-4xl
@@ -452,12 +452,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                     
                     {/* File and rank labels (flipped) */}
                     {reversedColIndex === 7 && (
-                      <span className="absolute left-1 top-0 text-xs font-bold opacity-70">
+                      <span className="chess-coordinates chess-rank">
                         {8 - rowIndex}
                       </span>
                     )}
                     {reversedRowIndex === 7 && (
-                      <span className="absolute right-1 bottom-0 text-xs font-bold opacity-70">
+                      <span className="chess-coordinates chess-file">
                         {"abcdefgh"[colIndex]}
                       </span>
                     )}
