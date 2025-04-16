@@ -13,8 +13,8 @@ interface Profile {
   id: string;
   full_name: string;
   avatar_url: string | null;
-  training_hours?: number;
-  level?: number;
+  training_hours: number;
+  level: number;
 }
 
 const Community = () => {
@@ -73,19 +73,22 @@ const Community = () => {
         const profilesWithStats = data?.map((profile, index) => {
           const randomBase = Math.floor(Math.random() * 220); // Random base hours
           const trainHours = 150 - (index * 8) + randomBase;
-          const mappedProfile = {
-            ...profile,
-            training_hours: Math.max(trainHours, 5), // Ensure at least 5 hours
-          };
-          // Calculate level based on hours
-          mappedProfile.level = calculateLevel(mappedProfile.training_hours);
-          return mappedProfile;
+          const trainingHours = Math.max(trainHours, 5); // Ensure at least 5 hours
+          
+          // Calculate level based on hours and create properly typed profile object
+          const level = calculateLevel(trainingHours);
+          
+          return {
+            id: profile.id,
+            full_name: profile.full_name || 'Chess Player',
+            avatar_url: profile.avatar_url,
+            training_hours: trainingHours,
+            level: level
+          } as Profile;
         }) || [];
         
         // Sort by training hours (descending)
-        profilesWithStats.sort((a, b) => 
-          (b.training_hours || 0) - (a.training_hours || 0)
-        );
+        profilesWithStats.sort((a, b) => b.training_hours - a.training_hours);
         
         setProfiles(profilesWithStats);
         
