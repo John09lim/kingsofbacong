@@ -25,17 +25,31 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   isRefreshing = false
 }) => {
   const [isSolved, setIsSolved] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
   
-  // Handle when the puzzle is solved
-  const handlePuzzleSolved = () => {
-    setIsSolved(true);
-    onSolved();
+  // Handle when the puzzle is solved or failed
+  const handlePuzzleResult = (success: boolean) => {
+    if (success) {
+      setIsSolved(true);
+      onSolved();
+    } else {
+      setFailedAttempts(prev => prev + 1);
+    }
   };
   
   // Handle getting a new puzzle
   const handleGetNewPuzzle = () => {
     setIsSolved(false);
+    setFailedAttempts(0);
     onGetNextPuzzle();
+  };
+
+  // Determine puzzle difficulty label
+  const getPuzzleDifficultyLabel = (rating?: number) => {
+    if (!rating) return "Unknown";
+    if (rating < 1400) return "Easy";
+    if (rating < 2000) return "Intermediate";
+    return "Hard";
   };
 
   if (isLoading) {
@@ -89,20 +103,31 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
     );
   }
 
+  const difficultyLabel = getPuzzleDifficultyLabel(puzzleData.puzzle.rating);
+  
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between">
-          <span>
-            {puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
-              puzzleData.puzzle.themes.includes('mate') 
-                ? 'Checkmate Puzzle' 
-                : puzzleData.puzzle.themes.includes('fork') 
-                  ? 'Fork Puzzle' 
-                  : puzzleData.puzzle.themes[0].charAt(0).toUpperCase() + puzzleData.puzzle.themes[0].slice(1) + ' Puzzle'
-              : 'Tactical Puzzle'
-            }
-          </span>
+          <div className="flex items-center gap-2">
+            <span>
+              {puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
+                puzzleData.puzzle.themes.includes('mate') 
+                  ? 'Checkmate Puzzle' 
+                  : puzzleData.puzzle.themes.includes('fork') 
+                    ? 'Fork Puzzle' 
+                    : puzzleData.puzzle.themes[0].charAt(0).toUpperCase() + puzzleData.puzzle.themes[0].slice(1) + ' Puzzle'
+                : 'Tactical Puzzle'
+              }
+            </span>
+            <Badge className={`
+              ${difficultyLabel === "Easy" ? "bg-green-600" : 
+                difficultyLabel === "Intermediate" ? "bg-amber-600" : 
+                "bg-red-600"}
+            `}>
+              {difficultyLabel} (+{difficultyLabel === "Easy" ? "1" : difficultyLabel === "Intermediate" ? "2" : "3"} ELO)
+            </Badge>
+          </div>
           <Button 
             variant="outline" 
             size="sm" 
@@ -128,7 +153,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
           pgn={puzzleData.game?.pgn || ""}
           solution={puzzleData.puzzle.solution || []}
           initialPly={puzzleData.puzzle.initialPly || 0}
-          onSolved={handlePuzzleSolved}
+          onSolved={handlePuzzleResult}
         />
       </CardContent>
       {puzzleData.game && (
@@ -147,14 +172,20 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
             </div>
           </div>
           
-          {isSolved && (
-            <div className="flex items-center">
+          <div className="flex items-center gap-2">
+            {isSolved && (
               <Badge className="bg-green-500 text-white flex items-center gap-1">
                 <Check className="h-3 w-3" />
                 Solved!
               </Badge>
-            </div>
-          )}
+            )}
+            {failedAttempts > 0 && !isSolved && (
+              <Badge className="bg-amber-500 text-white flex items-center gap-1">
+                <X className="h-3 w-3" />
+                Failed attempts: {failedAttempts}
+              </Badge>
+            )}
+          </div>
         </CardFooter>
       )}
     </Card>

@@ -22,7 +22,7 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
   const { puzzleId, autoFetch = true, theme } = options;
   const [currentPuzzleId, setCurrentPuzzleId] = useState<string | undefined>(puzzleId);
   const [solvedPuzzles, setSolvedPuzzles] = useState<string[]>([]);
-  const [userRating, setUserRating] = useState<number>(1200);
+  const [userRating, setUserRating] = useState<number>(0); // Starting ELO at 0
   const [currentTheme, setCurrentTheme] = useState<string | undefined>(theme);
 
   // Load solved puzzles from localStorage on initialization
@@ -149,35 +149,38 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
     }
   }, [currentTheme, fetchPuzzlesByTheme]);
 
-  // Mark a puzzle as solved
+  // Mark a puzzle as solved or failed
   const markPuzzleSolved = useCallback((puzzleId: string, success: boolean = true) => {
     if (success) {
+      // Add puzzle to solved list
       const updatedSolvedPuzzles = [...solvedPuzzles, puzzleId];
       setSolvedPuzzles(updatedSolvedPuzzles);
       localStorage.setItem('solvedPuzzles', JSON.stringify(updatedSolvedPuzzles));
       
-      // Simple rating adjustment simulation
+      // Calculate ELO points based on difficulty
       const puzzleRating = puzzleData?.puzzle.rating || 1200;
-      const ratingDiff = Math.max(10, Math.floor((puzzleRating - userRating) / 20));
-      const newRating = userRating + ratingDiff;
+      let eloPoints = 1; // Default for easy puzzles
+      
+      if (puzzleRating >= 1600 && puzzleRating < 2000) {
+        eloPoints = 2; // Intermediate puzzles
+      } else if (puzzleRating >= 2000) {
+        eloPoints = 3; // Hard puzzles
+      }
+      
+      // Update user rating
+      const newRating = userRating + eloPoints;
       setUserRating(newRating);
       localStorage.setItem('puzzleRating', newRating.toString());
       
       toast({
         title: "Puzzle Solved!",
-        description: `Rating: +${ratingDiff} (${newRating})`,
+        description: `Rating: +${eloPoints} ELO (${newRating})`,
       });
     } else {
-      // Failed attempt
-      const puzzleRating = puzzleData?.puzzle.rating || 1200;
-      const ratingDiff = Math.max(5, Math.floor((userRating - puzzleRating) / 30));
-      const newRating = userRating - ratingDiff;
-      setUserRating(newRating);
-      localStorage.setItem('puzzleRating', newRating.toString());
-      
+      // No penalty for failed puzzles in this implementation
       toast({
         title: "Puzzle Failed",
-        description: `Rating: -${ratingDiff} (${newRating})`,
+        description: "Try again or get a new puzzle.",
         variant: "destructive",
       });
     }
