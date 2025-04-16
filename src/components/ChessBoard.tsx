@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, RotateCcw, Check, X, Lightbulb, RefreshCw } from 'lucide-react';
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 interface ChessBoardProps {
   fen?: string;
@@ -30,6 +31,9 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [isPlayerWhite, setIsPlayerWhite] = useState<boolean>(true);
   const [showHint, setShowHint] = useState<boolean>(false);
   const [hintSquare, setHintSquare] = useState<string | null>(null);
+  const [waitingForComputerMove, setWaitingForComputerMove] = useState<boolean>(false);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  const [lastMove, setLastMove] = useState<[string, string] | null>(null);
   
   // Parse the FEN to a board representation
   const parseFen = useCallback((fen: string) => {
@@ -86,6 +90,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       setIsSolved(false);
       setShowHint(false);
       setHintSquare(null);
+      setWaitingForComputerMove(false);
+      setLastMove(null);
     }
   }, [fen]);
   
@@ -124,6 +130,66 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     return [row, col];
   };
   
+  // Make computer's move after player moves
+  const makeComputerMove = useCallback(() => {
+    if (currentSolutionIndex % 2 === 1 && currentSolutionIndex < solution.length) {
+      setWaitingForComputerMove(true);
+      
+      // Add a slight delay to simulate computer thinking
+      setTimeout(() => {
+        const computerMove = solution[currentSolutionIndex];
+        
+        if (computerMove && computerMove.length >= 4) {
+          // Extract from and to squares
+          const fromSquare = computerMove.substring(0, 2);
+          const toSquare = computerMove.substring(2, 4);
+          
+          const [fromRow, fromCol] = getSquarePosition(fromSquare);
+          const [toRow, toCol] = getSquarePosition(toSquare);
+          
+          if (fromRow >= 0 && fromCol >= 0 && toRow >= 0 && toCol >= 0) {
+            // Create a copy of the current board
+            const newBoard = [...board.map(row => [...row])];
+            
+            // Move the piece
+            const piece = newBoard[fromRow][fromCol];
+            newBoard[fromRow][fromCol] = '';
+            newBoard[toRow][toCol] = piece;
+            
+            // Update the board
+            setBoard(newBoard);
+            setMoveHistory([...moveHistory, computerMove]);
+            setCurrentSolutionIndex(currentSolutionIndex + 1);
+            setLastMove([fromSquare, toSquare]);
+            
+            // Animate the move
+            setIsAnimating(true);
+            setTimeout(() => setIsAnimating(false), 500);
+          }
+        }
+        
+        setWaitingForComputerMove(false);
+      }, 500);
+    }
+  }, [currentSolutionIndex, solution, board, moveHistory]);
+  
+  // Effect to trigger computer move when it's computer's turn
+  useEffect(() => {
+    if (currentSolutionIndex % 2 === 1 && currentSolutionIndex < solution.length && !waitingForComputerMove && !isSolved) {
+      makeComputerMove();
+    }
+    
+    // Check if the puzzle is solved
+    if (currentSolutionIndex >= solution.length && solution.length > 0 && !isSolved) {
+      setIsSolved(true);
+      toast({
+        title: "Puzzle solved!",
+        description: "Congratulations! You've solved this puzzle.",
+      });
+      if (onSolved) onSolved(true);
+    }
+  }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved]);
+  
   // Show hint for next move
   const showHintMove = () => {
     if (currentSolutionIndex < solution.length) {
@@ -143,7 +209,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
   // Handle square click
   const handleSquareClick = (row: number, col: number) => {
-    if (isSolved) return;
+    if (isSolved || waitingForComputerMove) return;
     
     const square = getSquareName(row, col);
     
@@ -160,7 +226,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         // Correct move
         toast({
           title: "Correct move!",
-          description: "That's the right move. Keep going!",
+          variant: "default",
         });
         
         // Update the board
@@ -175,18 +241,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           setBoard(newBoard);
           setSelectedSquare(null);
           setMoveHistory([...moveHistory, move]);
+          setLastMove([selectedSquare, square]);
           
           const nextSolutionIndex = currentSolutionIndex + 1;
           setCurrentSolutionIndex(nextSolutionIndex);
-          
-          if (nextSolutionIndex >= solution.length) {
-            setIsSolved(true);
-            toast({
-              title: "Puzzle solved!",
-              description: "Congratulations! You've solved this puzzle.",
-            });
-            if (onSolved) onSolved(true);
-          }
         }
       } else {
         // Incorrect move
@@ -232,6 +290,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     setBoard(parseFen(fen));
     setShowHint(false);
     setHintSquare(null);
+    setWaitingForComputerMove(false);
+    setLastMove(null);
   };
   
   // Check if a square is a legal move
@@ -254,16 +314,30 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     const isHovered = hoveredSquare === square;
     const isLegalMove = selectedSquare && isLegalMoveSquare(row, col);
     const isHintSquare = showHint && hintSquare === square;
+    const isLastMoveFrom = lastMove && lastMove[0] === square;
+    const isLastMoveTo = lastMove && lastMove[1] === square;
     
-    return `
+    let baseClasses = `
       w-12 h-12 flex items-center justify-center text-3xl relative
       ${isWhiteSquare ? 'bg-[#eeeed2]' : 'bg-[#769656]'} 
-      ${isSelected ? 'bg-[#bbcb2b]' : ''}
-      ${isLegalMove ? 'bg-[#f7f769]' : ''}
-      ${isHovered && !isSelected ? 'opacity-90' : ''}
-      ${isHintSquare ? 'ring-4 ring-blue-500 ring-inset' : ''}
       cursor-pointer transition-all
     `;
+    
+    if (isSelected) {
+      baseClasses += ' bg-[#bbcb2b]';
+    } else if (isLastMoveFrom || isLastMoveTo) {
+      baseClasses += ' bg-[#f7d26c]';
+    } else if (isLegalMove) {
+      baseClasses += ' bg-[#f7f769]';
+    } else if (isHovered && !isSelected) {
+      baseClasses += ' opacity-90';
+    }
+    
+    if (isHintSquare) {
+      baseClasses += ' ring-4 ring-blue-500 ring-inset';
+    }
+    
+    return baseClasses;
   };
 
   // Toggle the board orientation
@@ -284,16 +358,24 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           <Label htmlFor="board-color">Play as {isPlayerWhite ? "White" : "Black"}</Label>
         </div>
         
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={showHintMove}
-          className="flex items-center gap-1"
-          disabled={isSolved || currentSolutionIndex >= solution.length}
-        >
-          <Lightbulb className="h-4 w-4" />
-          Hint
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={showHintMove}
+            className="flex items-center gap-1"
+            disabled={isSolved || currentSolutionIndex >= solution.length || waitingForComputerMove}
+          >
+            <Lightbulb className="h-4 w-4" />
+            Hint
+          </Button>
+          
+          {waitingForComputerMove && (
+            <Badge className="bg-amber-500">
+              Computer thinking...
+            </Badge>
+          )}
+        </div>
       </div>
       
       <div className="border rounded-md bg-[#262421] p-2 overflow-hidden">
@@ -317,6 +399,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                         className={`
                           ${isWhitePiece(piece) ? 'text-white drop-shadow-md' : 'text-black drop-shadow-md'}
                           ${selectedSquare && selectedSquare === getSquareName(rowIndex, colIndex) ? 'opacity-70' : ''}
+                          ${isAnimating && lastMove && lastMove[1] === getSquareName(rowIndex, colIndex) ? 'animate-scale-in' : ''}
                           text-4xl
                         `}
                       >
@@ -359,6 +442,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                         className={`
                           ${isWhitePiece(piece) ? 'text-white drop-shadow-md' : 'text-black drop-shadow-md'}
                           ${selectedSquare && selectedSquare === getSquareName(rowIndex, colIndex) ? 'opacity-70' : ''}
+                          ${isAnimating && lastMove && lastMove[1] === getSquareName(rowIndex, colIndex) ? 'animate-scale-in' : ''}
                           text-4xl
                         `}
                       >

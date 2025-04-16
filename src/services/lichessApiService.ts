@@ -82,6 +82,28 @@ class LichessApiService {
   async getStormDashboard(): Promise<any> {
     return this.callLichessApi('storm/dashboard');
   }
+
+  // Get puzzles by rating
+  async getPuzzlesByRating(min: number, max: number, count: number = 10): Promise<any> {
+    return this.callLichessApi('puzzle/batch', { 
+      min, 
+      max,
+      count
+    });
+  }
+
+  // Get puzzles by theme
+  async getPuzzlesByTheme(themes: string[], count: number = 10): Promise<any> {
+    return this.callLichessApi('puzzle/batch', { 
+      themes: themes.join(','), 
+      count 
+    });
+  }
+
+  // Get random puzzle
+  async getRandomPuzzle(): Promise<any> {
+    return this.callLichessApi('puzzle/random');
+  }
 }
 
 export const lichessApiService = new LichessApiService();

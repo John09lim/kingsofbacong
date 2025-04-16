@@ -52,6 +52,14 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
     return "Hard";
   };
 
+  // Get ELO points based on difficulty
+  const getEloPoints = (rating?: number) => {
+    if (!rating) return "1";
+    if (rating < 1400) return "1";
+    if (rating < 2000) return "2";
+    return "3";
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -104,6 +112,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   }
 
   const difficultyLabel = getPuzzleDifficultyLabel(puzzleData.puzzle.rating);
+  const eloPoints = getEloPoints(puzzleData.puzzle.rating);
   
   return (
     <Card>
@@ -125,7 +134,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
                 difficultyLabel === "Intermediate" ? "bg-amber-600" : 
                 "bg-red-600"}
             `}>
-              {difficultyLabel} (+{difficultyLabel === "Easy" ? "1" : difficultyLabel === "Intermediate" ? "2" : "3"} ELO)
+              {difficultyLabel} (+{eloPoints} ELO)
             </Badge>
           </div>
           <Button 

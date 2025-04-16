@@ -48,6 +48,7 @@ serve(async (req) => {
       headers: {
         'Authorization': `Bearer ${LICHESS_TOKEN}`,
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
     });
 

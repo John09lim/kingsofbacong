@@ -71,18 +71,38 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
     queryKey: ['puzzle', currentPuzzleId, currentTheme, useLiveApi],
     queryFn: async () => {
       try {
-        // Try to use the live API first if available
+        // Always try to use the live API first if available
         if (useLiveApi) {
+          console.log("Using live Lichess API");
           if (currentPuzzleId) {
+            console.log(`Fetching puzzle by ID: ${currentPuzzleId}`);
             const livePuzzle = await lichessApiService.getPuzzleById(currentPuzzleId);
             if (livePuzzle) return livePuzzle;
+          } else if (currentTheme) {
+            console.log(`Fetching puzzles by theme: ${currentTheme}`);
+            // Get a batch of puzzles by theme
+            const themePuzzles = await lichessApiService.getPuzzlesByTheme([currentTheme], 5);
+            if (themePuzzles && themePuzzles.length > 0) {
+              // Pick a random puzzle from the batch
+              const randomIndex = Math.floor(Math.random() * themePuzzles.length);
+              const puzzleId = themePuzzles[randomIndex].id;
+              console.log(`Selected random puzzle ID: ${puzzleId}`);
+              return await lichessApiService.getPuzzleById(puzzleId);
+            }
           } else {
+            console.log("Fetching puzzle of the day");
             const dailyPuzzle = await lichessApiService.getPuzzleOfTheDay();
             if (dailyPuzzle) return dailyPuzzle;
+            
+            // If no daily puzzle, try a random puzzle
+            console.log("Fetching random puzzle as fallback");
+            const randomPuzzle = await lichessApiService.getRandomPuzzle();
+            if (randomPuzzle) return randomPuzzle;
           }
         }
         
         // Fall back to mock service
+        console.log("Falling back to mock Lichess service");
         if (currentPuzzleId) {
           return await lichessService.getPuzzleById(currentPuzzleId);
         }
@@ -136,11 +156,24 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
   });
 
   // Fetch puzzles by theme
-  const fetchPuzzlesByTheme = useCallback(async (theme: string, days: number = 30) => {
+  const fetchPuzzlesByTheme = useCallback(async (theme: string) => {
     try {
-      const themeData = await lichessService.getPuzzlesByTheme(days, theme);
       setCurrentTheme(theme);
       
+      if (useLiveApi) {
+        // Get puzzles by theme from live API
+        const themePuzzles = await lichessApiService.getPuzzlesByTheme([theme], 5);
+        if (themePuzzles && themePuzzles.length > 0) {
+          // Pick a random puzzle from the batch
+          const randomIndex = Math.floor(Math.random() * themePuzzles.length);
+          const puzzleId = themePuzzles[randomIndex].id;
+          setCurrentPuzzleId(puzzleId);
+          return await lichessApiService.getPuzzleById(puzzleId);
+        }
+      }
+      
+      // Fall back to mock service
+      const themeData = await lichessService.getPuzzlesByTheme(30, theme);
       if (themeData?.replay?.remaining?.length) {
         const randomIndex = Math.floor(Math.random() * themeData.replay.remaining.length);
         const puzzleId = themeData.replay.remaining[randomIndex];
@@ -163,7 +196,7 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
       });
       return null;
     }
-  }, []);
+  }, [useLiveApi]);
 
   // Fetch next puzzle
   const fetchNextPuzzle = useCallback(async (specificTheme?: string) => {
@@ -174,6 +207,16 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
         return fetchPuzzlesByTheme(themeToUse);
       }
       
+      if (useLiveApi) {
+        // Get a random puzzle from live API
+        const randomPuzzle = await lichessApiService.getRandomPuzzle();
+        if (randomPuzzle?.puzzle.id) {
+          setCurrentPuzzleId(randomPuzzle.puzzle.id);
+          return randomPuzzle;
+        }
+      }
+      
+      // Fall back to mock service
       const puzzle = await lichessService.getNextPuzzle();
       if (puzzle?.puzzle.id) {
         setCurrentPuzzleId(puzzle.puzzle.id);
@@ -188,7 +231,7 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
       });
       return null;
     }
-  }, [currentTheme, fetchPuzzlesByTheme]);
+  }, [currentTheme, fetchPuzzlesByTheme, useLiveApi]);
 
   // Mark a puzzle as solved or failed
   const markPuzzleSolved = useCallback((puzzleId: string, success: boolean = true) => {
@@ -230,7 +273,22 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
   // Generate a puzzle by difficulty
   const generatePuzzleByDifficulty = useCallback(async (difficulty: number) => {
     try {
-      // Fetch a random puzzle with the closest rating to the requested difficulty
+      if (useLiveApi) {
+        // Get puzzles by rating range from live API
+        const min = Math.max(difficulty - 100, 500);
+        const max = difficulty + 100;
+        const puzzles = await lichessApiService.getPuzzlesByRating(min, max, 5);
+        
+        if (puzzles && puzzles.length > 0) {
+          // Pick a random puzzle from the batch
+          const randomIndex = Math.floor(Math.random() * puzzles.length);
+          const puzzleId = puzzles[randomIndex].id;
+          setCurrentPuzzleId(puzzleId);
+          return await lichessApiService.getPuzzleById(puzzleId);
+        }
+      }
+      
+      // Fall back to mock service
       const puzzle = await lichessService.getRandomPuzzleByRating(difficulty);
       if (puzzle?.puzzle.id) {
         setCurrentPuzzleId(puzzle.puzzle.id);
@@ -246,7 +304,7 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
       });
       return null;
     }
-  }, []);
+  }, [useLiveApi]);
 
   return {
     puzzleData,
