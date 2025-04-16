@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useOpeningByEco } from '@/hooks/useChessApi';
+import { useOpeningByEco, ChessOpeningData } from '@/hooks/useChessApi';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -53,6 +53,8 @@ const OpeningDetails = ({ eco, name, onClose }: OpeningDetailsProps) => {
     );
   }
 
+  const openingData = data as ChessOpeningData;
+
   return (
     <Card className="w-full max-w-4xl mx-auto border-chess-deep-red shadow-lg">
       <CardHeader>
@@ -66,24 +68,24 @@ const OpeningDetails = ({ eco, name, onClose }: OpeningDetailsProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {data?.fen && (
+          {openingData?.fen && (
             <div className="border border-gray-200 p-2 rounded">
               <p className="font-mono text-xs mb-1 text-gray-500">FEN:</p>
-              <p className="font-mono text-xs break-all">{data.fen}</p>
+              <p className="font-mono text-xs break-all">{openingData.fen}</p>
             </div>
           )}
           
-          {data?.moves && (
+          {openingData?.moves && (
             <div>
               <h3 className="text-lg font-medium mb-2">Main Line</h3>
-              <p className="font-mono">{data.moves}</p>
+              <p className="font-mono">{openingData.moves}</p>
             </div>
           )}
           
-          {data?.name && (
+          {openingData?.name && (
             <div>
               <h3 className="text-lg font-medium mb-2">Full Name</h3>
-              <p>{data.name}</p>
+              <p>{openingData.name}</p>
             </div>
           )}
           
