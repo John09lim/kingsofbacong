@@ -8,9 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, BookOpen, Video, ChevronRight } from "lucide-react";
+import OpeningLessonModal from '@/components/OpeningLessonModal';
 
 // Separate the opening card as it's used multiple times
 const OpeningCard = ({ opening }) => {
+  const [showLessons, setShowLessons] = useState(false);
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all flex flex-col h-full">
       <div className="h-56 overflow-hidden">
@@ -46,7 +49,11 @@ const OpeningCard = ({ opening }) => {
       
       <CardFooter className="mt-auto">
         <div className="flex gap-4 w-full">
-          <Button variant="outline" className="flex-1">
+          <Button 
+            variant="outline" 
+            className="flex-1"
+            onClick={() => setShowLessons(true)}
+          >
             <BookOpen size={16} className="mr-2" />
             {opening.lessonsCount} Lessons
           </Button>
@@ -56,6 +63,14 @@ const OpeningCard = ({ opening }) => {
           </Button>
         </div>
       </CardFooter>
+
+      {/* Lesson Modal */}
+      <OpeningLessonModal 
+        openingName={opening.name}
+        lessonCount={opening.lessonsCount}
+        isOpen={showLessons}
+        onClose={() => setShowLessons(false)}
+      />
     </Card>
   );
 };
