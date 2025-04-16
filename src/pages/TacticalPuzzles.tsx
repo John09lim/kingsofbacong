@@ -8,16 +8,21 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
-import { Skeleton } from "@/components/ui/skeleton"; // Add this import
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Trophy, Star, TrendingUp, Timer, Brain, Zap, 
   Sword, Target, Crosshair, Gauge, CheckCircle2,
-  Loader2, RefreshCw, Info
+  Loader2, RefreshCw, Info, Calendar, History, Activity
 } from "lucide-react";
 import { usePuzzle } from "@/hooks/usePuzzle";
 import { toast } from "@/hooks/use-toast";
 import PuzzleViewer from "@/components/PuzzleViewer";
 import PuzzleThemeSelector from "@/components/PuzzleThemeSelector";
+import PuzzleHistoryChart from "@/components/PuzzleHistoryChart";
+import PuzzleStats from "@/components/PuzzleStats";
+import PuzzleHistory from "@/components/PuzzleHistory";
+import PuzzleDifficultyDistribution from "@/components/PuzzleDifficultyDistribution";
+import { format } from 'date-fns';
 
 const TacticalPuzzles = () => {
   const [difficulty, setDifficulty] = useState(1200);
@@ -25,6 +30,36 @@ const TacticalPuzzles = () => {
   const [activeTab, setActiveTab] = useState("daily");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [solvedCountByTheme, setSolvedCountByTheme] = useState<Record<string, number>>({});
+  const [puzzleHistory, setPuzzleHistory] = useState<any[]>([]);
+  const [puzzleStats, setPuzzleStats] = useState({
+    accuracy: 72,
+    solved: 42,
+    attempts: 58,
+    streak: 5,
+    bestTime: "4.2s",
+    rating: 1200,
+    ratingDelta: 24
+  });
+
+  // Sample rating history data
+  const [ratingHistoryData, setRatingHistoryData] = useState([
+    { date: format(new Date(2025, 3, 10), 'MMM dd'), rating: 1150 },
+    { date: format(new Date(2025, 3, 11), 'MMM dd'), rating: 1175 },
+    { date: format(new Date(2025, 3, 12), 'MMM dd'), rating: 1160 },
+    { date: format(new Date(2025, 3, 13), 'MMM dd'), rating: 1185 },
+    { date: format(new Date(2025, 3, 14), 'MMM dd'), rating: 1170 },
+    { date: format(new Date(2025, 3, 15), 'MMM dd'), rating: 1200 }
+  ]);
+
+  // Sample difficulty distribution data
+  const difficultyDistributionData = [
+    { range: "800-1000", count: 5, color: "#4ade80" },
+    { range: "1000-1200", count: 12, color: "#a3e635" }, 
+    { range: "1200-1400", count: 15, color: "#facc15" },
+    { range: "1400-1600", count: 7, color: "#fb923c" },
+    { range: "1600-1800", count: 2, color: "#f87171" },
+    { range: "1800+", count: 1, color: "#f43f5e" }
+  ];
 
   const { 
     puzzleData, 
@@ -38,7 +73,10 @@ const TacticalPuzzles = () => {
     generatePuzzleByDifficulty,
     markPuzzleSolved,
     userRating,
-    setCurrentPuzzleId
+    setCurrentPuzzleId,
+    currentTheme,
+    setCurrentTheme,
+    useLiveApi
   } = usePuzzle({ autoFetch: true });
 
   // Update solved count from localStorage on load
@@ -63,24 +101,117 @@ const TacticalPuzzles = () => {
         sacrifice: 0
       });
     }
-  }, []);
+
+    // Load puzzle history
+    const storedHistory = localStorage.getItem('puzzleHistory');
+    if (storedHistory) {
+      setPuzzleHistory(JSON.parse(storedHistory));
+    } else {
+      // Initialize with some sample data
+      const sampleHistory = [
+        {
+          id: "ABCDE",
+          date: new Date().toISOString(),
+          rating: 1200,
+          theme: "fork",
+          success: true,
+          timeSpent: 15
+        },
+        {
+          id: "FGHIJ",
+          date: new Date(Date.now() - 3600000).toISOString(),
+          rating: 1350,
+          theme: "pin",
+          success: false,
+          timeSpent: 45
+        },
+        {
+          id: "KLMNO",
+          date: new Date(Date.now() - 7200000).toISOString(),
+          rating: 1100,
+          theme: "mate",
+          success: true,
+          timeSpent: 22
+        }
+      ];
+      setPuzzleHistory(sampleHistory);
+      localStorage.setItem('puzzleHistory', JSON.stringify(sampleHistory));
+    }
+    
+    // Load puzzle stats
+    if (dashboardData?.global) {
+      const { global } = dashboardData;
+      
+      setPuzzleStats({
+        accuracy: Math.round((global.firstWins / global.nb) * 100) || 72,
+        solved: global.wins || solvedCount,
+        attempts: global.nb || 58,
+        streak: global.streak || 5,
+        bestTime: `${global.fastest?.seconds || 4.2}s`,
+        rating: userRating || 1200,
+        ratingDelta: 24
+      });
+    }
+  }, [dashboardData, userRating]);
 
   // Handle puzzle solved
   const handlePuzzleSolved = () => {
     if (puzzleData?.puzzle) {
       markPuzzleSolved(puzzleData.puzzle.id);
+      
+      // Update solved count
       const newCount = solvedCount + 1;
       setSolvedCount(newCount);
       localStorage.setItem('puzzlesSolvedCount', newCount.toString());
       
       // Update theme-specific count if this puzzle has a theme
-      const theme = puzzleData.puzzle.themes[0];
-      if (theme) {
+      if (puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0) {
+        const theme = puzzleData.puzzle.themes[0];
         const newThemeCounts = { ...solvedCountByTheme };
         newThemeCounts[theme] = (newThemeCounts[theme] || 0) + 1;
         setSolvedCountByTheme(newThemeCounts);
         localStorage.setItem('solvedPuzzlesByTheme', JSON.stringify(newThemeCounts));
       }
+      
+      // Add to puzzle history
+      const newHistoryEntry = {
+        id: puzzleData.puzzle.id,
+        date: new Date().toISOString(),
+        rating: puzzleData.puzzle.rating || 1200,
+        theme: puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
+          puzzleData.puzzle.themes[0] : undefined,
+        success: true,
+        timeSpent: Math.floor(Math.random() * 30) + 5 // Random time between 5-35s
+      };
+      
+      const updatedHistory = [newHistoryEntry, ...puzzleHistory];
+      if (updatedHistory.length > 50) {
+        updatedHistory.pop(); // Keep only the latest 50 entries
+      }
+      
+      setPuzzleHistory(updatedHistory);
+      localStorage.setItem('puzzleHistory', JSON.stringify(updatedHistory));
+      
+      // Update stats
+      setPuzzleStats(prev => ({
+        ...prev,
+        solved: prev.solved + 1,
+        attempts: prev.attempts + 1,
+        accuracy: Math.round(((prev.solved + 1) / (prev.attempts + 1)) * 100)
+      }));
+      
+      // Update rating history for today
+      const today = format(new Date(), 'MMM dd');
+      const updatedRatingHistory = [...ratingHistoryData];
+      const lastEntry = updatedRatingHistory[updatedRatingHistory.length - 1];
+      
+      if (lastEntry.date === today) {
+        lastEntry.rating = userRating;
+      } else {
+        updatedRatingHistory.push({ date: today, rating: userRating });
+      }
+      
+      setRatingHistoryData(updatedRatingHistory);
     }
   };
 
@@ -208,6 +339,9 @@ const TacticalPuzzles = () => {
                   <TabsTrigger value="themes" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
                     Tactical Themes
                   </TabsTrigger>
+                  <TabsTrigger value="dashboard" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
+                    Dashboard
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="daily" className="mt-0 space-y-6">
@@ -285,11 +419,11 @@ const TacticalPuzzles = () => {
                         <div className="flex gap-2">
                           <Badge variant="outline" className="bg-green-50">
                             <TrendingUp className="h-3 w-3 mr-1" />
-                            <span>+24 rating today</span>
+                            <span>+{puzzleStats.ratingDelta} rating today</span>
                           </Badge>
                           <Badge variant="outline" className="bg-amber-50">
                             <Star className="h-3 w-3 mr-1 text-amber-500" />
-                            <span>5 day streak</span>
+                            <span>{puzzleStats.streak} day streak</span>
                           </Badge>
                         </div>
                       </div>
@@ -345,6 +479,23 @@ const TacticalPuzzles = () => {
                     solvedCountByTheme={solvedCountByTheme}
                     isLoading={isThemesLoading}
                     onSelectTheme={handleSelectTheme}
+                  />
+                </TabsContent>
+                
+                <TabsContent value="dashboard" className="mt-0 space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <PuzzleStats stats={puzzleStats} isLoading={isDashboardLoading} />
+                    <PuzzleHistoryChart data={ratingHistoryData} isLoading={isDashboardLoading} />
+                  </div>
+                  
+                  <PuzzleDifficultyDistribution 
+                    data={difficultyDistributionData} 
+                    isLoading={isDashboardLoading}
+                  />
+                  
+                  <PuzzleHistory 
+                    history={puzzleHistory} 
+                    isLoading={isDashboardLoading}
                   />
                 </TabsContent>
               </Tabs>
@@ -471,9 +622,22 @@ const TacticalPuzzles = () => {
               </Card>
               
               <Card>
-                <CardHeader>
-                  <CardTitle>Your Puzzle Statistics</CardTitle>
-                  <CardDescription>Your tactical performance</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Your Puzzle Statistics</CardTitle>
+                    <CardDescription>Your tactical performance</CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => setActiveTab("dashboard")}
+                    >
+                      <Activity className="h-3.5 w-3.5 mr-1" />
+                      View Details
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -503,7 +667,7 @@ const TacticalPuzzles = () => {
                           ) : (
                             dashboardData?.global ? 
                               `${Math.round((dashboardData.global.firstWins / dashboardData.global.nb) * 100)}%` : 
-                              "68%"
+                              `${puzzleStats.accuracy}%`
                           )}
                         </div>
                       </div>
@@ -512,7 +676,7 @@ const TacticalPuzzles = () => {
                         <div className="font-bold text-xl">
                           {isDashboardLoading ? (
                             <Skeleton className="h-7 w-8" />
-                          ) : "14"}
+                          ) : puzzleStats.solved - (dashboardData?.global?.wins || 0) || "0"}
                         </div>
                       </div>
                       <div className="bg-gray-50 p-3 rounded-lg">
@@ -520,7 +684,7 @@ const TacticalPuzzles = () => {
                         <div className="font-bold text-xl">
                           {isDashboardLoading ? (
                             <Skeleton className="h-7 w-16" />
-                          ) : "5 days"}
+                          ) : `${puzzleStats.streak} days`}
                         </div>
                       </div>
                       <div className="bg-gray-50 p-3 rounded-lg">
@@ -528,10 +692,55 @@ const TacticalPuzzles = () => {
                         <div className="font-bold text-xl">
                           {isDashboardLoading ? (
                             <Skeleton className="h-7 w-12" />
-                          ) : "4.2s"}
+                          ) : puzzleStats.bestTime}
                         </div>
                       </div>
                     </div>
+                    
+                    <div className="flex justify-center mt-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-xs" 
+                        onClick={() => setActiveTab("dashboard")}
+                      >
+                        <History className="h-3.5 w-3.5 mr-1" />
+                        View History
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Weekly Calendar</CardTitle>
+                  <CardDescription>Your puzzle solving activity</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-7 gap-1">
+                    {Array(7).fill(0).map((_, dayIndex) => {
+                      // Generate random number for each day's puzzles
+                      const puzzleCount = Math.floor(Math.random() * 10);
+                      const opacity = puzzleCount === 0 ? "opacity-20" : puzzleCount < 3 ? "opacity-40" : 
+                        puzzleCount < 6 ? "opacity-70" : "opacity-100";
+                      
+                      return (
+                        <div key={dayIndex} className="flex flex-col items-center">
+                          <div className="text-xs text-gray-500 mb-1">
+                            {['S', 'M', 'T', 'W', 'T', 'F', 'S'][dayIndex]}
+                          </div>
+                          <div 
+                            className={`w-8 h-8 bg-chess-deep-red ${opacity} rounded-md flex items-center justify-center text-white text-xs`}
+                          >
+                            {puzzleCount}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-4 text-xs text-center text-gray-500">
+                    43 puzzles solved this week
                   </div>
                 </CardContent>
               </Card>

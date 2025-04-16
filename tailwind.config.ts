@@ -70,7 +70,13 @@ export default {
 					'light-pink': '#f5e6e7',
 					'muted-rose': '#d4a5a6',
 					'dark-blue': '#2b2d42',
-					'soft-pink': '#f2c6c7'
+					'soft-pink': '#f2c6c7',
+					// Wood theme colors
+					'light-wood': '#e4d4ba',
+					'medium-wood': '#c3a67e',
+					'dark-wood': '#8a6d4b',
+					'wood-border': '#7d5e3f',
+					'wood-shadow': '#5c432c'
 				}
 			},
 			borderRadius: {
@@ -114,13 +120,35 @@ export default {
 						transform: 'scale(1)',
 						opacity: '1'
 					}
+				},
+				'pulse': {
+					'0%, 100%': { 
+						opacity: '0.7',
+						transform: 'scale(1)' 
+					},
+					'50%': { 
+						opacity: '0.9',
+						transform: 'scale(1.05)' 
+					}
+				},
+				'pulse-fade': {
+					'0%, 100%': { 
+						opacity: '0.6',
+						transform: 'translate(-50%, -50%) scale(0.9)' 
+					},
+					'50%': { 
+						opacity: '0.8',
+						transform: 'translate(-50%, -50%) scale(1)' 
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out',
-				'scale-in': 'scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+				'scale-in': 'scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+				'pulse': 'pulse 2s infinite',
+				'pulse-fade': 'pulse-fade 1.5s infinite'
 			}
 		}
 	},

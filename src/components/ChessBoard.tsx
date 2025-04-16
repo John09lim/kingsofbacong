@@ -34,6 +34,9 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [waitingForComputerMove, setWaitingForComputerMove] = useState<boolean>(false);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const [lastMove, setLastMove] = useState<[string, string] | null>(null);
+  const [solveTime, setSolveTime] = useState<number>(0);
+  const [startTime, setStartTime] = useState<number>(Date.now());
+  const [moveCount, setMoveCount] = useState<number>(0);
   
   // Parse the FEN to a board representation
   const parseFen = useCallback((fen: string) => {
@@ -92,6 +95,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       setHintSquare(null);
       setWaitingForComputerMove(false);
       setLastMove(null);
+      setMoveCount(0);
+      setStartTime(Date.now());
     }
   }, [fen]);
   
@@ -182,13 +187,18 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     // Check if the puzzle is solved
     if (currentSolutionIndex >= solution.length && solution.length > 0 && !isSolved) {
       setIsSolved(true);
+      const endTime = Date.now();
+      const timeSpent = Math.round((endTime - startTime) / 1000);
+      setSolveTime(timeSpent);
+      
       toast({
         title: "Puzzle solved!",
-        description: "Congratulations! You've solved this puzzle.",
+        description: `Congratulations! You solved this puzzle in ${timeSpent} seconds.`,
       });
+      
       if (onSolved) onSolved(true);
     }
-  }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved]);
+  }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved, startTime]);
   
   // Show hint for next move
   const showHintMove = () => {
@@ -199,10 +209,15 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         setHintSquare(nextMove.substring(0, 2));
         setShowHint(true);
         
+        toast({
+          title: "Hint",
+          description: `Try moving the piece at ${nextMove.substring(0, 2).toUpperCase()}.`,
+        });
+        
         setTimeout(() => {
           setShowHint(false);
           setHintSquare(null);
-        }, 2000); // Show hint for 2 seconds
+        }, 3000); // Show hint for 3 seconds
       }
     }
   };
@@ -242,6 +257,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           setSelectedSquare(null);
           setMoveHistory([...moveHistory, move]);
           setLastMove([selectedSquare, square]);
+          setMoveCount(moveCount + 1);
           
           const nextSolutionIndex = currentSolutionIndex + 1;
           setCurrentSolutionIndex(nextSolutionIndex);
@@ -292,6 +308,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     setHintSquare(null);
     setWaitingForComputerMove(false);
     setLastMove(null);
+    setMoveCount(0);
+    setStartTime(Date.now());
+    toast({
+      title: "Puzzle reset",
+      description: "Start solving the puzzle again.",
+    });
   };
   
   // Check if a square is a legal move
@@ -320,7 +342,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     let baseClasses = `
       w-12 h-12 flex items-center justify-center relative
       ${isWhiteSquare ? 'chess-light-square' : 'chess-dark-square'} 
-      cursor-pointer transition-all
+      cursor-pointer transition-all duration-300
     `;
     
     if (isSelected) {
@@ -334,7 +356,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     }
     
     if (isHintSquare) {
-      baseClasses += ' ring-4 ring-blue-500 ring-inset';
+      baseClasses += ' ring-4 ring-blue-500 ring-inset animate-pulse';
     }
     
     return baseClasses;
@@ -373,6 +395,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           {waitingForComputerMove && (
             <Badge className="bg-amber-500">
               Computer thinking...
+            </Badge>
+          )}
+          
+          {!waitingForComputerMove && !isSolved && (
+            <Badge className="bg-blue-500">
+              Your turn to move
             </Badge>
           )}
         </div>
@@ -483,7 +511,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         {isSolved ? (
           <div className="flex items-center gap-1 text-green-600 font-medium">
             <Check className="h-4 w-4" />
-            Puzzle Solved!
+            Solved in {solveTime}s!
           </div>
         ) : (
           <div className="text-sm text-gray-500">
