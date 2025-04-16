@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, MessageSquare, ChevronRight } from "lucide-react";
+import { BookOpen, MessageSquare, ChevronRight, Lightbulb } from "lucide-react";
 
 // Define the lesson type
 export type LessonType = {
@@ -12,6 +12,7 @@ export type LessonType = {
   title: string;
   content: string;
   discussion: string;
+  detailedExplanation: string; // Added detailed explanation field
 };
 
 // Mock data for opening lessons
@@ -24,6 +25,7 @@ const generateLessons = (openingName: string, count: number): LessonType[] => {
       title: `${openingName}: Lesson ${i}`,
       content: generateLessonContent(openingName, i),
       discussion: generateDiscussionContent(openingName, i),
+      detailedExplanation: generateDetailedExplanation(openingName, i), // Generate detailed explanation
     });
   }
   
@@ -60,6 +62,127 @@ const generateLessonContent = (openingName: string, lessonNumber: number): strin
   // Use opening-specific content if available, otherwise use default
   const contentArray = openingSpecificContent[openingName] || defaultContent;
   return contentArray[Math.min(lessonNumber - 1, contentArray.length - 1)] || defaultContent[0];
+};
+
+// Generate detailed explanation based on opening name
+const generateDetailedExplanation = (openingName: string, lessonNumber: number): string => {
+  const openingSpecificExplanations = {
+    "Ruy Lopez": [
+      `<p>The Ruy Lopez provides White with excellent control of the center while developing pieces harmoniously. The Bb5 move creates immediate tension by attacking Black's knight, which is defending the e5 pawn.</p>
+      <p>Playing this opening effectively requires understanding several key concepts:</p>
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li><span class="font-semibold">Piece Activity:</span> White's bishop on b5 isn't just attacking a knight—it's preparing to control the a4-e8 diagonal after Black plays a6 and White retreats to a4.</li>
+        <li><span class="font-semibold">Structural Awareness:</span> The possibility of capturing on c6 gives White the option to damage Black's pawn structure, doubling Black's c-pawns.</li>
+        <li><span class="font-semibold">Long-term Planning:</span> White often aims for an eventual d4 push to challenge Black's center control fully.</li>
+      </ul>
+      <p class="mt-3">When studying this opening, pay special attention to how world champions like Garry Kasparov and Magnus Carlsen handle the resulting positions. Their games showcase the rich strategic possibilities.</p>`,
+      
+      `<p>The Exchange Variation (3...a6 4.Bxc6) represents a strategic choice where White voluntarily gives up the bishop pair in exchange for damaging Black's pawn structure. This decision transforms the character of the position entirely.</p>
+      <p>Understanding the resulting pawn structure is critical:</p>
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li><span class="font-semibold">Doubled Pawns:</span> Black's doubled c-pawns can be both a weakness and a strength. They control important central squares but can become targets in the endgame.</li>
+        <li><span class="font-semibold">Bishop Pair Compensation:</span> Black gets the bishop pair as compensation, which is particularly effective in open positions.</li>
+        <li><span class="font-semibold">Endgame Implications:</span> The structural weaknesses often become more pronounced in endgames, giving White a clear target.</li>
+      </ul>
+      <p class="mt-3">Study the classic games of Anatoly Karpov, who frequently employed this variation to great effect, demonstrating how to exploit these structural weaknesses in the long run.</p>`,
+      
+      `<p>The Berlin Defense (3...Nf6) has been nicknamed "The Berlin Wall" for good reason. It creates a solid position for Black that is notoriously difficult to break down.</p>
+      <p>After 4.O-O Nxe4 5.d4, the position requires specific knowledge:</p>
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li><span class="font-semibold">Queen Exchange:</span> The main line often involves an early queen exchange, leading to an endgame-like position with significant remaining material.</li>
+        <li><span class="font-semibold">Pawn Structure:</span> Black typically has a solid but somewhat passive pawn structure. Understanding how to mobilize these pawns at the right moment is crucial.</li>
+        <li><span class="font-semibold">Fortress Positions:</span> Black often creates a defensive fortress that requires precise technical skill from White to break down.</li>
+      </ul>
+      <p class="mt-3">Vladimir Kramnik famously used this defense to defeat Garry Kasparov in their 2000 World Championship match. Modern practitioners like Magnus Carlsen have refined the approach even further.</p>`
+    ],
+    "Sicilian Defense": [
+      `<p>The Sicilian Defense is statistically the most successful response to 1.e4, and for good reason. By immediately creating an asymmetrical pawn structure, Black establishes a fighting game from the very first move.</p>
+      <p>To understand the Sicilian deeply, consider these fundamental concepts:</p>
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li><span class="font-semibold">Pawn Exchange Dynamics:</span> The typical c5xd4 exchange gives Black control of the d4 square and often allows for a quick queenside expansion.</li>
+        <li><span class="font-semibold">Piece Development:</span> Black often delays kingside development to focus on queenside activity and central counterplay.</li>
+        <li><span class="font-semibold">Tempo Battles:</span> Many Sicilian variations revolve around tempo-sensitive positions where single moves can dramatically shift the evaluation.</li>
+      </ul>
+      <p class="mt-3">The theoretical density of the Sicilian is unmatched in chess openings. Even grandmasters continue to discover new ideas decades after a particular variation was first played.</p>`,
+      
+      `<p>The Najdorf Variation is named after Miguel Najdorf and represents one of the most theoretically complex roads Black can take in the Sicilian. The modest a6 move prepares for a later ...e5 advance while preventing Bb5+.</p>
+      <p>What makes the Najdorf special:</p>
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li><span class="font-semibold">Flexible Pawn Structure:</span> Black keeps multiple pawn advance options open, allowing adaptability based on White's setup.</li>
+        <li><span class="font-semibold">Key Central Battles:</span> The fight for control of e5 and d5 defines many Najdorf positions.</li>
+        <li><span class="font-semibold">Attack vs. Defense:</span> White often launches a kingside attack while Black counterpunches in the center or queenside.</li>
+      </ul>
+      <p class="mt-3">Studying the games of Bobby Fischer and Garry Kasparov will provide excellent examples of how to handle Black's position. Both champions made significant theoretical contributions to this variation.</p>`,
+      
+      `<p>The Dragon Variation features Black's bishop fianchetto on g7, aiming the bishop along the h8-a1 diagonal at White's queenside. This creates one of the most double-edged positions in chess.</p>
+      <p>Key strategic elements include:</p>
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li><span class="font-semibold">The Dragon Bishop:</span> The g7 bishop exerts tremendous pressure across the board and is often the centerpiece of Black's strategy.</li>
+        <li><span class="font-semibold">Yugoslav Attack:</span> White's most critical response involves castling queenside and launching a pawn storm against Black's king.</li>
+        <li><span class="font-semibold">Mutual King Hunts:</span> Many Dragon games feature both sides attacking opposing kings simultaneously in a race to deliver checkmate.</li>
+      </ul>
+      <p class="mt-3">This variation requires concrete calculation skills and positional understanding. Champions like Veselin Topalov have used the Dragon successfully at the highest levels, demonstrating its viability despite its reputation for danger.</p>`
+    ],
+    "Queen's Gambit": [
+      `<p>The Queen's Gambit is one of the fundamental chess openings, offering a pawn (c4) to establish a strong central presence. Despite its name, it's not truly a gambit in most lines as Black cannot productively maintain the extra pawn.</p>
+      <p>Understanding Queen's Gambit positions requires knowledge of:</p>
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li><span class="font-semibold">Central Control:</span> White aims to control the center with pawns on d4 and e4, often supported by pieces.</li>
+        <li><span class="font-semibold">Development Patterns:</span> The opening follows classical development principles with emphasis on controlling key central squares.</li>
+        <li><span class="font-semibold">Pawn Structure Variations:</span> Different responses by Black lead to distinctly different pawn structures, each with unique characteristics.</li>
+      </ul>
+      <p class="mt-3">The Queen's Gambit has stood the test of time and remains popular at all levels of chess. World Champions from Emanuel Lasker to Magnus Carlsen have relied on it in critical games.</p>`,
+      
+      `<p>In the Queen's Gambit Accepted, Black temporarily gains a pawn but must deal with White's development advantage and control of the center. The pawn is typically difficult to hold.</p>
+      <p>Strategic themes to master:</p>
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li><span class="font-semibold">Rapid Development:</span> White can develop pieces quickly with tempo gains against the c4 pawn.</li>
+        <li><span class="font-semibold">Central Domination:</span> White often establishes pawns on e4 and d4, claiming a strong center.</li>
+        <li><span class="font-semibold">Timing of ...dxc4:</span> Black must understand when taking the pawn is advantageous versus when it concedes too much central control.</li>
+      </ul>
+      <p class="mt-3">Study the games of Anatoly Karpov from both sides of this variation to understand the subtle interplay of pieces and the importance of timing in pawn recaptures.</p>`,
+      
+      `<p>The Queen's Gambit Declined is Black's most solid response, maintaining central control with the e6 pawn move. This creates a strong central pawn chain but temporarily blocks in the c8 bishop.</p>
+      <p>The main strategic considerations include:</p>
+      <ul class="list-disc list-inside space-y-2 mt-3">
+        <li><span class="font-semibold">The Light-Square Bishop Problem:</span> Black needs to find the right moment to develop the c8 bishop, which is initially blocked by pawns.</li>
+        <li><span class="font-semibold">Minority Attack:</span> In many QGD positions, White initiates a queenside pawn advance to create weaknesses in Black's structure.</li>
+        <li><span class="font-semibold">Central Tension:</span> The management of central tension, particularly when to resolve it with exchanges, is a key skill.</li>
+      </ul>
+      <p class="mt-3">This opening has been championed by many positional players throughout chess history. Games of Tigran Petrosian showcase how to handle the resulting positions with precision and patience.</p>`
+    ]
+  };
+
+  // Default explanations for openings without specific content
+  const defaultExplanations = [
+    `<p>This introductory lesson on the ${openingName} provides the foundation for understanding this opening's core concepts:</p>
+    <ul class="list-disc list-inside space-y-2 mt-3">
+      <li><span class="font-semibold">Historical Context:</span> This opening has evolved significantly since its first documented use in the 19th century. Understanding its historical development gives insight into its strategic foundations.</li>
+      <li><span class="font-semibold">Move Order Significance:</span> Each move in the opening sequence serves multiple purposes—development, center control, and preparation for future plans.</li>
+      <li><span class="font-semibold">Common Mistakes:</span> Beginning players often misunderstand the timing of key moves, leading to positions where their pieces lack coordination.</li>
+    </ul>
+    <p class="mt-3">Practice setting up these positions against a computer or friend to get comfortable with the initial moves before diving deeper into variations.</p>`,
+    
+    `<p>Pawn structures form the skeleton of chess positions. In the ${openingName}, several distinct structures can arise:</p>
+    <ul class="list-disc list-inside space-y-2 mt-3">
+      <li><span class="font-semibold">Central Pawn Formations:</span> The configuration of central pawns dictates which squares become important outposts for your pieces.</li>
+      <li><span class="font-semibold">Pawn Breaks:</span> Understanding when and how to execute pawn breaks is essential. These moves release tension and can completely transform the position.</li>
+      <li><span class="font-semibold">Structural Weaknesses:</span> Each pawn move creates potential weaknesses. Learning to minimize your own weaknesses while exploiting your opponent's is a key skill.</li>
+    </ul>
+    <p class="mt-3">Study master games featuring this opening and pay special attention to how the pawn structure evolves throughout the game. This will develop your positional understanding.</p>`,
+    
+    `<p>Advanced middlegame play in the ${openingName} requires synthesizing tactical and strategic elements:</p>
+    <ul class="list-disc list-inside space-y-2 mt-3">
+      <li><span class="font-semibold">Piece Coordination:</span> The interplay between pieces determines the success of your plans. Practice visualizing how your pieces work together.</li>
+      <li><span class="font-semibold">Transition to Endgame:</span> Recognizing favorable moment to transition to an endgame is a crucial skill that many players overlook.</li>
+      <li><span class="font-semibold">Dynamic vs. Static Advantages:</span> Learn to distinguish between temporary tactical advantages and lasting positional ones.</li>
+    </ul>
+    <p class="mt-3">Analyzing your own games is perhaps the most valuable practice. Pay attention to critical decision points where the character of the position changed significantly.</p>`
+  ];
+
+  // Use opening-specific explanations if available, otherwise use default
+  const explanationArray = openingSpecificExplanations[openingName] || defaultExplanations;
+  return explanationArray[Math.min(lessonNumber - 1, explanationArray.length - 1)] || defaultExplanations[0];
 };
 
 // Generate discussion content based on opening name
@@ -208,7 +331,7 @@ const OpeningLessonModal: React.FC<OpeningLessonModalProps> = ({
                       <h2 className="text-xl font-bold">{currentLesson.title}</h2>
                       <p className="leading-relaxed">{currentLesson.content}</p>
                       
-                      {/* Additional lesson content would go here */}
+                      {/* Key points section */}
                       <div className="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-md">
                         <h3 className="font-semibold mb-2">Key Points to Remember:</h3>
                         <ul className="list-disc list-inside space-y-1 text-sm">
@@ -217,6 +340,18 @@ const OpeningLessonModal: React.FC<OpeningLessonModalProps> = ({
                           <li>Castle early to secure your king's safety</li>
                           <li>Watch for typical tactical motifs in this opening</li>
                         </ul>
+                      </div>
+                      
+                      {/* Detailed explanation section */}
+                      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                        <h3 className="font-semibold mb-3 flex items-center">
+                          <Lightbulb size={18} className="mr-2 text-yellow-600" />
+                          Detailed Explanation
+                        </h3>
+                        <div 
+                          className="text-sm prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: currentLesson.detailedExplanation }}
+                        />
                       </div>
                     </div>
                   ) : null}
