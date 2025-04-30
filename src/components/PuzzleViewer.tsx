@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -144,7 +145,10 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
 
   const difficultyLabel = getPuzzleDifficultyLabel(puzzleData?.puzzle.rating);
   const eloPoints = getEloPoints(puzzleData?.puzzle.rating);
-  const effectivePlayerTurn = getEffectivePlayerTurn(puzzleData?.puzzle.playerTurn as string | undefined);
+  
+  // Fix: Safe access to playerTurn property with default value of 'w'
+  const playerTurn = (puzzleData?.puzzle as any)?.playerTurn || 'w';
+  const effectivePlayerTurn = getEffectivePlayerTurn(playerTurn);
   const effectiveSolution = getEffectiveSolution(puzzleData?.puzzle.solution);
   
   return (
@@ -170,7 +174,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
               {difficultyLabel} (+{eloPoints} ELO)
             </Badge>
             <Badge className="bg-blue-600 ml-2">
-              {isReversed ? "You Attack!" : getTurnText(puzzleData?.puzzle.playerTurn as string | undefined)}
+              {isReversed ? "You Attack!" : getTurnText(playerTurn)}
             </Badge>
           </div>
           <Button 
