@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format } from "date-fns";
+import { format, isSameDay } from "date-fns";
 import type { DayContentProps } from "react-day-picker";
 
 interface PuzzleSolvedData {
@@ -26,11 +26,6 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
   
   // Process solved puzzles to get daily counts
   useEffect(() => {
-    if (!solvedPuzzles?.length) {
-      setDailyCounts([]);
-      return;
-    }
-    
     // Get data from localStorage to persist between sessions
     const storedDailyCounts = localStorage.getItem('puzzleDailyCounts');
     let existingData: {[key: string]: number} = {};
@@ -44,13 +39,6 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
       }
     }
     
-    // Add today's count
-    const today = format(new Date(), 'yyyy-MM-dd');
-    existingData[today] = (existingData[today] || 0) + 1;
-    
-    // Store back to localStorage
-    localStorage.setItem('puzzleDailyCounts', JSON.stringify(existingData));
-    
     // Format data for the calendar
     const formattedData: PuzzleSolvedData[] = Object.keys(existingData).map(dateStr => ({
       date: new Date(dateStr),
@@ -63,10 +51,9 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
   // Custom day rendering to show badges with counts
   const renderDay = (dayContentProps: DayContentProps) => {
     const day = dayContentProps.date;
-    const dateStr = format(day, 'yyyy-MM-dd');
-    const dayData = dailyCounts.find(d => format(d.date, 'yyyy-MM-dd') === dateStr);
+    const dayData = dailyCounts.find(d => isSameDay(d.date, day));
     
-    if (!dayData) return null;
+    if (!dayData || dayData.count === 0) return null;
     
     return (
       <Badge 
@@ -82,9 +69,7 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
   const getSelectedDayCount = () => {
     if (!selectedDate) return 0;
     
-    const dateStr = format(selectedDate, 'yyyy-MM-dd');
-    const dayData = dailyCounts.find(d => format(d.date, 'yyyy-MM-dd') === dateStr);
-    
+    const dayData = dailyCounts.find(d => isSameDay(d.date, selectedDate));
     return dayData?.count || 0;
   };
   

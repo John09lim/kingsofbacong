@@ -3,6 +3,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { chessPuzzlesService, ChessPuzzle, adaptToLichessPuzzleFormat } from '@/services/chessPuzzlesService';
 import { toast } from '@/hooks/use-toast';
+import { format } from 'date-fns';
 
 interface UseChessPuzzlesOptions {
   enabled?: boolean;
@@ -164,7 +165,7 @@ export const useChessPuzzles = (options: UseChessPuzzlesOptions = {}) => {
       localStorage.setItem('solvedPuzzles', JSON.stringify(updatedSolvedPuzzles));
       
       // Update daily counts for the calendar
-      const today = new Date().toISOString().split('T')[0];
+      const today = format(new Date(), 'yyyy-MM-dd');
       const storedDailyCounts = localStorage.getItem('puzzleDailyCounts');
       let dailyCounts: {[key: string]: number} = {};
       

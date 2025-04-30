@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 
 interface PuzzleSolvedData {
   date: string;
@@ -65,10 +65,16 @@ export const usePuzzleStats = (solvedPuzzles: string[]) => {
     }
     
     // Format daily data for charts
-    const dailyData = Object.keys(dailyCounts).map(date => ({
-      date,
-      count: dailyCounts[date]
-    }));
+    let dailyData: PuzzleSolvedData[] = [];
+    
+    // Create entries for the last 30 days, even if there are no puzzles
+    for (let i = 29; i >= 0; i--) {
+      const date = format(subDays(new Date(), i), 'yyyy-MM-dd');
+      dailyData.push({
+        date,
+        count: dailyCounts[date] || 0
+      });
+    }
     
     setStats({
       totalSolved: solvedPuzzles.length,
