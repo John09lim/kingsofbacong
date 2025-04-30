@@ -37,16 +37,8 @@ export const usePuzzleStats = (solvedPuzzles: string[]) => {
       }
     }
     
-    // Add today's solved puzzles
-    const today = format(new Date(), 'yyyy-MM-dd');
-    if (solvedPuzzles.length > 0) {
-      dailyCounts[today] = solvedPuzzles.length;
-      
-      // Store back to localStorage
-      localStorage.setItem('puzzleDailyCounts', JSON.stringify(dailyCounts));
-    }
-    
     // Calculate stats
+    const today = format(new Date(), 'yyyy-MM-dd');
     const todayCount = dailyCounts[today] || 0;
     
     // Get week data

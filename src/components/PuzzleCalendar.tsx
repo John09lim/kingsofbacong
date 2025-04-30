@@ -5,6 +5,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import type { DayContentProps } from "react-day-picker";
 
 interface PuzzleSolvedData {
   date: Date;
@@ -60,7 +61,8 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
   }, [solvedPuzzles.length]);
   
   // Custom day rendering to show badges with counts
-  const renderDay = (day: Date) => {
+  const renderDay = (dayContentProps: DayContentProps) => {
+    const day = dayContentProps.date;
     const dateStr = format(day, 'yyyy-MM-dd');
     const dayData = dailyCounts.find(d => format(d.date, 'yyyy-MM-dd') === dateStr);
     
@@ -118,10 +120,10 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
           onSelect={setSelectedDate}
           className="w-full"
           components={{
-            DayContent: ({ day }) => (
+            DayContent: (props) => (
               <div className="relative flex h-9 w-9 items-center justify-center">
-                <span>{format(day, 'd')}</span>
-                {renderDay(day)}
+                <span>{format(props.date, 'd')}</span>
+                {renderDay(props)}
               </div>
             ),
           }}

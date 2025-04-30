@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+
+import { useState, useCallback, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { chessPuzzlesService, ChessPuzzle, adaptToLichessPuzzleFormat } from '@/services/chessPuzzlesService';
 import { toast } from '@/hooks/use-toast';

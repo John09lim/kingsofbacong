@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -81,6 +80,11 @@ const TacticalPuzzles = () => {
       fetchNextPuzzle();
     }
   }, [activeTab, puzzleData, isPuzzleLoading, fetchNextPuzzle]);
+  
+  // Fix the button click handler - Wrap the fetchNextPuzzle call in a React event handler
+  const handleStartTraining = () => {
+    fetchNextPuzzle();
+  };
   
   return (
     <div className="container mx-auto py-6 px-4 md:px-6">
@@ -198,7 +202,7 @@ const TacticalPuzzles = () => {
                     </Card>
                   </div>
                   
-                  <Button onClick={fetchNextPuzzle}>
+                  <Button onClick={handleStartTraining}>
                     Start Training
                   </Button>
                 </CardContent>
@@ -221,28 +225,28 @@ const TacticalPuzzles = () => {
         </div>
         
         <div className="space-y-6">
-          {/* User Puzzle Stats */}
+          {/* User Puzzle Stats - Update prop names to match component */}
           <PuzzleStats 
-            rating={userRating}
-            solved={allSolvedPuzzles.length}
+            userRating={userRating}
+            puzzlesSolved={allSolvedPuzzles.length}
             isLoading={isDashboardLoading}
           />
           
-          {/* Puzzle Calendar - NEW! */}
+          {/* Puzzle Calendar */}
           <PuzzleCalendar 
             solvedPuzzles={allSolvedPuzzles}
             isLoading={isDashboardLoading}
           />
           
-          {/* Recent Puzzle History */}
+          {/* Recent Puzzle History - Update prop names to match component */}
           <PuzzleHistory 
-            puzzles={dashboardData?.history?.slice(0, 5) || []}
+            historyItems={dashboardData?.history?.slice(0, 5) || []}
             isLoading={isDashboardLoading}
           />
           
-          {/* Difficulty Distribution */}
+          {/* Difficulty Distribution - Update prop names to match component */}
           <PuzzleDifficultyDistribution
-            distribution={dashboardData?.performance || {}}
+            performanceData={dashboardData?.performance || {}}
             isLoading={isDashboardLoading}
           />
         </div>
