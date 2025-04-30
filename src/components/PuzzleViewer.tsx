@@ -24,7 +24,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   onGetNextPuzzle,
   onSolved,
   isRefreshing = false,
-  isReversed = true // Set back to true for attack mode
+  isReversed = true // Set to true by default for attack mode
 }) => {
   const [isSolved, setIsSolved] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
@@ -54,8 +54,8 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
     return <PuzzleErrorState onGetNewPuzzle={handleGetNewPuzzle} isRefreshing={isRefreshing} />;
   }
 
-  // Get player turn safely
-  const playerTurn = puzzleData.puzzle.playerTurn || 'w';
+  // Get player turn safely, using playerIndexes as fallback
+  const playerTurn = puzzleData.puzzle.playerIndexes?.[0] === "w" ? "w" : "b";
   const effectivePlayerTurn = getEffectivePlayerTurn(playerTurn, isReversed);
   const effectiveSolution = getEffectiveSolution(puzzleData.puzzle.solution, isReversed);
   

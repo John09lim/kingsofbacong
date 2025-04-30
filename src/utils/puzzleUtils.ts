@@ -49,15 +49,15 @@ export const getEffectiveSolution = (solution?: string[], isReversed: boolean = 
     // Standard puzzle mode - return full solution
     return solution;
   } else {
-    // In reversed mode, we need to create a modified solution 
-    // that represents the opponent's correct responses
+    // In reversed mode (attack mode):
+    // We need to modify the solution so that:
+    // 1. The user makes the attacking moves (which were originally computer moves)
+    // 2. The computer makes the defending moves (which were originally player moves)
     
-    // Take every second move from the solution array
-    // These are the moves the computer will make in response to user moves
+    // We take every second move starting from index 0
+    // These will be the computer's responses to the user's attacking moves
     const reversedSolution = [];
-    for (let i = 0; i < solution.length; i += 2) {
-      // Skip the first move as that would be the user's move in normal mode
-      if (i === 0) continue;
+    for (let i = 1; i < solution.length; i += 2) {
       reversedSolution.push(solution[i]);
     }
     

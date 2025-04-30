@@ -97,6 +97,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       setLastMove(null);
       setMoveCount(0);
       setStartTime(Date.now());
+      setUserHasMadeFirstMove(false); // Reset this flag when puzzle changes
       // Set board orientation based on who's turn it is
       setBoardFlipped(playerTurn === 'b');
     }

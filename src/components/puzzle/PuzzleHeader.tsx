@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { LichessPuzzleData } from "@/services/lichessService";
-import { getPuzzleDifficultyLabel, getEloPoints, getTurnText } from '@/utils/puzzleUtils';
+import { getPuzzleDifficultyLabel, getEloPoints, getEffectiveTurnText } from '@/utils/puzzleUtils';
 
 interface PuzzleHeaderProps {
   puzzleData?: LichessPuzzleData;
@@ -17,14 +17,15 @@ interface PuzzleHeaderProps {
 const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
   puzzleData,
   isRefreshing = false,
-  isReversed = true, // Set to true by default for attack mode consistency
+  isReversed = true, // Default to true for attack mode
   onGetNewPuzzle
 }) => {
   if (!puzzleData) return null;
   
   const difficultyLabel = getPuzzleDifficultyLabel(puzzleData.puzzle.rating);
   const eloPoints = getEloPoints(puzzleData.puzzle.rating);
-  const playerTurn = puzzleData.puzzle.playerTurn || 'w';
+  // Access playerTurn through puzzle property, add fallback if it doesn't exist
+  const playerTurn = puzzleData.puzzle.playerIndexes?.[0] === "w" ? "w" : "b";
 
   return (
     <>
@@ -48,7 +49,7 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
             {difficultyLabel} (+{eloPoints} ELO)
           </Badge>
           <Badge className="bg-blue-600 ml-2">
-            {isReversed ? "You Attack!" : getTurnText(playerTurn)}
+            {isReversed ? "You Attack!" : getEffectiveTurnText(playerTurn)}
           </Badge>
         </div>
         <Button 
