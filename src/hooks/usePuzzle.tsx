@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { 
@@ -11,7 +12,6 @@ import {
 import { lichessApiService } from '@/services/lichessApiService';
 import { toast } from "@/hooks/use-toast";
 import { useChessApi } from '@/hooks/useChessApi';
-import { format } from 'date-fns';
 
 interface UsePuzzleOptions {
   puzzleId?: string;
@@ -236,28 +236,10 @@ export const usePuzzle = (options: UsePuzzleOptions = {}) => {
   // Mark a puzzle as solved or failed
   const markPuzzleSolved = useCallback((puzzleId: string, success: boolean = true) => {
     if (success) {
-      // Add puzzle to solved list if not already in the list
-      if (!solvedPuzzles.includes(puzzleId)) {
-        const updatedSolvedPuzzles = [...solvedPuzzles, puzzleId];
-        setSolvedPuzzles(updatedSolvedPuzzles);
-        localStorage.setItem('solvedPuzzles', JSON.stringify(updatedSolvedPuzzles));
-        
-        // Update daily counts for the calendar
-        const today = format(new Date(), 'yyyy-MM-dd');
-        const storedDailyCounts = localStorage.getItem('puzzleDailyCounts');
-        let dailyCounts: {[key: string]: number} = {};
-        
-        if (storedDailyCounts) {
-          try {
-            dailyCounts = JSON.parse(storedDailyCounts);
-          } catch (e) {
-            console.error('Error parsing stored daily counts', e);
-          }
-        }
-        
-        dailyCounts[today] = (dailyCounts[today] || 0) + 1;
-        localStorage.setItem('puzzleDailyCounts', JSON.stringify(dailyCounts));
-      }
+      // Add puzzle to solved list
+      const updatedSolvedPuzzles = [...solvedPuzzles, puzzleId];
+      setSolvedPuzzles(updatedSolvedPuzzles);
+      localStorage.setItem('solvedPuzzles', JSON.stringify(updatedSolvedPuzzles));
       
       // Calculate ELO points based on difficulty
       const puzzleRating = puzzleData?.puzzle.rating || 1200;

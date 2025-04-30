@@ -32,9 +32,6 @@ const PuzzleDifficultyDistribution: React.FC<PuzzleDifficultyDistributionProps> 
     );
   }
 
-  // Ensure data is an array to prevent "data.map is not a function" error
-  const chartData = Array.isArray(data) ? data : [];
-
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -44,7 +41,7 @@ const PuzzleDifficultyDistribution: React.FC<PuzzleDifficultyDistributionProps> 
         <div className="h-[200px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={chartData}
+              data={data}
               margin={{
                 top: 5,
                 right: 20,
@@ -75,7 +72,7 @@ const PuzzleDifficultyDistribution: React.FC<PuzzleDifficultyDistributionProps> 
               />
               <Legend />
               <Bar dataKey="count" name="Puzzles Solved" radius={[4, 4, 0, 0]}>
-                {chartData.map((entry, index) => (
+                {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Bar>

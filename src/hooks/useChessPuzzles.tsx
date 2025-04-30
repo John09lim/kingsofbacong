@@ -1,10 +1,8 @@
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { chessPuzzlesService, ChessPuzzle, adaptToLichessPuzzleFormat } from '@/services/chessPuzzlesService';
 import { toast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
-import { LichessPuzzleTheme } from '@/services/lichessService';
 
 interface UseChessPuzzlesOptions {
   enabled?: boolean;
@@ -15,17 +13,6 @@ export const useChessPuzzles = (options: UseChessPuzzlesOptions = {}) => {
   const [currentPuzzleId, setCurrentPuzzleId] = useState<string>();
   const [currentDifficulty, setCurrentDifficulty] = useState<number>();
   const [currentThemes, setCurrentThemes] = useState<string[]>();
-
-  // Track solved puzzles
-  const [solvedPuzzles, setSolvedPuzzles] = useState<string[]>([]);
-  
-  // Load saved puzzles from localStorage on init
-  useEffect(() => {
-    const savedPuzzles = localStorage.getItem('solvedPuzzles');
-    if (savedPuzzles) {
-      setSolvedPuzzles(JSON.parse(savedPuzzles));
-    }
-  }, []);
 
   // Fetch a random puzzle
   const { 
@@ -86,13 +73,11 @@ export const useChessPuzzles = (options: UseChessPuzzlesOptions = {}) => {
         });
         
         // Convert to the format expected by the PuzzleThemeSelector component
-        const themes: LichessPuzzleTheme[] = Array.from(themeSet).map(theme => ({
+        return Array.from(themeSet).map(theme => ({
           key: theme,
           name: theme.charAt(0).toUpperCase() + theme.slice(1),
           description: `Puzzles featuring ${theme} tactical patterns.`
         }));
-        
-        return themes;
       } catch (error) {
         console.error('Error fetching puzzle themes:', error);
         return [];
@@ -160,36 +145,6 @@ export const useChessPuzzles = (options: UseChessPuzzlesOptions = {}) => {
     }
   }, [refetchPuzzle]);
 
-  // Mark a puzzle as solved
-  const markPuzzleSolved = useCallback((puzzleId: string) => {
-    if (!solvedPuzzles.includes(puzzleId)) {
-      const updatedSolvedPuzzles = [...solvedPuzzles, puzzleId];
-      setSolvedPuzzles(updatedSolvedPuzzles);
-      localStorage.setItem('solvedPuzzles', JSON.stringify(updatedSolvedPuzzles));
-      
-      // Update daily counts for the calendar
-      const today = format(new Date(), 'yyyy-MM-dd');
-      const storedDailyCounts = localStorage.getItem('puzzleDailyCounts');
-      let dailyCounts: {[key: string]: number} = {};
-      
-      if (storedDailyCounts) {
-        try {
-          dailyCounts = JSON.parse(storedDailyCounts);
-        } catch (e) {
-          console.error('Error parsing stored daily counts', e);
-        }
-      }
-      
-      dailyCounts[today] = (dailyCounts[today] || 0) + 1;
-      localStorage.setItem('puzzleDailyCounts', JSON.stringify(dailyCounts));
-      
-      toast({
-        title: "Puzzle Solved!",
-        description: "Great job! You've solved this puzzle.",
-      });
-    }
-  }, [solvedPuzzles]);
-
   return {
     puzzleData,
     isPuzzleLoading,
@@ -201,7 +156,5 @@ export const useChessPuzzles = (options: UseChessPuzzlesOptions = {}) => {
     generatePuzzleByDifficulty,
     currentPuzzleId,
     setCurrentPuzzleId,
-    solvedPuzzles,
-    markPuzzleSolved,
   };
 };

@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,22 +94,6 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold;
-  }
-
-  /* Calendar component styles - fix blinking */
-  .rdp-button:focus:not([disabled]) {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-
-  .rdp-day_selected:not([disabled]) {
-    animation: none !important;
-    transition: background-color 0.2s ease-in-out;
-  }
-
-  .rdp-button_reset {
-    transition: none;
   }
 
   /* Chess theme specific styles */
