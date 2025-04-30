@@ -10,6 +10,7 @@ export interface RapidApiPuzzle {
   openingFamily: string;
   openingVariation: string;
   themes: string;
+  color?: string; // Add optional color property
 }
 
 export const useChessPuzzleApi = () => {
@@ -47,7 +48,13 @@ export const useChessPuzzleApi = () => {
         }
       );
       
-      setPuzzle(response.data[0]);
+      // Add the color property to the puzzle data
+      const puzzleWithColor = {
+        ...response.data[0],
+        color: 'white' // Default to white, adjust if API provides this info
+      };
+      
+      setPuzzle(puzzleWithColor);
     } catch (err: any) {
       console.error("Failed to fetch puzzle:", err);
       setError(err.message || 'Failed to fetch puzzle');

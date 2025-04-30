@@ -60,7 +60,7 @@ const RapidApiChessPuzzle = () => {
             toast({
               title: "Puzzle solved!",
               description: "Great job! You've completed the puzzle.",
-              variant: "success",
+              variant: "default",
             });
           }
           return true;
