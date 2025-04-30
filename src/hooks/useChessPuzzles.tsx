@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { chessPuzzlesService, ChessPuzzle, adaptToLichessPuzzleFormat } from '@/services/chessPuzzlesService';
 import { toast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { LichessPuzzleTheme } from '@/services/lichessService';
 
 interface UseChessPuzzlesOptions {
   enabled?: boolean;
@@ -85,11 +86,13 @@ export const useChessPuzzles = (options: UseChessPuzzlesOptions = {}) => {
         });
         
         // Convert to the format expected by the PuzzleThemeSelector component
-        return Array.from(themeSet).map(theme => ({
+        const themes: LichessPuzzleTheme[] = Array.from(themeSet).map(theme => ({
           key: theme,
           name: theme.charAt(0).toUpperCase() + theme.slice(1),
           description: `Puzzles featuring ${theme} tactical patterns.`
         }));
+        
+        return themes;
       } catch (error) {
         console.error('Error fetching puzzle themes:', error);
         return [];

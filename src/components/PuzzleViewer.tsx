@@ -61,7 +61,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   };
 
   // Get turn text based on playerTurn value
-  const getTurnText = (turn?: string) => {
+  const getTurnText = (turn: 'w' | 'b') => {
     return turn === 'b' ? "Black to Play" : "White to Play";
   };
 
@@ -119,9 +119,14 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   const difficultyLabel = getPuzzleDifficultyLabel(puzzleData?.puzzle?.rating);
   const eloPoints = getEloPoints(puzzleData?.puzzle?.rating);
   
-  // Extract player turn safely with fallback to 'w'
-  // Fix: Access playerTurn safely and provide a default value 'w'
-  const playerTurn = puzzleData?.puzzle?.playerTurn as string || 'w';
+  // Extract player turn safely from the FEN
+  const extractTurn = (fen?: string): 'w' | 'b' => {
+    if (!fen) return 'w';
+    const parts = fen.split(' ');
+    return (parts.length > 1 && parts[1] === 'b') ? 'b' : 'w';
+  };
+  
+  const playerTurn = puzzleData?.puzzle?.playerTurn as 'w' | 'b' || extractTurn(puzzleData?.puzzle?.fen);
   const turnText = getTurnText(playerTurn);
   
   // Determine the puzzle type for better clarity

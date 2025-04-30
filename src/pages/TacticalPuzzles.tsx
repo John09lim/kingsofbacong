@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { usePuzzle } from '@/hooks/usePuzzle';
 import { useChessPuzzles } from '@/hooks/useChessPuzzles';
 import { usePuzzleStats } from '@/hooks/usePuzzleStats';
 import PuzzleViewer from '@/components/PuzzleViewer';
@@ -14,69 +13,42 @@ import PuzzleStats from '@/components/PuzzleStats';
 import PuzzleHistory from '@/components/PuzzleHistory';
 import PuzzleDifficultyDistribution from '@/components/PuzzleDifficultyDistribution';
 import PuzzleCalendar from '@/components/PuzzleCalendar';
-import { Calendar } from "lucide-react";
 
 const TacticalPuzzles = () => {
   const [activeTab, setActiveTab] = useState("daily");
-  const [currentSource, setCurrentSource] = useState<'lichess' | 'custom'>('lichess');
-  
-  // Use Lichess puzzle hook
-  const { 
-    puzzleData: lichessPuzzle, 
-    isPuzzleLoading: isLichessLoading, 
-    fetchNextPuzzle: fetchNextLichessPuzzle,
-    markPuzzleSolved: markLichessPuzzleSolved,
-    fetchPuzzlesByTheme,
-    dashboardData,
-    isDashboardLoading,
-    themesData,
-    isThemesLoading,
-    solvedPuzzles,
-    userRating
-  } = usePuzzle({
-    autoFetch: currentSource === 'lichess',
-  });
   
   // Use our custom puzzle hook
   const {
-    puzzleData: customPuzzle,
-    isPuzzleLoading: isCustomLoading,
-    fetchNextPuzzle: fetchNextCustomPuzzle,
-    markPuzzleSolved: markCustomPuzzleSolved,
-    themesData: customThemesData,
-    isThemesLoading: isCustomThemesLoading,
-    solvedPuzzles: customSolvedPuzzles
+    puzzleData,
+    isPuzzleLoading,
+    fetchNextPuzzle,
+    markPuzzleSolved,
+    fetchPuzzlesByTheme,
+    themesData,
+    isThemesLoading,
+    solvedPuzzles,
+    generatePuzzleByDifficulty
   } = useChessPuzzles({
-    enabled: currentSource === 'custom'
+    enabled: true
   });
 
-  // Combine solved puzzles from both sources for stats
-  const allSolvedPuzzles = [...solvedPuzzles, ...customSolvedPuzzles];
-  
   // Use the puzzle stats hook
-  const puzzleStats = usePuzzleStats(allSolvedPuzzles);
-  
-  // Determine which puzzle data and functions to use based on current source
-  const puzzleData = currentSource === 'lichess' ? lichessPuzzle : customPuzzle;
-  const isPuzzleLoading = currentSource === 'lichess' ? isLichessLoading : isCustomLoading;
-  const fetchNextPuzzle = currentSource === 'lichess' ? fetchNextLichessPuzzle : fetchNextCustomPuzzle;
+  const puzzleStats = usePuzzleStats(solvedPuzzles);
   
   // Handle when a puzzle is solved
   const handlePuzzleSolved = () => {
-    if (!puzzleData) return;
-    
-    if (currentSource === 'lichess') {
-      markLichessPuzzleSolved(puzzleData.puzzle.id);
-    } else {
-      markCustomPuzzleSolved(puzzleData.puzzle.id);
-    }
+    if (!puzzleData || !puzzleData.puzzle.id) return;
+    markPuzzleSolved(puzzleData.puzzle.id);
   };
   
   // Handle theme selection
   const handleThemeSelect = async (theme: string) => {
-    if (currentSource === 'lichess') {
-      await fetchPuzzlesByTheme(theme);
-    }
+    await fetchPuzzlesByTheme(theme);
+  };
+  
+  // Handle difficulty selection
+  const handleDifficultySelect = (difficulty: number) => {
+    generatePuzzleByDifficulty(difficulty);
   };
   
   // Ensure we show daily puzzles by default
@@ -94,33 +66,18 @@ const TacticalPuzzles = () => {
     attempts: puzzleStats.totalSolved + 5, // Adding some mock failed attempts for display
     streak: Math.min(7, puzzleStats.week), // Use a simple streak calculation
     bestTime: "00:45", // Mock best time
-    rating: userRating,
+    rating: 1200, // Default rating
     ratingDelta: 5 // Mock rating change
   };
   
   // Format difficulty distribution data for the chart
   const formatPerformanceData = () => {
-    if (!dashboardData?.performance) {
-      return [
-        { range: "Easy (800-1200)", count: 0, color: "#4ade80" },
-        { range: "Medium (1200-1600)", count: 0, color: "#facc15" },
-        { range: "Hard (1600-2000)", count: 0, color: "#f97316" },
-        { range: "Expert (2000+)", count: 0, color: "#ef4444" }
-      ];
-    }
-    
-    const performance = dashboardData.performance;
     return [
-      { range: "Easy (800-1200)", count: performance.easy || 0, color: "#4ade80" },
-      { range: "Medium (1200-1600)", count: performance.medium || 0, color: "#facc15" },
-      { range: "Hard (1600-2000)", count: performance.hard || 0, color: "#f97316" },
-      { range: "Expert (2000+)", count: performance.expert || 0, color: "#ef4444" }
+      { range: "Easy (800-1200)", count: puzzleStats.ratingDistribution?.easy || 0, color: "#4ade80" },
+      { range: "Medium (1200-1600)", count: puzzleStats.ratingDistribution?.medium || 0, color: "#facc15" },
+      { range: "Hard (1600-2000)", count: puzzleStats.ratingDistribution?.hard || 0, color: "#f97316" },
+      { range: "Expert (2000+)", count: puzzleStats.ratingDistribution?.expert || 0, color: "#ef4444" }
     ];
-  };
-  
-  // Fix the button click handler
-  const handleStartTraining = () => {
-    fetchNextPuzzle();
   };
   
   return (
@@ -132,22 +89,6 @@ const TacticalPuzzles = () => {
             Improve your tactical vision by solving puzzles. Find decisive combinations, checkmates, 
             and other tactical motifs to improve your chess skills.
           </p>
-        </div>
-        
-        <div className="flex mt-4 md:mt-0">
-          <Button 
-            variant={currentSource === 'lichess' ? 'default' : 'outline'} 
-            className="mr-2"
-            onClick={() => setCurrentSource('lichess')}
-          >
-            Lichess Puzzles
-          </Button>
-          <Button 
-            variant={currentSource === 'custom' ? 'default' : 'outline'} 
-            onClick={() => setCurrentSource('custom')}
-          >
-            Community Puzzles
-          </Button>
         </div>
       </div>
       
@@ -180,8 +121,8 @@ const TacticalPuzzles = () => {
                 </CardHeader>
                 <CardContent>
                   <PuzzleThemeSelector 
-                    themes={currentSource === 'lichess' ? themesData : customThemesData}
-                    isLoading={currentSource === 'lichess' ? isThemesLoading : isCustomThemesLoading}
+                    themes={themesData}
+                    isLoading={isThemesLoading}
                     onSelectTheme={handleThemeSelect}
                   />
                 </CardContent>
@@ -211,7 +152,10 @@ const TacticalPuzzles = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                    <Card className="cursor-pointer hover:border-primary transition-colors">
+                    <Card 
+                      className="cursor-pointer hover:border-primary transition-colors"
+                      onClick={() => handleDifficultySelect(1200)}
+                    >
                       <CardHeader className="p-4">
                         <CardTitle className="text-sm">Easy</CardTitle>
                       </CardHeader>
@@ -220,7 +164,10 @@ const TacticalPuzzles = () => {
                       </CardContent>
                     </Card>
                     
-                    <Card className="cursor-pointer hover:border-primary transition-colors">
+                    <Card 
+                      className="cursor-pointer hover:border-primary transition-colors"
+                      onClick={() => handleDifficultySelect(1600)}
+                    >
                       <CardHeader className="p-4">
                         <CardTitle className="text-sm">Intermediate</CardTitle>
                       </CardHeader>
@@ -229,7 +176,10 @@ const TacticalPuzzles = () => {
                       </CardContent>
                     </Card>
                     
-                    <Card className="cursor-pointer hover:border-primary transition-colors">
+                    <Card 
+                      className="cursor-pointer hover:border-primary transition-colors"
+                      onClick={() => handleDifficultySelect(2200)}
+                    >
                       <CardHeader className="p-4">
                         <CardTitle className="text-sm">Advanced</CardTitle>
                       </CardHeader>
@@ -239,7 +189,7 @@ const TacticalPuzzles = () => {
                     </Card>
                   </div>
                   
-                  <Button onClick={handleStartTraining}>
+                  <Button onClick={() => fetchNextPuzzle()}>
                     Start Training
                   </Button>
                 </CardContent>
@@ -262,28 +212,28 @@ const TacticalPuzzles = () => {
         </div>
         
         <div className="space-y-6">
-          {/* User Puzzle Stats - Now passing correctly formatted stats object */}
+          {/* User Puzzle Stats */}
           <PuzzleStats 
             stats={statsData}
-            isLoading={isDashboardLoading}
+            isLoading={false}
           />
           
           {/* Puzzle Calendar */}
           <PuzzleCalendar 
-            solvedPuzzles={allSolvedPuzzles}
-            isLoading={isDashboardLoading}
+            solvedPuzzles={solvedPuzzles}
+            isLoading={false}
           />
           
-          {/* Recent Puzzle History - Map properties correctly */}
+          {/* Recent Puzzle History */}
           <PuzzleHistory 
-            history={dashboardData?.history?.slice(0, 5) || []}
-            isLoading={isDashboardLoading}
+            history={[]}
+            isLoading={false}
           />
           
-          {/* Difficulty Distribution - Pass formatted array data */}
+          {/* Difficulty Distribution */}
           <PuzzleDifficultyDistribution
             data={formatPerformanceData()}
-            isLoading={isDashboardLoading}
+            isLoading={false}
           />
         </div>
       </div>
