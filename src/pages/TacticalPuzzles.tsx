@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -13,7 +14,7 @@ import {
   Sword, Target, Crosshair, Gauge, CheckCircle2,
   Loader2, RefreshCw, Info, Calendar, History, Activity
 } from "lucide-react";
-import { usePuzzle } from "@/hooks/usePuzzle";
+// import { usePuzzle } from "@/hooks/usePuzzle";
 import { useChessPuzzles } from "@/hooks/useChessPuzzles";
 import { toast } from "@/hooks/use-toast";
 import PuzzleViewer from "@/components/PuzzleViewer";
@@ -40,6 +41,8 @@ const TacticalPuzzles = () => {
     rating: 1200,
     ratingDelta: 24
   });
+  const [userRating, setUserRating] = useState(1200);
+  const [isDashboardLoading, setIsDashboardLoading] = useState(false);
 
   // Sample rating history data
   const [ratingHistoryData, setRatingHistoryData] = useState([
@@ -70,6 +73,17 @@ const TacticalPuzzles = () => {
     fetchPuzzlesByTheme,
     generatePuzzleByDifficulty,
   } = useChessPuzzles({ enabled: true });
+
+  // Mock dashboard data for compatibility
+  const dashboardData = {
+    global: {
+      firstWins: 31,
+      nb: 43,
+      wins: 36,
+      streak: 5,
+      fastest: { seconds: 4.2 }
+    }
+  };
 
   // Update solved count from localStorage on load
   useEffect(() => {
@@ -205,6 +219,29 @@ const TacticalPuzzles = () => {
       
       setRatingHistoryData(updatedRatingHistory);
     }
+  };
+
+  // Function to mark a puzzle as solved (helper for handlePuzzleSolved)
+  const markPuzzleSolved = (puzzleId: string) => {
+    // Calculate ELO points based on difficulty
+    const puzzleRating = puzzleData?.puzzle.rating || 1200;
+    let eloPoints = 1; // Default for easy puzzles
+    
+    if (puzzleRating >= 1600 && puzzleRating < 2000) {
+      eloPoints = 2; // Intermediate puzzles
+    } else if (puzzleRating >= 2000) {
+      eloPoints = 3; // Hard puzzles
+    }
+    
+    // Update user rating
+    const newRating = userRating + eloPoints;
+    setUserRating(newRating);
+    localStorage.setItem('puzzleRating', newRating.toString());
+    
+    toast({
+      title: "Puzzle Solved!",
+      description: `Rating: +${eloPoints} ELO (${newRating})`,
+    });
   };
 
   // Handle get next puzzle

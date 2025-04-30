@@ -47,6 +47,7 @@ export const adaptToLichessPuzzleFormat = (puzzle: ChessPuzzle) => {
       initialPly: 0 // This might need adjustment based on FEN
     },
     game: {
+      id: `game_${puzzle.puzzleid}`,
       perf: {
         name: "Rapid"
       },
@@ -54,6 +55,8 @@ export const adaptToLichessPuzzleFormat = (puzzle: ChessPuzzle) => {
         { name: "Player 1", rating: Math.floor(Math.random() * 300) + 1600 },
         { name: "Player 2", rating: Math.floor(Math.random() * 300) + 1600 }
       ],
+      clock: "5+0",
+      rated: true,
       pgn: "" // We don't have PGN from the API
     }
   };
