@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -34,7 +35,7 @@
 
     --radius: 0.5rem;
     
-    /* Chess board colors - wooden theme */
+    /* Chess board colors - elegant theme */
     --light-square: 36 33% 86%;   /* Lighter wood color */
     --dark-square: 28 42% 37%;    /* Darker wood color */
     --highlight: 45 100% 70%;     /* Golden highlight */
@@ -72,7 +73,7 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
     
-    /* Chess board colors (dark mode) - darker wooden theme */
+    /* Chess board colors (dark mode) - darker elegant theme */
     --light-square: 36 20% 82%;
     --dark-square: 28 30% 32%;
     --highlight: 45 80% 65%;
@@ -113,12 +114,12 @@
     @apply py-16 px-4 md:px-6 lg:px-8;
   }
   
-  /* Chess board specific styles - wooden theme */
+  /* Chess board specific styles - elegant theme */
   .chess-board {
     @apply border-8 rounded shadow-lg relative overflow-hidden;
-    border-color: #8b5a2b; 
+    border-color: #6b4226; 
     background: linear-gradient(145deg, #7d4e26, #5d3c31);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
 
   .chess-board::before {
@@ -207,36 +208,37 @@
     50% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
   }
   
+  /* New completely solid piece styling */
   .chess-piece {
     @apply select-none transition-transform;
-    filter: drop-shadow(2px 3px 3px rgba(0, 0, 0, 0.3));
     will-change: transform;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 2.25rem;
+    letter-spacing: 0;
+    line-height: 1;
   }
   
   .chess-piece:hover {
     transform: translateY(-2px);
   }
   
+  /* New solid white piece styling */
   .chess-piece.white {
-    @apply text-white;
-    text-shadow: 
-      0 0 3px rgba(0, 0, 0, 0.8),
-      1px 1px 2px rgba(0, 0, 0, 0.6),
-      0 2px 5px rgba(0, 0, 0, 0.5);
-    opacity: 1 !important; /* Make white pieces fully opaque */
-    color: #ffffff !important; /* Pure white color */
-    fill: #ffffff !important; /* Ensure SVG pieces are also white */
+    color: #FFFFFF;
+    background-color: #FFFFFF;
+    -webkit-text-stroke: 1px #000000;
+    text-stroke: 1px #000000;
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
   }
   
+  /* Black piece styling */
   .chess-piece.black {
-    @apply text-black;
-    text-shadow: 
-      0 0 3px rgba(255, 255, 255, 0.4),
-      1px 1px 2px rgba(0, 0, 0, 0.5),
-      0 2px 5px rgba(0, 0, 0, 0.3);
-    opacity: 1 !important; /* Make black pieces fully opaque */
-    color: #000000 !important; /* Pure black color */
-    fill: #000000 !important; /* Ensure SVG pieces are also black */
+    color: #000000;
+    background-color: #000000;
+    -webkit-text-stroke: 0.5px #333333;
+    text-stroke: 0.5px #333333;
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
   }
   
   .chess-coordinates {

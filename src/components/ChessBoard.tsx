@@ -99,12 +99,12 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       setLastMove(null);
       setMoveCount(0);
       setStartTime(Date.now());
-      // Reset the board orientation based on the player's turn
+      // Set board orientation based on who's turn it is
       setBoardFlipped(playerTurn === 'b');
     }
   }, [fen, playerTurn]);
   
-  // Map chess piece symbols to Unicode chess symbols with better visibility
+  // Map chess piece symbols to Font Awesome Unicode chess symbols
   const getPieceSymbol = (piece: string) => {
     const pieceMap: { [key: string]: string } = {
       'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
@@ -369,11 +369,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     return baseClasses;
   };
 
-  // Toggle the board orientation
-  const toggleBoardOrientation = () => {
-    setBoardFlipped(!boardFlipped);
-  };
-  
   // Render the chess board
   return (
     <div className="flex flex-col items-center">
@@ -382,7 +377,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           <Switch
             id="board-orientation"
             checked={!boardFlipped}
-            onCheckedChange={toggleBoardOrientation}
+            onCheckedChange={() => setBoardFlipped(!boardFlipped)}
           />
           <Label htmlFor="board-orientation">
             <RotateCcw className="h-4 w-4" />
