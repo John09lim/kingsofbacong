@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import ChessBoard from "@/components/ChessBoard";
+import ChessBoard from "@/components/chessboard/ChessBoard";
 import { LichessPuzzleData } from "@/services/lichessService";
 import { getEffectivePlayerTurn, getEffectiveSolution } from '@/utils/puzzleUtils';
 import PuzzleLoadingState from './puzzle/PuzzleLoadingState';
@@ -54,8 +54,8 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
     return <PuzzleErrorState onGetNewPuzzle={handleGetNewPuzzle} isRefreshing={isRefreshing} />;
   }
 
-  // Get player turn safely, using playerIndexes as fallback
-  const playerTurn = puzzleData.puzzle.playerIndexes?.[0] === "w" ? "w" : "b";
+  // Get player turn safely - if playerIndexes doesn't exist, fall back to 'w'
+  const playerTurn = puzzleData.puzzle?.playerIndexes?.[0] === "w" ? "w" : "b";
   const effectivePlayerTurn = getEffectivePlayerTurn(playerTurn, isReversed);
   const effectiveSolution = getEffectiveSolution(puzzleData.puzzle.solution, isReversed);
   
