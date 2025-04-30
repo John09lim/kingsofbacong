@@ -12,7 +12,13 @@ const PuzzleLoadingState: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col items-center gap-4">
-          <Skeleton className="w-full h-[384px] rounded-md" />
+          <div className="w-full bg-muted rounded-md overflow-hidden">
+            <Skeleton className="w-full h-[384px] rounded-md" />
+            <div className="p-2">
+              <Skeleton className="h-5 w-24 mb-2" />
+              <Skeleton className="h-4 w-1/3" />
+            </div>
+          </div>
           <div className="flex gap-4">
             <Skeleton className="h-10 w-24" />
             <Skeleton className="h-10 w-24" />

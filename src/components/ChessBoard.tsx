@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ interface ChessBoardProps {
   onSolved?: (success: boolean) => void;
   initialPly?: number;
   playerTurn?: 'w' | 'b';
+  isReversed?: boolean;
 }
 
 const ChessBoard: React.FC<ChessBoardProps> = ({ 
@@ -21,7 +23,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   solution = [], 
   onSolved,
   initialPly = 0,
-  playerTurn = 'w'
+  playerTurn = 'w',
+  isReversed = false
 }) => {
   const [currentFen, setCurrentFen] = useState<string>(fen);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
@@ -79,10 +82,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   
   // Display current board based on FEN
   const [board, setBoard] = useState<Array<Array<string>>>(parseFen(fen));
-  
-  useEffect(() => {
-    setBoard(parseFen(currentFen));
-  }, [currentFen, parseFen]);
   
   useEffect(() => {
     // Reset board when fen changes (new puzzle)
@@ -159,7 +158,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   
   // Make computer's move after player moves
   const makeComputerMove = useCallback(() => {
-    if (currentSolutionIndex % 2 === 1 && currentSolutionIndex < solution.length) {
+    if (currentSolutionIndex < solution.length) {
       setWaitingForComputerMove(true);
       
       // Add a slight delay to simulate computer thinking
@@ -202,7 +201,13 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   
   // Effect to trigger computer move when it's computer's turn
   useEffect(() => {
-    if (currentSolutionIndex % 2 === 1 && currentSolutionIndex < solution.length && !waitingForComputerMove && !isSolved) {
+    // In reversed mode, computer should respond after every player move
+    // In normal mode, computer only moves on odd solution indices
+    const shouldMakeComputerMove = isReversed ? 
+      currentSolutionIndex < solution.length && !waitingForComputerMove && !isSolved :
+      currentSolutionIndex % 2 === 1 && currentSolutionIndex < solution.length && !waitingForComputerMove && !isSolved;
+    
+    if (shouldMakeComputerMove) {
       makeComputerMove();
     }
     
@@ -220,7 +225,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       
       if (onSolved) onSolved(true);
     }
-  }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved, startTime]);
+  }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved, startTime, isReversed]);
   
   // Show hint for next move
   const showHintMove = () => {
@@ -301,7 +306,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         // Only allow selecting pieces of the current player's color
         const isWhite = isWhitePiece(piece);
         const isCorrectPlayerTurn = (playerTurn === 'w' && isWhite) || (playerTurn === 'b' && !isWhite);
-        const isPlayerTurn = currentSolutionIndex % 2 === 0; // First move in solution is always player's
+        const isPlayerTurn = isReversed || currentSolutionIndex % 2 === 0; // In reversed mode, player is always the attacker
         
         if (isPlayerTurn && isCorrectPlayerTurn) {
           setSelectedSquare(square);

@@ -25,6 +25,14 @@ export const getTurnText = (turn?: string): string => {
   return turn === 'b' ? "Black to Play" : "White to Play";
 };
 
+// Get turn text based on playerTurn value and reversed mode
+export const getEffectiveTurnText = (turn?: string, isReversed: boolean = false): string => {
+  if (isReversed) {
+    return "Your Turn to Attack";
+  }
+  return getTurnText(turn);
+};
+
 // Reverse the player's turn if needed
 export const getEffectivePlayerTurn = (playerTurn?: string, isReversed: boolean = false): string => {
   if (!playerTurn) return 'w';
