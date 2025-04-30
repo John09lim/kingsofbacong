@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -117,23 +118,40 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
 
   const difficultyLabel = getPuzzleDifficultyLabel(puzzleData.puzzle.rating);
   const eloPoints = getEloPoints(puzzleData.puzzle.rating);
-  const turnText = getTurnText(puzzleData.puzzle.playerTurn);
+  // Fix the playerTurn property access
+  const playerTurn = puzzleData.puzzle.playerTurn || 'w';
+  const turnText = getTurnText(playerTurn);
+  
+  // Determine the puzzle type for better clarity
+  const getPuzzleType = () => {
+    if (!puzzleData.puzzle.themes || puzzleData.puzzle.themes.length === 0) {
+      return 'Tactical Puzzle';
+    }
+    
+    const themes = puzzleData.puzzle.themes;
+    if (themes.includes('mate')) {
+      return 'Checkmate Puzzle';
+    } else if (themes.includes('advantage')) {
+      return 'Winning Advantage Puzzle';
+    } else if (themes.includes('fork')) {
+      return 'Fork Puzzle';
+    } else if (themes.includes('pin')) {
+      return 'Pin Puzzle';
+    } else if (themes.includes('discovery')) {
+      return 'Discovered Attack Puzzle';
+    } else {
+      return themes[0].charAt(0).toUpperCase() + themes[0].slice(1) + ' Puzzle';
+    }
+  };
+  
+  const puzzleType = getPuzzleType();
   
   return (
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span>
-              {puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
-                puzzleData.puzzle.themes.includes('mate') 
-                  ? 'Checkmate Puzzle' 
-                  : puzzleData.puzzle.themes.includes('fork') 
-                    ? 'Fork Puzzle' 
-                    : puzzleData.puzzle.themes[0].charAt(0).toUpperCase() + puzzleData.puzzle.themes[0].slice(1) + ' Puzzle'
-                : 'Tactical Puzzle'
-              }
-            </span>
+            <span>{puzzleType}</span>
             <Badge className={`
               ${difficultyLabel === "Easy" ? "bg-green-600" : 
                 difficultyLabel === "Intermediate" ? "bg-amber-600" : 
@@ -171,7 +189,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
           solution={puzzleData.puzzle.solution || []}
           initialPly={puzzleData.puzzle.initialPly || 0}
           onSolved={handlePuzzleResult}
-          playerTurn={puzzleData.puzzle.playerTurn || 'w'}
+          playerTurn={playerTurn}
         />
       </CardContent>
       {puzzleData.game && (
