@@ -39,20 +39,26 @@ export const getEffectivePlayerTurn = (playerTurn?: string, isReversed: boolean 
   return isReversed ? (playerTurn === 'w' ? 'b' : 'w') : playerTurn;
 };
 
-// Reverse solution moves if needed
+// Get effective solution for puzzles
+// In standard mode, return the full solution
+// In reversed mode, only return the opponent's correct responses, not all moves
 export const getEffectiveSolution = (solution?: string[], isReversed: boolean = false): string[] => {
-  if (!solution || !isReversed) return solution || [];
+  if (!solution || solution.length === 0) return [];
   
-  // In reversed mode, we need to create a modified solution 
-  // that represents the opponent's correct responses
-  if (solution.length <= 1) return solution;
-  
-  // Take every second move from the solution, which would be the opponent's moves
-  // in the reversed scenario
-  const reversedSolution = [];
-  for (let i = 1; i < solution.length; i += 2) {
-    reversedSolution.push(solution[i]);
+  if (!isReversed) {
+    // Standard puzzle mode - return full solution
+    return solution;
+  } else {
+    // In reversed mode, we need to create a modified solution 
+    // that represents the opponent's correct responses
+    
+    // Take every second move from the solution, which would be the opponent's moves
+    // in the reversed scenario - starting from index 1
+    const reversedSolution = [];
+    for (let i = 1; i < solution.length; i += 2) {
+      reversedSolution.push(solution[i]);
+    }
+    
+    return reversedSolution;
   }
-  
-  return reversedSolution;
 };

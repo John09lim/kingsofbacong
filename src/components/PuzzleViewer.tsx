@@ -24,7 +24,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   onGetNextPuzzle,
   onSolved,
   isRefreshing = false,
-  isReversed = true // Default to reversed puzzles (you delivering the tactic)
+  isReversed = false // Changed default to false - standard puzzle solving mode
 }) => {
   const [isSolved, setIsSolved] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
@@ -55,7 +55,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   }
 
   // Get player turn safely
-  const playerTurn = (puzzleData.puzzle as any)?.playerTurn || 'w';
+  const playerTurn = puzzleData.puzzle.playerTurn || 'w';
   const effectivePlayerTurn = getEffectivePlayerTurn(playerTurn, isReversed);
   const effectiveSolution = getEffectiveSolution(puzzleData.puzzle.solution, isReversed);
   
