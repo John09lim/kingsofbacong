@@ -32,7 +32,7 @@ export interface LichessPuzzle {
   themes: string[];
   fen: string;
   lastMove?: string;
-  color?: 'white' | 'black'; // Added color property with optional string type
+  color: 'white' | 'black'; // Changed from optional to required
 }
 
 export interface LichessPuzzleData {
@@ -409,7 +409,7 @@ class LichessService {
         themes: [theme, Math.random() > 0.5 ? 'short' : 'long'],
         fen: fen,
         lastMove: solution[0],
-        color: Math.random() > 0.5 ? 'white' : 'black' // Add color property to mock puzzles
+        color: Math.random() > 0.5 ? 'white' : 'black' // This is now a required property
       },
       game: {
         id: `game-${Date.now()}`,
