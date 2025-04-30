@@ -17,14 +17,14 @@ interface PuzzleHeaderProps {
 const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
   puzzleData,
   isRefreshing = false,
-  isReversed = true,
+  isReversed = true, // Set to true by default for attack mode consistency
   onGetNewPuzzle
 }) => {
   if (!puzzleData) return null;
   
   const difficultyLabel = getPuzzleDifficultyLabel(puzzleData.puzzle.rating);
   const eloPoints = getEloPoints(puzzleData.puzzle.rating);
-  const playerTurn = (puzzleData.puzzle as any)?.playerTurn || 'w';
+  const playerTurn = puzzleData.puzzle.playerTurn || 'w';
 
   return (
     <>

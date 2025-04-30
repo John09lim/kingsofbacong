@@ -24,7 +24,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   onGetNextPuzzle,
   onSolved,
   isRefreshing = false,
-  isReversed = false // Changed default to false - standard puzzle solving mode
+  isReversed = true // Set back to true for attack mode
 }) => {
   const [isSolved, setIsSolved] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);

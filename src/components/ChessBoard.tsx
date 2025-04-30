@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -41,6 +40,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [solveTime, setSolveTime] = useState<number>(0);
   const [startTime, setStartTime] = useState<number>(Date.now());
   const [moveCount, setMoveCount] = useState<number>(0);
+  const [userHasMadeFirstMove, setUserHasMadeFirstMove] = useState<boolean>(false);
   
   // Parse the FEN to a board representation
   const parseFen = useCallback((fen: string) => {
@@ -161,7 +161,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     if (currentSolutionIndex < solution.length) {
       setWaitingForComputerMove(true);
       
-      // Add a slight delay to simulate computer thinking
+      // Add a longer delay to simulate computer thinking, giving user time to see what's happening
       setTimeout(() => {
         const computerMove = solution[currentSolutionIndex];
         
@@ -195,24 +195,34 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         }
         
         setWaitingForComputerMove(false);
-      }, 500);
+      }, 800); // Increased delay to 800ms to make computer "thinking" more visible
     }
-  }, [currentSolutionIndex, solution, board, moveHistory]);
+  }, [currentSolutionIndex, solution, board, moveHistory, getSquarePosition]);
   
   // Effect to trigger computer move when it's computer's turn
   useEffect(() => {
-    // In reversed mode, computer should respond after every player move
-    // In normal mode, computer only moves on odd solution indices
-    const shouldMakeComputerMove = isReversed ? 
-      currentSolutionIndex < solution.length && !waitingForComputerMove && !isSolved :
-      currentSolutionIndex % 2 === 1 && currentSolutionIndex < solution.length && !waitingForComputerMove && !isSolved;
+    // For reversed mode (attack mode), computer only moves if:
+    // 1. We have a valid solution index
+    // 2. We're not waiting for a computer move already
+    // 3. The puzzle isn't already solved
+    // 4. The user has made at least one move (prevents auto-solving)
+    const shouldMakeComputerMove = 
+      isReversed ? 
+        currentSolutionIndex < solution.length && 
+        !waitingForComputerMove && 
+        !isSolved && 
+        userHasMadeFirstMove :  // Only make computer move if user has made at least one move
+        currentSolutionIndex % 2 === 1 && 
+        currentSolutionIndex < solution.length && 
+        !waitingForComputerMove && 
+        !isSolved;
     
     if (shouldMakeComputerMove) {
       makeComputerMove();
     }
     
     // Check if the puzzle is solved
-    if (currentSolutionIndex >= solution.length && solution.length > 0 && !isSolved) {
+    if (currentSolutionIndex >= solution.length && solution.length > 0 && !isSolved && userHasMadeFirstMove) {
       setIsSolved(true);
       const endTime = Date.now();
       const timeSpent = Math.round((endTime - startTime) / 1000);
@@ -225,7 +235,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       
       if (onSolved) onSolved(true);
     }
-  }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved, startTime, isReversed]);
+  }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved, startTime, isReversed, userHasMadeFirstMove]);
   
   // Show hint for next move
   const showHintMove = () => {
@@ -285,6 +295,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           setMoveHistory([...moveHistory, move]);
           setLastMove([selectedSquare, square]);
           setMoveCount(moveCount + 1);
+          setUserHasMadeFirstMove(true); // Mark that user has made their first move
           
           const nextSolutionIndex = currentSolutionIndex + 1;
           setCurrentSolutionIndex(nextSolutionIndex);

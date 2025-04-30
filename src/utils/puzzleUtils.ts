@@ -52,10 +52,12 @@ export const getEffectiveSolution = (solution?: string[], isReversed: boolean = 
     // In reversed mode, we need to create a modified solution 
     // that represents the opponent's correct responses
     
-    // Take every second move from the solution, which would be the opponent's moves
-    // in the reversed scenario - starting from index 1
+    // Take every second move from the solution array
+    // These are the moves the computer will make in response to user moves
     const reversedSolution = [];
-    for (let i = 1; i < solution.length; i += 2) {
+    for (let i = 0; i < solution.length; i += 2) {
+      // Skip the first move as that would be the user's move in normal mode
+      if (i === 0) continue;
       reversedSolution.push(solution[i]);
     }
     
