@@ -60,6 +60,11 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
     return "3";
   };
 
+  // Get turn text based on playerTurn value
+  const getTurnText = (playerTurn?: 'w' | 'b') => {
+    return playerTurn === 'b' ? "Black to Play" : "White to Play";
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -113,6 +118,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
 
   const difficultyLabel = getPuzzleDifficultyLabel(puzzleData.puzzle.rating);
   const eloPoints = getEloPoints(puzzleData.puzzle.rating);
+  const turnText = getTurnText(puzzleData.puzzle.playerTurn);
   
   return (
     <Card>
@@ -135,6 +141,9 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
                 "bg-red-600"}
             `}>
               {difficultyLabel} (+{eloPoints} ELO)
+            </Badge>
+            <Badge className="bg-blue-600 ml-2">
+              {turnText}
             </Badge>
           </div>
           <Button 
@@ -163,6 +172,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
           solution={puzzleData.puzzle.solution || []}
           initialPly={puzzleData.puzzle.initialPly || 0}
           onSolved={handlePuzzleResult}
+          playerTurn={puzzleData.puzzle.playerTurn || 'w'}
         />
       </CardContent>
       {puzzleData.game && (

@@ -13,6 +13,7 @@ interface ChessBoardProps {
   solution?: string[];
   onSolved?: (success: boolean) => void;
   initialPly?: number;
+  playerTurn?: 'w' | 'b';
 }
 
 const ChessBoard: React.FC<ChessBoardProps> = ({ 
@@ -20,7 +21,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   pgn,
   solution = [], 
   onSolved,
-  initialPly = 0
+  initialPly = 0,
+  playerTurn = 'w'
 }) => {
   const [currentFen, setCurrentFen] = useState<string>(fen);
   const [selectedSquare, setSelectedSquare] = useState<string | null>(null);
@@ -28,7 +30,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [currentSolutionIndex, setCurrentSolutionIndex] = useState<number>(0);
   const [isSolved, setIsSolved] = useState<boolean>(false);
   const [hoveredSquare, setHoveredSquare] = useState<string | null>(null);
-  const [isPlayerWhite, setIsPlayerWhite] = useState<boolean>(true);
+  const [boardFlipped, setBoardFlipped] = useState<boolean>(playerTurn === 'b');
   const [showHint, setShowHint] = useState<boolean>(false);
   const [hintSquare, setHintSquare] = useState<string | null>(null);
   const [waitingForComputerMove, setWaitingForComputerMove] = useState<boolean>(false);
@@ -97,8 +99,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       setLastMove(null);
       setMoveCount(0);
       setStartTime(Date.now());
+      // Reset the board orientation based on the player's turn
+      setBoardFlipped(playerTurn === 'b');
     }
-  }, [fen]);
+  }, [fen, playerTurn]);
   
   // Map chess piece symbols to Unicode chess symbols with better visibility
   const getPieceSymbol = (piece: string) => {
@@ -278,12 +282,15 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       if (piece !== '') {
         // Only allow selecting pieces of the current player's color
         const isWhite = isWhitePiece(piece);
-        if ((isPlayerWhite && isWhite) || (!isPlayerWhite && !isWhite)) {
+        const isCorrectPlayerTurn = (playerTurn === 'w' && isWhite) || (playerTurn === 'b' && !isWhite);
+        const isPlayerTurn = currentSolutionIndex % 2 === 0; // First move in solution is always player's
+        
+        if (isPlayerTurn && isCorrectPlayerTurn) {
           setSelectedSquare(square);
         } else {
           toast({
-            title: "Wrong color",
-            description: `It's ${isPlayerWhite ? "white" : "black"}'s turn to move.`,
+            title: "Wrong piece",
+            description: `It's ${playerTurn === 'w' ? "White" : "Black"}'s turn to move.`,
             variant: "destructive",
           });
         }
@@ -363,8 +370,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   };
 
   // Toggle the board orientation
-  const toggleBoardColor = () => {
-    setIsPlayerWhite(!isPlayerWhite);
+  const toggleBoardOrientation = () => {
+    setBoardFlipped(!boardFlipped);
   };
   
   // Render the chess board
@@ -373,11 +380,14 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       <div className="mb-4 flex items-center justify-between w-full">
         <div className="flex items-center space-x-2">
           <Switch
-            id="board-color"
-            checked={isPlayerWhite}
-            onCheckedChange={toggleBoardColor}
+            id="board-orientation"
+            checked={!boardFlipped}
+            onCheckedChange={toggleBoardOrientation}
           />
-          <Label htmlFor="board-color">Play as {isPlayerWhite ? "White" : "Black"}</Label>
+          <Label htmlFor="board-orientation">
+            <RotateCcw className="h-4 w-4" />
+            <span className="sr-only">Flip Board</span>
+          </Label>
         </div>
         
         <div className="flex gap-2">
@@ -400,7 +410,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           
           {!waitingForComputerMove && !isSolved && (
             <Badge className="bg-blue-500">
-              Your turn to move
+              {playerTurn === 'w' ? "White" : "Black"} to move
             </Badge>
           )}
         </div>
@@ -409,7 +419,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       <div className="chess-board">
         <div className="grid grid-cols-8 gap-0 w-full max-w-md mx-auto">
           {/* Render the board according to player's perspective */}
-          {isPlayerWhite ? (
+          {!boardFlipped ? (
             // White's perspective (a1 at bottom left)
             board.map((row, rowIndex) => (
               row.map((piece, colIndex) => {

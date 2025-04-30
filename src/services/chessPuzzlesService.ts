@@ -24,8 +24,20 @@ export interface PuzzleQueryParams {
   maxRating?: number;
 }
 
+// Extract turn information from FEN string
+const extractTurnFromFen = (fen: string): 'w' | 'b' => {
+  const parts = fen.split(' ');
+  if (parts.length > 1) {
+    return parts[1] as 'w' | 'b';
+  }
+  return 'w'; // Default to white if FEN is malformed
+};
+
 // Convert to Lichess puzzle format for compatibility with existing components
 export const adaptToLichessPuzzleFormat = (puzzle: ChessPuzzle) => {
+  // Determine whose turn it is from the FEN
+  const turn = extractTurnFromFen(puzzle.fen);
+  
   // Convert the moves format from RapidAPI to Lichess format
   const movesPairs = [];
   for (let i = 0; i < puzzle.moves.length; i += 2) {
@@ -44,11 +56,13 @@ export const adaptToLichessPuzzleFormat = (puzzle: ChessPuzzle) => {
       themes: puzzle.themes || [],
       solution: puzzle.moves,
       plays: 0,
-      initialPly: 0 // This might need adjustment based on FEN
+      initialPly: 0, // This might need adjustment based on FEN
+      playerTurn: turn // Add player turn information
     },
     game: {
       id: `game_${puzzle.puzzleid}`,
       perf: {
+        key: "rapid", // Add the missing key property
         name: "Rapid"
       },
       players: [
