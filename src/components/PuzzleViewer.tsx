@@ -14,6 +14,7 @@ interface PuzzleViewerProps {
   onGetNextPuzzle: () => void;
   onSolved: () => void;
   isRefreshing?: boolean;
+  isReversed?: boolean;
 }
 
 const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
@@ -21,7 +22,8 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   isLoading,
   onGetNextPuzzle,
   onSolved,
-  isRefreshing = false
+  isRefreshing = false,
+  isReversed = true // Default to reversed puzzles (you delivering the tactic)
 }) => {
   const [isSolved, setIsSolved] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
@@ -61,7 +63,32 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
 
   // Get turn text based on playerTurn value
   const getTurnText = (turn?: string) => {
+    if (!turn) return "White to Play";
     return turn === 'b' ? "Black to Play" : "White to Play";
+  };
+
+  // Reverse the player's turn if needed
+  const getEffectivePlayerTurn = (playerTurn?: string): string => {
+    if (!playerTurn) return 'w';
+    return isReversed ? (playerTurn === 'w' ? 'b' : 'w') : playerTurn;
+  };
+
+  // Reverse solution moves if needed
+  const getEffectiveSolution = (solution?: string[]): string[] => {
+    if (!solution || !isReversed) return solution || [];
+    
+    // In reversed mode, we need to create a modified solution 
+    // that represents the opponent's correct responses
+    if (solution.length <= 1) return solution;
+    
+    // Take every second move from the solution, which would be the opponent's moves
+    // in the reversed scenario
+    const reversedSolution = [];
+    for (let i = 1; i < solution.length; i += 2) {
+      reversedSolution.push(solution[i]);
+    }
+    
+    return reversedSolution;
   };
 
   if (isLoading) {
@@ -115,9 +142,10 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
     );
   }
 
-  const difficultyLabel = getPuzzleDifficultyLabel(puzzleData.puzzle.rating);
-  const eloPoints = getEloPoints(puzzleData.puzzle.rating);
-  const turnText = getTurnText(puzzleData.puzzle.playerTurn);
+  const difficultyLabel = getPuzzleDifficultyLabel(puzzleData?.puzzle.rating);
+  const eloPoints = getEloPoints(puzzleData?.puzzle.rating);
+  const effectivePlayerTurn = getEffectivePlayerTurn(puzzleData?.puzzle.playerTurn as string | undefined);
+  const effectiveSolution = getEffectiveSolution(puzzleData?.puzzle.solution);
   
   return (
     <Card>
@@ -125,13 +153,13 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span>
-              {puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
+              {puzzleData?.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
                 puzzleData.puzzle.themes.includes('mate') 
-                  ? 'Checkmate Puzzle' 
+                  ? 'Checkmate Attack' 
                   : puzzleData.puzzle.themes.includes('fork') 
-                    ? 'Fork Puzzle' 
-                    : puzzleData.puzzle.themes[0].charAt(0).toUpperCase() + puzzleData.puzzle.themes[0].slice(1) + ' Puzzle'
-                : 'Tactical Puzzle'
+                    ? 'Fork Attack' 
+                    : puzzleData.puzzle.themes[0].charAt(0).toUpperCase() + puzzleData.puzzle.themes[0].slice(1) + ' Attack'
+                : 'Tactical Attack'
               }
             </span>
             <Badge className={`
@@ -142,7 +170,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
               {difficultyLabel} (+{eloPoints} ELO)
             </Badge>
             <Badge className="bg-blue-600 ml-2">
-              {turnText}
+              {isReversed ? "You Attack!" : getTurnText(puzzleData?.puzzle.playerTurn as string | undefined)}
             </Badge>
           </div>
           <Button 
@@ -157,7 +185,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
           </Button>
         </CardTitle>
         <CardDescription>
-          Rating: {puzzleData.puzzle.rating} • Themes: {puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
+          Rating: {puzzleData?.puzzle.rating} • Themes: {puzzleData?.puzzle.themes && puzzleData?.puzzle.themes.length > 0 ? 
             puzzleData.puzzle.themes.map((t: string) => 
               t.charAt(0).toUpperCase() + t.slice(1)
             ).join(', ') : 'Tactical'
@@ -166,15 +194,16 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
       </CardHeader>
       <CardContent>
         <ChessBoard 
-          fen={puzzleData.puzzle.fen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"} 
-          pgn={puzzleData.game?.pgn || ""}
-          solution={puzzleData.puzzle.solution || []}
-          initialPly={puzzleData.puzzle.initialPly || 0}
+          fen={puzzleData?.puzzle.fen || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"} 
+          pgn={puzzleData?.game?.pgn || ""}
+          solution={effectiveSolution}
+          initialPly={puzzleData?.puzzle.initialPly || 0}
           onSolved={handlePuzzleResult}
-          playerTurn={puzzleData.puzzle.playerTurn || 'w'}
+          playerTurn={effectivePlayerTurn}
+          isReversed={isReversed}
         />
       </CardContent>
-      {puzzleData.game && (
+      {puzzleData?.game && (
         <CardFooter className="border-t pt-4 flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <h4 className="text-sm font-medium mb-1">Game Info</h4>
@@ -194,7 +223,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
             {isSolved && (
               <Badge className="bg-green-500 text-white flex items-center gap-1">
                 <Check className="h-3 w-3" />
-                Solved!
+                {isReversed ? "Attack Successful!" : "Solved!"}
               </Badge>
             )}
             {failedAttempts > 0 && !isSolved && (

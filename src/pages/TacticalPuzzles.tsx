@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -43,6 +42,7 @@ const TacticalPuzzles = () => {
   });
   const [userRating, setUserRating] = useState(1200);
   const [isDashboardLoading, setIsDashboardLoading] = useState(false);
+  const [isReversed, setIsReversed] = useState(true); // Default to reversed (attack) mode
 
   // Sample rating history data
   const [ratingHistoryData, setRatingHistoryData] = useState([
@@ -348,8 +348,8 @@ const TacticalPuzzles = () => {
           <div className="container mx-auto">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Puzzles</h1>
             <p className="text-chess-light-pink text-lg max-w-3xl">
-              Train your tactical vision with thousands of puzzles sorted by themes and difficulty levels. 
-              Improve your calculation and pattern recognition skills.
+              Train your tactical vision with thousands of puzzles. Play the attacker role and deliver 
+              devastating tactics against your opponent!
             </p>
           </div>
         </div>
@@ -360,13 +360,13 @@ const TacticalPuzzles = () => {
               <Tabs defaultValue="daily" value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="mb-4 bg-chess-muted-rose/20">
                   <TabsTrigger value="daily" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
-                    Daily Puzzle
+                    Daily Attack
                   </TabsTrigger>
                   <TabsTrigger value="generator" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
-                    Puzzle Generator
+                    Attack Generator
                   </TabsTrigger>
                   <TabsTrigger value="themes" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
-                    Tactical Themes
+                    Attack Themes
                   </TabsTrigger>
                   <TabsTrigger value="dashboard" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
                     Dashboard
@@ -374,12 +374,29 @@ const TacticalPuzzles = () => {
                 </TabsList>
 
                 <TabsContent value="daily" className="mt-0 space-y-6">
+                  <Card className="mb-4">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="font-medium text-lg">
+                          Tactical Attack Mode
+                        </div>
+                        <Badge variant="outline" className="bg-chess-deep-red text-white">
+                          You're the attacker
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-4">
+                        You're delivering the tactics! Find the best moves to gain advantage against your opponent.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
                   <PuzzleViewer
                     puzzleData={puzzleData}
                     isLoading={isPuzzleLoading}
                     onGetNextPuzzle={handleGetNextPuzzle}
                     onSolved={handlePuzzleSolved}
                     isRefreshing={isRefreshing}
+                    isReversed={isReversed}
                   />
                 </TabsContent>
                 
