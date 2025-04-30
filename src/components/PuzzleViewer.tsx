@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -119,7 +120,8 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   const eloPoints = getEloPoints(puzzleData?.puzzle?.rating);
   
   // Extract player turn safely with fallback to 'w'
-  const playerTurn = puzzleData?.puzzle?.playerTurn || 'w';
+  // Fix: Access playerTurn safely and provide a default value 'w'
+  const playerTurn = puzzleData?.puzzle?.playerTurn as string || 'w';
   const turnText = getTurnText(playerTurn);
   
   // Determine the puzzle type for better clarity
