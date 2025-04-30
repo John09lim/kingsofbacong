@@ -65,6 +65,24 @@ export const isWhitePiece = (piece: string): boolean => {
   return piece !== '' && piece === piece.toUpperCase();
 };
 
+/**
+ * Ensures proper chess board orientation where a1 is a dark square
+ * This helps maintain consistent board rendering
+ */
+export const getProperBoardOrientation = (isReversed: boolean, playerTurn: 'w' | 'b'): boolean => {
+  // In standard chess orientation, a1 is a dark square
+  // We need to flip the board based on player color and mode
+  
+  // In Attack Mode, player is always at the bottom
+  if (isReversed) {
+    // No need to flip for attack mode - player is always at the bottom
+    return false;
+  }
+  
+  // In regular mode, flip based on player color
+  return playerTurn === 'b';
+};
+
 // Get square CSS classes based on its state
 export const getSquareClasses = (
   row: number, 
@@ -109,10 +127,30 @@ export const getSquareClasses = (
   return baseClasses;
 };
 
+/**
+ * Validates if a hint is targeting the correct player's piece
+ * Used to ensure hints only highlight the player's pieces in attack mode
+ */
+export const validateHintTarget = (hintSquare: string | null, board: string[][], playerTurn: 'w' | 'b'): boolean => {
+  if (!hintSquare) return false;
+  
+  const [row, col] = getSquarePosition(hintSquare);
+  if (row < 0 || col < 0 || row >= 8 || col >= 8) return false;
+  
+  const piece = board[row][col];
+  if (!piece) return false;
+  
+  // Check if the piece belongs to the current player
+  const isWhite = isWhitePiece(piece);
+  return (playerTurn === 'w' && isWhite) || (playerTurn === 'b' && !isWhite);
+};
+
 export default {
   parseFen,
   getSquareName,
   getSquarePosition,
   isWhitePiece,
-  getSquareClasses
+  getSquareClasses,
+  validateHintTarget,
+  getProperBoardOrientation
 };

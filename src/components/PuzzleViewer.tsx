@@ -55,7 +55,8 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   }
 
   // Get player turn safely - default to 'w' if playerIndexes doesn't exist
-  const playerTurn = puzzleData.puzzle?.playerIndexes?.[0] || 'w';
+  // Safely access the player turn information
+  const playerTurn: 'w' | 'b' = puzzleData.puzzle.color === 'black' ? 'b' : 'w';
   const effectivePlayerTurn = getEffectivePlayerTurn(playerTurn, isReversed);
   const effectiveSolution = getEffectiveSolution(puzzleData.puzzle.solution, isReversed);
   

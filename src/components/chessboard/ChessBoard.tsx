@@ -3,7 +3,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from "@/hooks/use-toast";
 import ChessSquare from './ChessSquare';
 import ChessBoardControls from './ChessBoardControls';
-import { parseFen, getSquareName, getSquarePosition, isWhitePiece, getSquareClasses } from './ChessBoardUtils';
+import { 
+  parseFen, 
+  getSquareName, 
+  getSquarePosition, 
+  isWhitePiece, 
+  getSquareClasses, 
+  validateHintTarget,
+  getProperBoardOrientation 
+} from './ChessBoardUtils';
+import { debugPuzzle } from '@/utils/puzzleUtils';
 
 interface ChessBoardProps {
   fen?: string;
@@ -30,7 +39,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [currentSolutionIndex, setCurrentSolutionIndex] = useState<number>(0);
   const [isSolved, setIsSolved] = useState<boolean>(false);
   const [hoveredSquare, setHoveredSquare] = useState<string | null>(null);
-  const [boardFlipped, setBoardFlipped] = useState<boolean>(playerTurn === 'b');
+  const [boardFlipped, setBoardFlipped] = useState<boolean>(getProperBoardOrientation(isReversed, playerTurn));
   const [showHint, setShowHint] = useState<boolean>(false);
   const [hintSquare, setHintSquare] = useState<string | null>(null);
   const [waitingForComputerMove, setWaitingForComputerMove] = useState<boolean>(false);
@@ -43,6 +52,18 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   
   // Display current board based on FEN
   const [board, setBoard] = useState<Array<Array<string>>>(parseFen(fen));
+  
+  // Debug on init - helps troubleshoot puzzle issues
+  useEffect(() => {
+    if (fen && solution) {
+      console.log("ChessBoard initialized with:", {
+        fen,
+        solution,
+        isReversed,
+        playerTurn
+      });
+    }
+  }, []);
   
   useEffect(() => {
     // Reset board when fen changes (new puzzle)
@@ -59,10 +80,14 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       setMoveCount(0);
       setStartTime(Date.now());
       setUserHasMadeFirstMove(false); // Reset this flag when puzzle changes
-      // Set board orientation based on who's turn it is
-      setBoardFlipped(playerTurn === 'b');
+      
+      // Always use proper orientation
+      setBoardFlipped(getProperBoardOrientation(isReversed, playerTurn));
+      
+      // Parse the FEN to set up the board
+      setBoard(parseFen(fen));
     }
-  }, [fen, playerTurn]);
+  }, [fen, playerTurn, isReversed]);
   
   // Make computer's move after player moves
   const makeComputerMove = useCallback(() => {
@@ -82,11 +107,23 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           const [toRow, toCol] = getSquarePosition(toSquare);
           
           if (fromRow >= 0 && fromCol >= 0 && toRow >= 0 && toCol >= 0) {
+            // Verify there's actually a piece to move
+            const piece = board[fromRow][fromCol];
+            if (!piece) {
+              console.error("Computer move error: No piece at", fromSquare);
+              toast({
+                title: "Invalid computer move",
+                description: `No piece found at ${fromSquare}. Try a new puzzle.`,
+                variant: "destructive",
+              });
+              setWaitingForComputerMove(false);
+              return;
+            }
+            
             // Create a copy of the current board
             const newBoard = [...board.map(row => [...row])];
             
             // Move the piece
-            const piece = newBoard[fromRow][fromCol];
             newBoard[fromRow][fromCol] = '';
             newBoard[toRow][toCol] = piece;
             
@@ -145,24 +182,48 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     }
   }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved, startTime, isReversed, userHasMadeFirstMove]);
   
-  // Show hint for next move
+  // Show hint for next move - FIXED to only highlight player's pieces
   const showHintMove = () => {
     if (currentSolutionIndex < solution.length) {
       const nextMove = solution[currentSolutionIndex];
       if (nextMove && nextMove.length >= 2) {
         // Extract the first two characters (from square)
-        setHintSquare(nextMove.substring(0, 2));
-        setShowHint(true);
+        const suggestedSquare = nextMove.substring(0, 2);
         
+        // Verify that the hint is targeting the player's piece
+        const [row, col] = getSquarePosition(suggestedSquare);
+        
+        if (row >= 0 && col >= 0 && row < 8 && col < 8) {
+          const piece = board[row][col];
+          
+          if (piece) {
+            const isWhite = isWhitePiece(piece);
+            const isPlayerPiece = (playerTurn === 'w' && isWhite) || (playerTurn === 'b' && !isWhite);
+            
+            if (isPlayerPiece) {
+              setHintSquare(suggestedSquare);
+              setShowHint(true);
+              
+              toast({
+                title: "Hint",
+                description: `Try moving the piece at ${suggestedSquare.toUpperCase()}.`,
+              });
+              
+              setTimeout(() => {
+                setShowHint(false);
+                setHintSquare(null);
+              }, 3000); // Show hint for 3 seconds
+              return;
+            }
+          }
+        }
+        
+        // If we got here, the hint was invalid
         toast({
-          title: "Hint",
-          description: `Try moving the piece at ${nextMove.substring(0, 2).toUpperCase()}.`,
+          title: "Invalid hint",
+          description: "This puzzle may have an incorrect solution. Try a new puzzle.",
+          variant: "destructive",
         });
-        
-        setTimeout(() => {
-          setShowHint(false);
-          setHintSquare(null);
-        }, 3000); // Show hint for 3 seconds
       }
     }
   };
