@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -15,6 +14,7 @@ import {
   Loader2, RefreshCw, Info, Calendar, History, Activity
 } from "lucide-react";
 import { usePuzzle } from "@/hooks/usePuzzle";
+import { useChessPuzzles } from "@/hooks/useChessPuzzles";
 import { toast } from "@/hooks/use-toast";
 import PuzzleViewer from "@/components/PuzzleViewer";
 import PuzzleThemeSelector from "@/components/PuzzleThemeSelector";
@@ -62,22 +62,14 @@ const TacticalPuzzles = () => {
   ];
 
   const { 
-    puzzleData, 
-    isPuzzleLoading, 
-    dashboardData, 
-    isDashboardLoading,
+    puzzleData,
+    isPuzzleLoading,
     themesData,
     isThemesLoading,
     fetchNextPuzzle,
     fetchPuzzlesByTheme,
     generatePuzzleByDifficulty,
-    markPuzzleSolved,
-    userRating,
-    setCurrentPuzzleId,
-    currentTheme,
-    setCurrentTheme,
-    useLiveApi
-  } = usePuzzle({ autoFetch: true });
+  } = useChessPuzzles({ enabled: true });
 
   // Update solved count from localStorage on load
   useEffect(() => {

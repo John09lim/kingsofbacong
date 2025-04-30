@@ -2,7 +2,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const CHESS_API_KEY = Deno.env.get("CHESS_RAPID_API_KEY");
-const CHESS_API_HOST = "chess-api1.p.rapidapi.com";
+const CHESS_API_HOST = "chess-puzzles.p.rapidapi.com";
 
 // CORS headers for browser requests
 const corsHeaders = {
@@ -36,19 +36,36 @@ serve(async (req) => {
       );
     }
 
-    // Construct query string from params
-    const queryParams = params ? new URLSearchParams(params).toString() : '';
-    const url = `https://${CHESS_API_HOST}${endpoint}${queryParams ? `?${queryParams}` : ''}`;
+    let url;
+    let headers = {
+      "X-RapidAPI-Key": CHESS_API_KEY,
+      "X-RapidAPI-Host": CHESS_API_HOST,
+    };
 
-    console.log(`Making request to Chess API: ${url}`);
+    if (endpoint === '/puzzles') {
+      // Handle puzzle-specific endpoint with special formatting for the chess-puzzles API
+      url = `https://${CHESS_API_HOST}`;
+      console.log(`Making request to Chess Puzzles API: ${url} with params:`, params);
+    } else {
+      // Construct query string from params for other endpoints
+      const queryParams = params ? new URLSearchParams(params).toString() : '';
+      url = `https://${CHESS_API_HOST}${endpoint}${queryParams ? `?${queryParams}` : ''}`;
+      console.log(`Making request to Chess API: ${url}`);
+    }
 
     const response = await fetch(url, {
       method: "GET",
-      headers: {
-        "X-RapidAPI-Key": CHESS_API_KEY,
-        "X-RapidAPI-Host": CHESS_API_HOST,
-      },
+      headers: headers,
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Error from Chess API: ${response.status} ${response.statusText}`, errorText);
+      return new Response(
+        JSON.stringify({ error: `API returned ${response.status}: ${response.statusText}`, details: errorText }),
+        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const data = await response.json();
     

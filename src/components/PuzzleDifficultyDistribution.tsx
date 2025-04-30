@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface PuzzleDifficultyDistributionProps {
@@ -11,11 +11,13 @@ interface PuzzleDifficultyDistributionProps {
     color: string;
   }[];
   isLoading?: boolean;
+  title?: string;
 }
 
 const PuzzleDifficultyDistribution: React.FC<PuzzleDifficultyDistributionProps> = ({ 
   data, 
-  isLoading = false 
+  isLoading = false,
+  title = "Puzzle Difficulty Distribution"
 }) => {
   if (isLoading) {
     return (
@@ -33,7 +35,7 @@ const PuzzleDifficultyDistribution: React.FC<PuzzleDifficultyDistributionProps> 
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle>Puzzle Difficulty Distribution</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[200px] w-full">
@@ -68,7 +70,8 @@ const PuzzleDifficultyDistribution: React.FC<PuzzleDifficultyDistributionProps> 
                   fontSize: "12px"
                 }}
               />
-              <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+              <Legend />
+              <Bar dataKey="count" name="Puzzles Solved" radius={[4, 4, 0, 0]}>
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
