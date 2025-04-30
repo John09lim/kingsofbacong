@@ -98,7 +98,27 @@ const TacticalPuzzles = () => {
     ratingDelta: 5 // Mock rating change
   };
   
-  // Fix the button click handler - Wrap the fetchNextPuzzle call in a React event handler
+  // Format difficulty distribution data for the chart
+  const formatPerformanceData = () => {
+    if (!dashboardData?.performance) {
+      return [
+        { range: "Easy (800-1200)", count: 0, color: "#4ade80" },
+        { range: "Medium (1200-1600)", count: 0, color: "#facc15" },
+        { range: "Hard (1600-2000)", count: 0, color: "#f97316" },
+        { range: "Expert (2000+)", count: 0, color: "#ef4444" }
+      ];
+    }
+    
+    const performance = dashboardData.performance;
+    return [
+      { range: "Easy (800-1200)", count: performance.easy || 0, color: "#4ade80" },
+      { range: "Medium (1200-1600)", count: performance.medium || 0, color: "#facc15" },
+      { range: "Hard (1600-2000)", count: performance.hard || 0, color: "#f97316" },
+      { range: "Expert (2000+)", count: performance.expert || 0, color: "#ef4444" }
+    ];
+  };
+  
+  // Fix the button click handler
   const handleStartTraining = () => {
     fetchNextPuzzle();
   };
@@ -260,9 +280,9 @@ const TacticalPuzzles = () => {
             isLoading={isDashboardLoading}
           />
           
-          {/* Difficulty Distribution - Map properties correctly */}
+          {/* Difficulty Distribution - Pass formatted array data */}
           <PuzzleDifficultyDistribution
-            data={dashboardData?.performance || {}}
+            data={formatPerformanceData()}
             isLoading={isDashboardLoading}
           />
         </div>
