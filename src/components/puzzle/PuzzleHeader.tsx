@@ -25,7 +25,7 @@ const PuzzleHeader: React.FC<PuzzleHeaderProps> = ({
   const difficultyLabel = getPuzzleDifficultyLabel(puzzleData.puzzle.rating);
   const eloPoints = getEloPoints(puzzleData.puzzle.rating);
   // Access playerTurn through puzzle property, add fallback if playerIndexes doesn't exist
-  const playerTurn = puzzleData.puzzle?.playerIndexes?.[0] === "w" ? "w" : "b";
+  const playerTurn = puzzleData.puzzle?.playerIndexes?.[0] || 'w';
 
   return (
     <>

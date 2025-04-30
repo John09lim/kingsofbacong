@@ -54,8 +54,8 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
     return <PuzzleErrorState onGetNewPuzzle={handleGetNewPuzzle} isRefreshing={isRefreshing} />;
   }
 
-  // Get player turn safely - if playerIndexes doesn't exist, fall back to 'w'
-  const playerTurn = puzzleData.puzzle?.playerIndexes?.[0] === "w" ? "w" : "b";
+  // Get player turn safely - default to 'w' if playerIndexes doesn't exist
+  const playerTurn = puzzleData.puzzle?.playerIndexes?.[0] || 'w';
   const effectivePlayerTurn = getEffectivePlayerTurn(playerTurn, isReversed);
   const effectiveSolution = getEffectiveSolution(puzzleData.puzzle.solution, isReversed);
   
