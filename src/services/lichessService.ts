@@ -408,7 +408,8 @@ class LichessService {
         solution: solution,
         themes: [theme, Math.random() > 0.5 ? 'short' : 'long'],
         fen: fen,
-        lastMove: solution[0]
+        lastMove: solution[0],
+        color: Math.random() > 0.5 ? 'white' : 'black' // Add color property to mock puzzles
       },
       game: {
         id: `game-${Date.now()}`,
