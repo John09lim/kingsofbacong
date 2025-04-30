@@ -1,4 +1,3 @@
-
 import { toast } from "@/hooks/use-toast";
 
 // Types for Lichess API responses
@@ -33,6 +32,7 @@ export interface LichessPuzzle {
   themes: string[];
   fen: string;
   lastMove?: string;
+  color?: 'white' | 'black'; // Added color property with optional string type
 }
 
 export interface LichessPuzzleData {
