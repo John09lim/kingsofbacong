@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -109,6 +108,25 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     const pieceMap: { [key: string]: string } = {
       'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
       'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
+    };
+    return pieceMap[piece] || '';
+  };
+  
+  // Get piece image path based on piece symbol
+  const getPieceImage = (piece: string) => {
+    const pieceMap: { [key: string]: string } = {
+      'r': '/rook-black.svg', 
+      'n': '/knight-black.svg', 
+      'b': '/bishop-black.svg', 
+      'q': '/queen-black.svg', 
+      'k': '/king-black.svg', 
+      'p': '/pawn-black.svg',
+      'R': '/rook-white.svg', 
+      'N': '/knight-white.svg', 
+      'B': '/bishop-white.svg', 
+      'Q': '/queen-white.svg', 
+      'K': '/king-white.svg', 
+      'P': '/pawn-white.svg'
     };
     return pieceMap[piece] || '';
   };
@@ -428,16 +446,15 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                     className={squareClasses}
                   >
                     {piece && (
-                      <span 
+                      <img 
+                        src={getPieceImage(piece)} 
+                        alt={`${isWhitePiece(piece) ? 'White' : 'Black'} ${piece.toLowerCase()}`}
                         className={`
-                          chess-piece ${isWhitePiece(piece) ? 'white' : 'black'}
+                          chess-piece w-10 h-10
                           ${selectedSquare && selectedSquare === getSquareName(rowIndex, colIndex) ? 'opacity-70' : ''}
                           ${isAnimating && lastMove && lastMove[1] === getSquareName(rowIndex, colIndex) ? 'animate-scale-in' : ''}
-                          text-4xl
                         `}
-                      >
-                        {getPieceSymbol(piece)}
-                      </span>
+                      />
                     )}
                     
                     {/* File and rank labels */}
@@ -471,16 +488,15 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                     className={squareClasses}
                   >
                     {piece && (
-                      <span 
+                      <img 
+                        src={getPieceImage(piece)} 
+                        alt={`${isWhitePiece(piece) ? 'White' : 'Black'} ${piece.toLowerCase()}`}
                         className={`
-                          chess-piece ${isWhitePiece(piece) ? 'white' : 'black'}
+                          chess-piece w-10 h-10
                           ${selectedSquare && selectedSquare === getSquareName(rowIndex, colIndex) ? 'opacity-70' : ''}
                           ${isAnimating && lastMove && lastMove[1] === getSquareName(rowIndex, colIndex) ? 'animate-scale-in' : ''}
-                          text-4xl
                         `}
-                      >
-                        {getPieceSymbol(piece)}
-                      </span>
+                      />
                     )}
                     
                     {/* File and rank labels (flipped) */}

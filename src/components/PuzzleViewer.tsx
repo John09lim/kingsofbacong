@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -61,8 +60,8 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   };
 
   // Get turn text based on playerTurn value
-  const getTurnText = (playerTurn?: 'w' | 'b') => {
-    return playerTurn === 'b' ? "Black to Play" : "White to Play";
+  const getTurnText = (turn?: string) => {
+    return turn === 'b' ? "Black to Play" : "White to Play";
   };
 
   if (isLoading) {
