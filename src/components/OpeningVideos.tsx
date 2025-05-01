@@ -63,6 +63,42 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
         thumbnail: "https://i.ytimg.com/vi/CJ1nmfIYols/hqdefault.jpg",
         duration: "15:26",
         difficulty: "Intermediate"
+      },
+      {
+        id: "5",
+        title: "Ruy Lopez Chess Opening Explained in 10 Minutes [TRAPS Included]",
+        channel: "GM Igor Smirnov",
+        url: "https://www.youtube.com/watch?v=6YSfdCs5hUU",
+        thumbnail: "https://i.ytimg.com/vi/6YSfdCs5hUU/hqdefault.jpg",
+        duration: "10:47",
+        difficulty: "Beginner"
+      },
+      {
+        id: "6",
+        title: "Chess Openings: Ruy Lopez | Ideas, Theory, and Attacking Plans",
+        channel: "Chess Vibes",
+        url: "https://www.youtube.com/watch?v=sLbFm1nZ5B4",
+        thumbnail: "https://i.ytimg.com/vi/sLbFm1nZ5B4/hqdefault.jpg",
+        duration: "17:44",
+        difficulty: "Intermediate"
+      },
+      {
+        id: "7",
+        title: "Master the Marshall Attack | Chess Openings",
+        channel: "Saint Louis Chess Club",
+        url: "https://www.youtube.com/watch?v=ngbDaIFY1P0",
+        thumbnail: "https://i.ytimg.com/vi/ngbDaIFY1P0/hqdefault.jpg",
+        duration: "29:12",
+        difficulty: "Advanced"
+      },
+      {
+        id: "8",
+        title: "MAGNUS shows how to play the RUY LOPEZ opening",
+        channel: "ChessBase",
+        url: "https://www.youtube.com/watch?v=pHP3qP_y-TQ",
+        thumbnail: "https://i.ytimg.com/vi/pHP3qP_y-TQ/hqdefault.jpg",
+        duration: "14:32",
+        difficulty: "Advanced"
       }
     ],
     "Sicilian Defense": [
@@ -92,6 +128,24 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
         thumbnail: "https://i.ytimg.com/vi/rIO5326FgPE/hqdefault.jpg",
         duration: "28:54",
         difficulty: "Intermediate"
+      },
+      {
+        id: "4",
+        title: "Sicilian Defense ALL Variations Explained",
+        channel: "Daniel Naroditsky",
+        url: "https://www.youtube.com/watch?v=MYGSzNKnlK4",
+        thumbnail: "https://i.ytimg.com/vi/MYGSzNKnlK4/hqdefault.jpg", 
+        duration: "15:22",
+        difficulty: "Intermediate"
+      },
+      {
+        id: "5",
+        title: "Sicilian Defense: Najdorf Variation",
+        channel: "Chess Vibes",
+        url: "https://www.youtube.com/watch?v=vasSAeGSZ-k",
+        thumbnail: "https://i.ytimg.com/vi/vasSAeGSZ-k/hqdefault.jpg",
+        duration: "19:46",
+        difficulty: "Advanced"
       }
     ],
     "Queen's Gambit": [
@@ -111,6 +165,24 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
         url: "https://www.youtube.com/watch?v=uJOBnM9xbr8",
         thumbnail: "https://i.ytimg.com/vi/uJOBnM9xbr8/hqdefault.jpg",
         duration: "35:42",
+        difficulty: "Intermediate"
+      },
+      {
+        id: "3",
+        title: "Queen's Gambit Declined: Exchange Variation",
+        channel: "Saint Louis Chess Club",
+        url: "https://www.youtube.com/watch?v=vOHRDhBzxC0",
+        thumbnail: "https://i.ytimg.com/vi/vOHRDhBzxC0/hqdefault.jpg",
+        duration: "24:15",
+        difficulty: "Intermediate"
+      },
+      {
+        id: "4",
+        title: "Queen's Gambit Accepted: Main Line",
+        channel: "Chess Vibes",
+        url: "https://www.youtube.com/watch?v=sqKj7J9z5e8",
+        thumbnail: "https://i.ytimg.com/vi/sqKj7J9z5e8/hqdefault.jpg",
+        duration: "18:27",
         difficulty: "Intermediate"
       }
     ],
@@ -132,6 +204,24 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
         thumbnail: "https://i.ytimg.com/vi/aUqpZ4F-Eas/hqdefault.jpg",
         duration: "1:05:32",
         difficulty: "Advanced"
+      },
+      {
+        id: "3",
+        title: "How to Play the French Defense",
+        channel: "Chess.com",
+        url: "https://www.youtube.com/watch?v=Jq5Rev1wHjc",
+        thumbnail: "https://i.ytimg.com/vi/Jq5Rev1wHjc/hqdefault.jpg",
+        duration: "16:48",
+        difficulty: "Beginner"
+      },
+      {
+        id: "4",
+        title: "French Defense: Advance Variation",
+        channel: "Saint Louis Chess Club",
+        url: "https://www.youtube.com/watch?v=KgrjcDvfZEY",
+        thumbnail: "https://i.ytimg.com/vi/KgrjcDvfZEY/hqdefault.jpg",
+        duration: "22:35",
+        difficulty: "Intermediate"
       }
     ],
     "Caro-Kann Defense": [
@@ -151,6 +241,24 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
         url: "https://www.youtube.com/watch?v=G3QI-PbpCx8",
         thumbnail: "https://i.ytimg.com/vi/G3QI-PbpCx8/hqdefault.jpg",
         duration: "51:15",
+        difficulty: "Intermediate"
+      },
+      {
+        id: "3",
+        title: "Chess Opening Basics: Caro-Kann Defense",
+        channel: "Chess.com",
+        url: "https://www.youtube.com/watch?v=RJ8_qAF2lJo",
+        thumbnail: "https://i.ytimg.com/vi/RJ8_qAF2lJo/hqdefault.jpg",
+        duration: "14:27",
+        difficulty: "Beginner"
+      },
+      {
+        id: "4",
+        title: "Caro-Kann Defense: Advanced Variation",
+        channel: "Saint Louis Chess Club",
+        url: "https://www.youtube.com/watch?v=YIVj45-QuXY",
+        thumbnail: "https://i.ytimg.com/vi/YIVj45-QuXY/hqdefault.jpg",
+        duration: "26:19",
         difficulty: "Intermediate"
       }
     ],
@@ -172,6 +280,24 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
         thumbnail: "https://i.ytimg.com/vi/nbmECKKKCkM/hqdefault.jpg",
         duration: "27:36",
         difficulty: "Advanced"
+      },
+      {
+        id: "3",
+        title: "English Opening Theory",
+        channel: "Chess.com",
+        url: "https://www.youtube.com/watch?v=OxhkXGpLzCM",
+        thumbnail: "https://i.ytimg.com/vi/OxhkXGpLzCM/hqdefault.jpg",
+        duration: "19:44",
+        difficulty: "Intermediate"
+      },
+      {
+        id: "4",
+        title: "English Opening: Symmetrical Variation",
+        channel: "Saint Louis Chess Club",
+        url: "https://www.youtube.com/watch?v=m-fzVgM8h6s",
+        thumbnail: "https://i.ytimg.com/vi/m-fzVgM8h6s/hqdefault.jpg",
+        duration: "23:11",
+        difficulty: "Intermediate"
       }
     ],
     "Giuoco Piano": [
@@ -192,6 +318,24 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
         thumbnail: "https://i.ytimg.com/vi/5DHnHsoM7OI/hqdefault.jpg",
         duration: "24:41",
         difficulty: "Intermediate"
+      },
+      {
+        id: "3",
+        title: "Italian Game Theory",
+        channel: "Chess.com",
+        url: "https://www.youtube.com/watch?v=Z0j0RQrbEec",
+        thumbnail: "https://i.ytimg.com/vi/Z0j0RQrbEec/hqdefault.jpg",
+        duration: "15:38",
+        difficulty: "Beginner"
+      },
+      {
+        id: "4",
+        title: "Giuoco Piano: Main Line Analysis",
+        channel: "Saint Louis Chess Club",
+        url: "https://www.youtube.com/watch?v=XNoAha_JvHM",
+        thumbnail: "https://i.ytimg.com/vi/XNoAha_JvHM/hqdefault.jpg",
+        duration: "28:14",
+        difficulty: "Intermediate"
       }
     ],
     "Slav Defense": [
@@ -211,6 +355,24 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
         url: "https://www.youtube.com/watch?v=2MbvP93n1ME",
         thumbnail: "https://i.ytimg.com/vi/2MbvP93n1ME/hqdefault.jpg",
         duration: "51:56",
+        difficulty: "Intermediate"
+      },
+      {
+        id: "3",
+        title: "Slav Defense Theory",
+        channel: "Chess.com",
+        url: "https://www.youtube.com/watch?v=uJMwn58xrxk",
+        thumbnail: "https://i.ytimg.com/vi/uJMwn58xrxk/hqdefault.jpg",
+        duration: "16:22",
+        difficulty: "Beginner"
+      },
+      {
+        id: "4",
+        title: "Slav Defense: Main Line Analysis",
+        channel: "Saint Louis Chess Club",
+        url: "https://www.youtube.com/watch?v=L5Gl46JFBj8",
+        thumbnail: "https://i.ytimg.com/vi/L5Gl46JFBj8/hqdefault.jpg",
+        duration: "29:45",
         difficulty: "Intermediate"
       }
     ]
