@@ -5,9 +5,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { format, subDays } from 'date-fns';
-import { Calendar as CalendarIcon, Clock, CheckCircle2, X } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, CheckCircle2, X, Expand } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from 'react-router-dom';
 
 interface PuzzleCalendarProps {
   puzzleActivity?: Record<string, { count: number, solved: number, failed: number, time: number }>;
@@ -20,6 +21,7 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const navigate = useNavigate();
   
   // Generate sample activity data for the last 30 days if none provided
   const ensurePuzzleActivity = () => {
@@ -72,38 +74,53 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
     );
   };
 
+  // Handle expand button click to navigate to monthly calendar page
+  const handleExpandClick = () => {
+    navigate('/calendar');
+  };
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div>
-          <CardTitle>Weekly Calendar</CardTitle>
+          <CardTitle>Daily Calendar</CardTitle>
           <CardDescription>Your puzzle solving activity</CardDescription>
         </div>
-        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="h-8 w-8 p-0">
-              <CalendarIcon className="h-4 w-4" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <Calendar 
-              mode="single" 
-              selected={selectedDate} 
-              onSelect={(date) => {
-                setSelectedDate(date);
-                setCalendarOpen(false);
-              }}
-              className="p-3 pointer-events-auto"
-              components={{
-                Day: ({ date, ...props }) => (
-                  <div {...props}>
-                    {renderDay(date)}
-                  </div>
-                )
-              }}
-            />
-          </PopoverContent>
-        </Popover>
+        <div className="flex items-center gap-2">
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="h-8 w-8 p-0">
+                <CalendarIcon className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar 
+                mode="single" 
+                selected={selectedDate} 
+                onSelect={(date) => {
+                  setSelectedDate(date);
+                  setCalendarOpen(false);
+                }}
+                className="p-3 pointer-events-auto"
+                components={{
+                  Day: ({ date, ...props }) => (
+                    <div {...props}>
+                      {renderDay(date)}
+                    </div>
+                  )
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+          <Button 
+            variant="outline" 
+            className="h-8 w-8 p-0" 
+            onClick={handleExpandClick}
+            title="View monthly calendar"
+          >
+            <Expand className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {selectedActivity ? (

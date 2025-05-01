@@ -136,7 +136,7 @@ const RapidApiChessPuzzle = () => {
             </div>
           )}
           
-          <div className="w-full max-w-md">
+          <div className="w-full aspect-square max-w-md">
             <Chessboard 
               position={game.fen()} 
               onPieceDrop={onPieceDrop}
