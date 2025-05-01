@@ -1,8 +1,8 @@
 
 import { useCallback } from 'react';
 import { 
-  lichessService, 
-  LichessPuzzleData
+  LichessPuzzleData,
+  lichessService
 } from '@/services/lichessService';
 import { lichessApiService } from '@/services/lichessApiService';
 import { toast } from "@/hooks/use-toast";

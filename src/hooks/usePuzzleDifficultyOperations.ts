@@ -1,6 +1,7 @@
 
 import { useCallback } from 'react';
 import { 
+  LichessPuzzleData,
   lichessService
 } from '@/services/lichessService';
 import { lichessApiService } from '@/services/lichessApiService';

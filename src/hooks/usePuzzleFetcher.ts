@@ -2,8 +2,9 @@
 import { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { 
-  lichessService, 
-  LichessPuzzleData
+  LichessPuzzleData,
+  lichessService,
+  LichessPuzzleThemes
 } from '@/services/lichessService';
 import { lichessApiService } from '@/services/lichessApiService';
 import { showErrorToast } from '@/utils/puzzleHookUtils';
