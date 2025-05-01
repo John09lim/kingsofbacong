@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 
 export interface LichessUser {
@@ -61,7 +62,7 @@ export interface LichessPuzzleData {
     players: {
       white: LichessUser;
       black: LichessUser;
-    }[];
+    };
     clock: string;
     rated: boolean;
     pgn: string;
@@ -146,14 +147,45 @@ export const lichessService = {
       game: {
         id: "mockGame",
         perf: { key: "rapid", name: "Rapid" },
-        players: [
-          { name: "Player1", rating: 1600 }, 
-          { name: "Player2", rating: 1550 }
-        ],
+        players: {
+          white: { id: "player1", name: "Player1", rating: 1600, username: "player1" },
+          black: { id: "player2", name: "Player2", rating: 1550, username: "player2" }
+        },
         clock: "5+3",
         rated: true,
         pgn: "1. e4 e5 2. Nf3"
       }
     };
+  },
+  
+  // Add these new methods to fix the build errors
+  getNextPuzzle: async (): Promise<LichessPuzzleData | null> => {
+    try {
+      // For mock purposes, just return the daily puzzle
+      return await lichessService.getDailyPuzzle();
+    } catch (error) {
+      console.error("Error fetching next puzzle:", error);
+      return null;
+    }
+  },
+  
+  getRandomPuzzleByRating: async (rating: number): Promise<LichessPuzzleData | null> => {
+    try {
+      // Mock implementation that returns the daily puzzle with adjusted rating
+      const puzzle = await lichessService.getDailyPuzzle();
+      if (puzzle) {
+        return {
+          ...puzzle,
+          puzzle: {
+            ...puzzle.puzzle,
+            rating: rating
+          }
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error(`Error fetching puzzle with rating ${rating}:`, error);
+      return null;
+    }
   }
 };

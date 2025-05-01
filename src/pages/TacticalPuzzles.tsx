@@ -13,7 +13,6 @@ import {
   Sword, Target, Crosshair, Gauge, CheckCircle2,
   Loader2, RefreshCw, Info, Calendar, History, Activity
 } from "lucide-react";
-// import { usePuzzle } from "@/hooks/usePuzzle";
 import { useChessPuzzles } from "@/hooks/useChessPuzzles";
 import { toast } from "@/hooks/use-toast";
 import PuzzleViewer from "@/components/PuzzleViewer";
@@ -23,6 +22,7 @@ import PuzzleStats from "@/components/PuzzleStats";
 import PuzzleHistory from "@/components/PuzzleHistory";
 import PuzzleDifficultyDistribution from "@/components/PuzzleDifficultyDistribution";
 import { format } from 'date-fns';
+import PuzzleCalendar from '@/components/PuzzleCalendar';
 
 const TacticalPuzzles = () => {
   const [difficulty, setDifficulty] = useState(1200);
@@ -43,6 +43,7 @@ const TacticalPuzzles = () => {
   const [userRating, setUserRating] = useState(1200);
   const [isDashboardLoading, setIsDashboardLoading] = useState(false);
   const [isReversed, setIsReversed] = useState(true); // Default to reversed (attack) mode
+  const [puzzleActivity, setPuzzleActivity] = useState<Record<string, { count: number, solved: number, failed: number, time: number }>>({});
 
   // Sample rating history data
   const [ratingHistoryData, setRatingHistoryData] = useState([
@@ -144,6 +145,38 @@ const TacticalPuzzles = () => {
       localStorage.setItem('puzzleHistory', JSON.stringify(sampleHistory));
     }
     
+    // Load puzzle activity data
+    const storedActivity = localStorage.getItem('puzzleActivity');
+    if (storedActivity) {
+      setPuzzleActivity(JSON.parse(storedActivity));
+    } else {
+      // Initialize with some sample data for the past week
+      const sampleActivity: Record<string, { count: number, solved: number, failed: number, time: number }> = {};
+      const today = new Date();
+      
+      // Generate sample data for the past 30 days
+      for (let i = 0; i < 30; i++) {
+        const date = new Date();
+        date.setDate(today.getDate() - i);
+        const dateKey = format(date, 'yyyy-MM-dd');
+        
+        // More recent days have more activity
+        const count = Math.max(0, Math.floor(Math.random() * 10 * (1 - i/30)));
+        if (count > 0) {
+          const solved = Math.floor(count * 0.7); // 70% solved
+          sampleActivity[dateKey] = {
+            count, 
+            solved,
+            failed: count - solved,
+            time: Math.floor(count * (30 + Math.random() * 30)) // 30-60 seconds per puzzle
+          };
+        }
+      }
+      
+      setPuzzleActivity(sampleActivity);
+      localStorage.setItem('puzzleActivity', JSON.stringify(sampleActivity));
+    }
+    
     // Load puzzle stats
     if (dashboardData?.global) {
       const { global } = dashboardData;
@@ -160,7 +193,7 @@ const TacticalPuzzles = () => {
     }
   }, [dashboardData, userRating]);
 
-  // Handle puzzle solved
+  // Handle puzzle solved - update to track daily activity
   const handlePuzzleSolved = () => {
     if (puzzleData?.puzzle) {
       markPuzzleSolved(puzzleData.puzzle.id);
@@ -206,18 +239,47 @@ const TacticalPuzzles = () => {
         accuracy: Math.round(((prev.solved + 1) / (prev.attempts + 1)) * 100)
       }));
       
-      // Update rating history for today
-      const today = format(new Date(), 'MMM dd');
-      const updatedRatingHistory = [...ratingHistoryData];
-      const lastEntry = updatedRatingHistory[updatedRatingHistory.length - 1];
+      // Update puzzle activity for today's date
+      const today = format(new Date(), 'yyyy-MM-dd');
+      const updatedActivity = { ...puzzleActivity };
       
-      if (lastEntry.date === today) {
-        lastEntry.rating = userRating;
+      if (!updatedActivity[today]) {
+        updatedActivity[today] = { count: 1, solved: 1, failed: 0, time: newHistoryEntry.timeSpent };
       } else {
-        updatedRatingHistory.push({ date: today, rating: userRating });
+        updatedActivity[today].count += 1;
+        updatedActivity[today].solved += 1;
+        updatedActivity[today].time += newHistoryEntry.timeSpent;
       }
       
-      setRatingHistoryData(updatedRatingHistory);
+      setPuzzleActivity(updatedActivity);
+      localStorage.setItem('puzzleActivity', JSON.stringify(updatedActivity));
+    }
+  };
+
+  // Handle puzzle failed - update activity tracking
+  const handlePuzzleFailed = () => {
+    if (puzzleData?.puzzle) {
+      // Update puzzle activity for today's date
+      const today = format(new Date(), 'yyyy-MM-dd');
+      const updatedActivity = { ...puzzleActivity };
+      const timeSpent = Math.floor(Math.random() * 30) + 5; // Random time
+      
+      if (!updatedActivity[today]) {
+        updatedActivity[today] = { count: 1, solved: 0, failed: 1, time: timeSpent };
+      } else {
+        updatedActivity[today].count += 1;
+        updatedActivity[today].failed += 1;
+        updatedActivity[today].time += timeSpent;
+      }
+      
+      setPuzzleActivity(updatedActivity);
+      localStorage.setItem('puzzleActivity', JSON.stringify(updatedActivity));
+      
+      toast({
+        title: "Puzzle Failed",
+        description: "Don't worry, keep practicing!",
+        variant: "destructive",
+      });
     }
   };
 
@@ -395,6 +457,7 @@ const TacticalPuzzles = () => {
                     isLoading={isPuzzleLoading}
                     onGetNextPuzzle={handleGetNextPuzzle}
                     onSolved={handlePuzzleSolved}
+                    onFailed={handlePuzzleFailed}
                     isRefreshing={isRefreshing}
                     isReversed={isReversed}
                   />
@@ -758,38 +821,8 @@ const TacticalPuzzles = () => {
                 </CardContent>
               </Card>
               
-              <Card>
-                <CardHeader>
-                  <CardTitle>Weekly Calendar</CardTitle>
-                  <CardDescription>Your puzzle solving activity</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-7 gap-1">
-                    {Array(7).fill(0).map((_, dayIndex) => {
-                      // Generate random number for each day's puzzles
-                      const puzzleCount = Math.floor(Math.random() * 10);
-                      const opacity = puzzleCount === 0 ? "opacity-20" : puzzleCount < 3 ? "opacity-40" : 
-                        puzzleCount < 6 ? "opacity-70" : "opacity-100";
-                      
-                      return (
-                        <div key={dayIndex} className="flex flex-col items-center">
-                          <div className="text-xs text-gray-500 mb-1">
-                            {['S', 'M', 'T', 'W', 'T', 'F', 'S'][dayIndex]}
-                          </div>
-                          <div 
-                            className={`w-8 h-8 bg-chess-deep-red ${opacity} rounded-md flex items-center justify-center text-white text-xs`}
-                          >
-                            {puzzleCount}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="mt-4 text-xs text-center text-gray-500">
-                    43 puzzles solved this week
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Replace the existing calendar with our enhanced PuzzleCalendar component */}
+              <PuzzleCalendar puzzleActivity={puzzleActivity} />
             </div>
           </div>
         </div>

@@ -49,9 +49,13 @@ export const useChessPuzzleApi = () => {
       );
       
       // Add the color property to the puzzle data
+      // Determine color based on FEN if possible, defaulting to white
+      const fen = response.data[0]?.fen || '';
+      const color = fen.includes(' w ') ? 'white' : fen.includes(' b ') ? 'black' : 'white';
+      
       const puzzleWithColor = {
         ...response.data[0],
-        color: 'white' // Default to white, adjust if API provides this info
+        color: color
       };
       
       setPuzzle(puzzleWithColor);
