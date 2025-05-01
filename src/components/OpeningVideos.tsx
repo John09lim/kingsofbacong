@@ -375,11 +375,34 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
         duration: "29:45",
         difficulty: "Intermediate"
       }
+    ],
+    // Adding fallback for any missing openings
+    "Default": [
+      {
+        id: "default1",
+        title: "Chess Opening Fundamentals",
+        channel: "GothamChess",
+        url: "https://www.youtube.com/watch?v=21L45Qo6EIY",
+        thumbnail: "https://i.ytimg.com/vi/21L45Qo6EIY/hqdefault.jpg",
+        duration: "15:30",
+        difficulty: "Beginner"
+      },
+      {
+        id: "default2",
+        title: "Top 10 Chess Openings for Beginners",
+        channel: "Chess.com",
+        url: "https://www.youtube.com/watch?v=8IlJ3v8I4Z8",
+        thumbnail: "https://i.ytimg.com/vi/8IlJ3v8I4Z8/hqdefault.jpg",
+        duration: "22:45",
+        difficulty: "Beginner"
+      }
     ]
   };
 
-  // Prepare to generate enough videos to match the count
-  let selectedVideos = videosByOpening[openingName] || [];
+  // First, check if we have videos for the requested opening name
+  let selectedVideos = videosByOpening[openingName] || videosByOpening["Default"];
+  
+  // Make a copy of the original videos
   const baseVideos = [...selectedVideos];
   
   // If we need more videos than are predefined, generate additional ones
@@ -391,13 +414,15 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
     // Determine which part number we're on
     const partNumber = Math.floor(selectedVideos.length / baseVideos.length) + 2;
     
-    // Create a "new" video based on the base video but with modified properties
-    selectedVideos.push({
-      ...baseVideo,
-      id: `${selectedVideos.length + 1}`,
-      title: `${baseVideo.title} - Part ${partNumber}`,
-      duration: `${Math.floor(10 + Math.random() * 40)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
-    });
+    // Create a "new" video based on the base video with modified properties
+    if (baseVideo && baseVideo.title) {
+      selectedVideos.push({
+        ...baseVideo,
+        id: `${selectedVideos.length + 1}`,
+        title: `${baseVideo.title} - Part ${partNumber}`,
+        duration: `${Math.floor(10 + Math.random() * 40)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+      });
+    }
   }
   
   // Return just the requested count
