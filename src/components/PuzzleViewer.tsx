@@ -14,6 +14,7 @@ interface PuzzleViewerProps {
   isLoading: boolean;
   onGetNextPuzzle: () => void;
   onSolved: () => void;
+  onFailed?: () => void;
   isRefreshing?: boolean;
   isReversed?: boolean;
 }
@@ -23,6 +24,7 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
   isLoading,
   onGetNextPuzzle,
   onSolved,
+  onFailed,
   isRefreshing = false,
   isReversed = true // Set to true by default for attack mode
 }) => {
@@ -36,6 +38,9 @@ const PuzzleViewer: React.FC<PuzzleViewerProps> = ({
       onSolved();
     } else {
       setFailedAttempts(prev => prev + 1);
+      if (onFailed) {
+        onFailed();
+      }
     }
   };
   

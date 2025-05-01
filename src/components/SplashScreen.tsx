@@ -1,15 +1,19 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-const SplashScreen = ({ finishLoading }: { finishLoading: () => void }) => {
+const SplashScreen = () => {
+  const [isVisible, setIsVisible] = useState(true);
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      finishLoading();
+      setIsVisible(false);
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [finishLoading]);
+  }, []);
+
+  if (!isVisible) return null;
 
   return (
     <motion.div 
