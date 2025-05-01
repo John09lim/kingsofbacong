@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,26 +56,23 @@ const MonthlyCalendar = () => {
   const formattedSelectedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '';
   const selectedActivity = formattedSelectedDate ? puzzleActivity[formattedSelectedDate] : undefined;
 
-  // Custom day rendering to show activity
+  // Custom day rendering to show activity - make ALL dates clickable
   const renderDay = (day: Date) => {
     const dateString = format(day, 'yyyy-MM-dd');
     const dayActivity = puzzleActivity[dateString];
     
-    if (!dayActivity || dayActivity.count === 0) {
-      return <div className="relative w-full h-full flex items-center justify-center">
-        {day.getDate()}
-      </div>;
-    }
-    
-    // Calculate color intensity based on puzzle count (1-10)
-    const intensity = Math.min(100, (dayActivity.count / 10) * 100);
-    const bgColor = `rgba(152, 27, 27, ${intensity/100})`;
+    // Calculate color intensity based on puzzle count (0-10)
+    const count = dayActivity?.count || 0;
+    const intensity = Math.min(100, (count / 10) * 100);
+    const bgColor = count > 0 ? `rgba(152, 27, 27, ${intensity/100})` : 'transparent';
     
     return (
-      <div className="relative w-full h-full flex items-center justify-center">
+      <div className="relative w-full h-full flex items-center justify-center cursor-pointer">
         {day.getDate()}
-        <div className="absolute bottom-0.5 left-1/2 transform -translate-x-1/2 w-4 h-1.5 rounded-sm" 
-             style={{ backgroundColor: bgColor }}></div>
+        <div 
+          className="absolute bottom-0.5 left-1/2 transform -translate-x-1/2 w-4 h-1.5 rounded-sm" 
+          style={{ backgroundColor: bgColor }}
+        ></div>
       </div>
     );
   };
@@ -121,7 +117,9 @@ const MonthlyCalendar = () => {
                 <Calendar
                   mode="single"
                   selected={selectedDate}
-                  onSelect={setSelectedDate}
+                  onSelect={(date) => {
+                    if (date) setSelectedDate(date);
+                  }}
                   month={currentDate}
                   onMonthChange={setCurrentDate}
                   className="p-0 pointer-events-auto w-full text-center"

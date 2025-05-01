@@ -209,17 +209,7 @@ const Auth = () => {
           </div>
         </form>
         
-        {!isSignUp && (
-          <div className="text-center mt-4">
-            <button 
-              type="button"
-              onClick={handleToggleMode}
-              className="text-sm text-chess-deep-red hover:text-chess-dark-maroon"
-            >
-              Need an account? Create one
-            </button>
-          </div>
-        )}
+        {/* Removed the "Need an account? Create one" button */}
       </div>
     </div>
   );

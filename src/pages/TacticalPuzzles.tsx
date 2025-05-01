@@ -402,6 +402,32 @@ const TacticalPuzzles = () => {
     }
   ];
 
+  // This is the section with the type error - we need to transform the players array to the correct format
+  const mockPuzzleData = {
+    puzzle: {
+      id: "V6iSv",
+      fen: "r1bq1rk1/pp2bppp/2n2n2/2pp4/3P4/2N2NP1/PP2PPBP/R1BQ1RK1 w - - 4 9",
+      rating: 1500,
+      themes: ["advantage", "middlegame", "short"],
+      solution: ["d4c5", "f6e4", "g2e4", "e7c5"],
+      plays: 1256,
+      initialPly: 16,
+      playerTurn: "w" as "w" | "b"
+    },
+    game: {
+      id: "X7txx",
+      perf: { key: "rapid", name: "Rapid" },
+      // Fix the players property to match the expected type
+      players: { 
+        white: { name: "DrNykterstein", rating: 2861 },
+        black: { name: "LiquidDream", rating: 2650 }
+      },
+      clock: "10+0",
+      rated: true,
+      pgn: "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3"
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />

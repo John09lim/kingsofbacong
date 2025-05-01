@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -9,10 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, BookOpen, Video, ChevronRight } from "lucide-react";
 import OpeningLessonModal from '@/components/OpeningLessonModal';
+import OpeningVideos from '@/components/OpeningVideos';
 
 // Separate the opening card as it's used multiple times
 const OpeningCard = ({ opening }) => {
   const [showLessons, setShowLessons] = useState(false);
+  const [showVideos, setShowVideos] = useState(false);
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all flex flex-col h-full">
@@ -57,7 +58,11 @@ const OpeningCard = ({ opening }) => {
             <BookOpen size={16} className="mr-2" />
             {opening.lessonsCount} Lessons
           </Button>
-          <Button variant="outline" className="flex-1">
+          <Button 
+            variant="outline" 
+            className="flex-1"
+            onClick={() => setShowVideos(true)}
+          >
             <Video size={16} className="mr-2" />
             {opening.videoCount} Videos
           </Button>
@@ -70,6 +75,14 @@ const OpeningCard = ({ opening }) => {
         lessonCount={opening.lessonsCount}
         isOpen={showLessons}
         onClose={() => setShowLessons(false)}
+      />
+
+      {/* Videos Modal */}
+      <OpeningVideos
+        openingName={opening.name}
+        videoCount={opening.videoCount}
+        isOpen={showVideos}
+        onClose={() => setShowVideos(false)}
       />
     </Card>
   );

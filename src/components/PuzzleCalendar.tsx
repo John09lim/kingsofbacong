@@ -50,26 +50,23 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
   const formattedSelectedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '';
   const selectedActivity = formattedSelectedDate ? activity[formattedSelectedDate] : undefined;
 
-  // Create a customized day render function
+  // Create a customized day render function that makes ALL days clickable
   const renderDay = (day: Date) => {
     const dateString = format(day, 'yyyy-MM-dd');
     const dayActivity = activity[dateString];
     
-    if (!dayActivity || dayActivity.count === 0) {
-      return <div className="relative w-full h-full flex items-center justify-center">
-        {day.getDate()}
-      </div>;
-    }
-    
-    // Calculate color intensity based on puzzle count (1-10)
-    const intensity = Math.min(100, (dayActivity.count / 10) * 100);
-    const bgColor = `rgba(152, 27, 27, ${intensity/100})`;
+    // Calculate color intensity based on puzzle count (0-10)
+    const count = dayActivity?.count || 0;
+    const intensity = Math.min(100, (count / 10) * 100);
+    const bgColor = count > 0 ? `rgba(152, 27, 27, ${intensity/100})` : 'transparent';
     
     return (
-      <div className="relative w-full h-full flex items-center justify-center">
+      <div className="relative w-full h-full flex items-center justify-center cursor-pointer">
         {day.getDate()}
-        <div className="absolute bottom-0.5 left-1/2 transform -translate-x-1/2 w-4 h-1.5 rounded-sm" 
-             style={{ backgroundColor: bgColor }}></div>
+        <div 
+          className="absolute bottom-0.5 left-1/2 transform -translate-x-1/2 w-4 h-1.5 rounded-sm" 
+          style={{ backgroundColor: bgColor }}
+        ></div>
       </div>
     );
   };
@@ -98,8 +95,10 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
                 mode="single" 
                 selected={selectedDate} 
                 onSelect={(date) => {
-                  setSelectedDate(date);
-                  setCalendarOpen(false);
+                  if (date) {
+                    setSelectedDate(date);
+                    setCalendarOpen(false);
+                  }
                 }}
                 className="p-3 pointer-events-auto"
                 components={{
