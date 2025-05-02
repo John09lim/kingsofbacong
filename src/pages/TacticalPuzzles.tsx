@@ -402,7 +402,7 @@ const TacticalPuzzles = () => {
     }
   ];
 
-  // This is the section with the type error - we need to transform the players array to the correct format
+  // This is the section with the type error - we need to transform the players structure
   const mockPuzzleData = {
     puzzle: {
       id: "V6iSv",
@@ -609,7 +609,7 @@ const TacticalPuzzles = () => {
                 
                 <TabsContent value="themes" className="mt-0">
                   <PuzzleThemeSelector 
-                    themes={themesData || []}
+                    themes={themesData}
                     solvedCountByTheme={solvedCountByTheme}
                     isLoading={isThemesLoading}
                     onSelectTheme={handleSelectTheme}
