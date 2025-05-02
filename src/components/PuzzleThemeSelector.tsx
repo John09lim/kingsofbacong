@@ -7,7 +7,7 @@ import { Target, CheckCircle2 } from "lucide-react";
 import { LichessPuzzleThemes } from '@/services/lichessService';
 
 interface PuzzleThemeSelectorProps {
-  themes: LichessPuzzleThemes[];
+  themes: LichessPuzzleThemes | null;
   solvedCountByTheme: Record<string, number>;
   isLoading: boolean;
   onSelectTheme: (theme: string) => void;
@@ -46,7 +46,14 @@ const PuzzleThemeSelector: React.FC<PuzzleThemeSelectorProps> = ({
     { key: 'sacrifice', name: 'Sacrifice', description: 'Give up material for an advantage' },
   ];
 
-  const displayThemes = themes.length > 0 ? themes : defaultThemes;
+  // Convert LichessPuzzleThemes to our display format or use defaults
+  const displayThemes = themes && Object.keys(themes.themes).length > 0
+    ? Object.entries(themes.themes).map(([key, name]) => ({
+        key,
+        name,
+        description: `Puzzles featuring ${key} tactical patterns.`
+      }))
+    : defaultThemes;
 
   return (
     <Card>
