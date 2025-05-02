@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -403,7 +402,7 @@ const TacticalPuzzles = () => {
     }
   ];
 
-  // This is the section with the type error - we need to transform the players structure
+  // Fix the structure of mockPuzzleData to match LichessPuzzleData interface
   const mockPuzzleData = {
     puzzle: {
       id: "V6iSv",
