@@ -412,13 +412,12 @@ const TacticalPuzzles = () => {
       solution: ["d4c5", "f6e4", "g2e4", "e7c5"],
       plays: 1256,
       initialPly: 16,
-      playerTurn: "w" as "w" | "b"
+      playerTurn: "w"
     },
     game: {
       id: "X7txx",
       perf: { key: "rapid", name: "Rapid" },
-      // Fix the players property to match the expected type
-      players: { 
+      players: {
         white: { name: "DrNykterstein", rating: 2861 },
         black: { name: "LiquidDream", rating: 2650 }
       },

@@ -35,6 +35,8 @@ export const usePuzzleThemeOperations = ({
           const randomIndex = Math.floor(Math.random() * themePuzzles.length);
           const puzzleId = themePuzzles[randomIndex].id;
           setCurrentPuzzleId(puzzleId);
+          
+          // Get the puzzle data in the expected format
           return await lichessApiService.getPuzzleById(puzzleId);
         }
       }

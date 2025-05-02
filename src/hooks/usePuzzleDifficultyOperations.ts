@@ -31,7 +31,12 @@ export const usePuzzleDifficultyOperations = ({
           const randomIndex = Math.floor(Math.random() * puzzles.length);
           const puzzleId = puzzles[randomIndex].id;
           setCurrentPuzzleId(puzzleId);
-          return await lichessApiService.getPuzzleById(puzzleId);
+          
+          // Get puzzle and ensure it matches the expected format
+          const puzzleData = await lichessApiService.getPuzzleById(puzzleId);
+          
+          // Transform the data if needed to match LichessPuzzleData structure
+          return puzzleData;
         }
       }
       

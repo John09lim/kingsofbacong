@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { chessPuzzlesService, ChessPuzzle, adaptToLichessPuzzleFormat } from '@/services/chessPuzzlesService';
 import { toast } from '@/hooks/use-toast';
+import { LichessPuzzleThemes } from '@/services/lichessService';
 
 interface UseChessPuzzlesOptions {
   enabled?: boolean;
@@ -61,7 +62,7 @@ export const useChessPuzzles = (options: UseChessPuzzlesOptions = {}) => {
         // Get a sample of puzzles to extract themes
         const response = await chessPuzzlesService.getPuzzles({ count: 10 });
         if (!response.puzzles || response.puzzles.length === 0) {
-          return [];
+          return null;
         }
         
         // Extract unique themes from all puzzles
@@ -72,15 +73,27 @@ export const useChessPuzzles = (options: UseChessPuzzlesOptions = {}) => {
           }
         });
         
-        // Convert to the format expected by the PuzzleThemeSelector component
-        return Array.from(themeSet).map(theme => ({
-          key: theme,
-          name: theme.charAt(0).toUpperCase() + theme.slice(1),
-          description: `Puzzles featuring ${theme} tactical patterns.`
-        }));
+        // Convert to the format expected by LichessPuzzleThemes
+        const result: LichessPuzzleThemes = {
+          themes: {},
+          categories: {}
+        };
+        
+        // Convert the set of themes to an object structure
+        Array.from(themeSet).forEach(theme => {
+          result.themes[theme] = theme.charAt(0).toUpperCase() + theme.slice(1);
+        });
+        
+        // Group some themes by category for display purposes
+        result.categories = {
+          "tactics": Array.from(themeSet).slice(0, Math.min(5, themeSet.size)),
+          "endgame": Array.from(themeSet).slice(Math.min(5, themeSet.size), Math.min(10, themeSet.size))
+        };
+        
+        return result;
       } catch (error) {
         console.error('Error fetching puzzle themes:', error);
-        return [];
+        return null;
       }
     },
     enabled: enabled,
