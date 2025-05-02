@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area"; 
@@ -15,6 +14,7 @@ interface OpeningVideo {
   thumbnail?: string;
   duration?: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  description?: string;
 }
 
 interface OpeningVideosProps {
@@ -30,75 +30,123 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
     "Ruy Lopez": [
       {
         id: "1",
-        title: "Learn The Ruy Lopez Opening | 10-Minute Chess Openings",
-        channel: "GothamChess",
-        url: "https://www.youtube.com/watch?v=QxQy7MMGiGQ",
-        thumbnail: "https://i.ytimg.com/vi/QxQy7MMGiGQ/hqdefault.jpg",
-        duration: "10:12",
-        difficulty: "Beginner"
+        title: "Ruy Lopez Chess Opening Explained in 10 Minutes [TRAPS Included]",
+        channel: "GM Igor Smirnov",
+        url: "https://www.youtube.com/watch?v=xD0iTgHMQVQ",
+        thumbnail: "https://i.ytimg.com/vi/xD0iTgHMQVQ/hqdefault.jpg",
+        duration: "10:00",
+        difficulty: "Beginner",
+        description: "GM Igor Smirnov provides a concise overview of the Ruy Lopez, including common traps."
       },
       {
         id: "2",
-        title: "Ruy Lopez | Complete Chess Opening Guide",
-        channel: "Hanging Pawns",
-        url: "https://www.youtube.com/watch?v=yfkzh3fzBNE",
-        thumbnail: "https://i.ytimg.com/vi/yfkzh3fzBNE/hqdefault.jpg",
-        duration: "34:11",
-        difficulty: "Intermediate"
+        title: "Chess Openings: Ruy Lopez | Ideas, Theory, and Attacking Plans",
+        channel: "Chess Talk",
+        url: "https://www.youtube.com/watch?v=IQrtrPvU3bQ",
+        thumbnail: "https://i.ytimg.com/vi/IQrtrPvU3bQ/hqdefault.jpg",
+        duration: "15:30",
+        difficulty: "Intermediate",
+        description: "An in-depth look at the Ruy Lopez's key ideas and strategies."
       },
       {
         id: "3",
-        title: "The Ruy Lopez Opening: Step by Step",
-        channel: "Daniel Naroditsky",
-        url: "https://www.youtube.com/watch?v=RG4IWjQ6bf0",
-        thumbnail: "https://i.ytimg.com/vi/RG4IWjQ6bf0/hqdefault.jpg",
-        duration: "49:27",
-        difficulty: "Intermediate"
+        title: "Ruy Lopez Opening Explained: Key Strategies & Moves",
+        channel: "Chess Academy",
+        url: "https://www.youtube.com/watch?v=fm4YVM2K6Hk",
+        thumbnail: "https://i.ytimg.com/vi/fm4YVM2K6Hk/hqdefault.jpg",
+        duration: "20:15",
+        difficulty: "Intermediate",
+        description: "A detailed explanation of the Ruy Lopez opening's main strategies."
       },
       {
         id: "4",
-        title: "How to Play the Berlin Defense | Chess Opening Tutorial",
-        channel: "Chess.com",
-        url: "https://www.youtube.com/watch?v=CJ1nmfIYols",
-        thumbnail: "https://i.ytimg.com/vi/CJ1nmfIYols/hqdefault.jpg",
-        duration: "15:26",
-        difficulty: "Intermediate"
+        title: "Learn the Ruy Lopez and Relax Chess Opening Tutorial ASMR",
+        channel: "Chess ASMR",
+        url: "https://www.youtube.com/watch?v=5N2IX72pYPs",
+        thumbnail: "https://i.ytimg.com/vi/5N2IX72pYPs/hqdefault.jpg",
+        duration: "25:40",
+        difficulty: "Beginner",
+        description: "A beginner-friendly tutorial presented in a relaxing ASMR format."
       },
       {
         id: "5",
-        title: "Ruy Lopez Chess Opening Explained in 10 Minutes [TRAPS Included]",
-        channel: "GM Igor Smirnov",
-        url: "https://www.youtube.com/watch?v=6YSfdCs5hUU",
-        thumbnail: "https://i.ytimg.com/vi/6YSfdCs5hUU/hqdefault.jpg",
-        duration: "10:47",
-        difficulty: "Beginner"
+        title: "The Ruy Lopez Opening Chess Move",
+        channel: "Chess Basics",
+        url: "https://www.youtube.com/watch?v=fcne7r5bAIc",
+        thumbnail: "https://i.ytimg.com/vi/fcne7r5bAIc/hqdefault.jpg",
+        duration: "5:20",
+        difficulty: "Beginner",
+        description: "A quick demonstration of the Ruy Lopez opening move."
       },
       {
         id: "6",
-        title: "Chess Openings: Ruy Lopez | Ideas, Theory, and Attacking Plans",
-        channel: "Chess Vibes",
-        url: "https://www.youtube.com/watch?v=sLbFm1nZ5B4",
-        thumbnail: "https://i.ytimg.com/vi/sLbFm1nZ5B4/hqdefault.jpg",
-        duration: "17:44",
-        difficulty: "Intermediate"
+        title: "Chess Openings: Ruy Lopez • Free Chess Videos",
+        channel: "Lichess",
+        url: "https://www.youtube.com/watch?v=w5w1f7U4qV8",
+        thumbnail: "https://i.ytimg.com/vi/w5w1f7U4qV8/hqdefault.jpg",
+        duration: "18:25",
+        difficulty: "Beginner",
+        description: "An introductory video covering common themes in the Ruy Lopez."
       },
       {
         id: "7",
-        title: "Master the Marshall Attack | Chess Openings",
-        channel: "Saint Louis Chess Club",
-        url: "https://www.youtube.com/watch?v=ngbDaIFY1P0",
-        thumbnail: "https://i.ytimg.com/vi/ngbDaIFY1P0/hqdefault.jpg",
-        duration: "29:12",
-        difficulty: "Advanced"
+        title: "Ruy Lopez Chess Opening TRAP",
+        channel: "Chess Traps",
+        url: "https://www.youtube.com/watch?v=OognTEQttvM",
+        thumbnail: "https://i.ytimg.com/vi/OognTEQttvM/hqdefault.jpg",
+        duration: "12:30",
+        difficulty: "Intermediate",
+        description: "Learn a specific trap within the Ruy Lopez to catch your opponents off guard."
       },
       {
         id: "8",
-        title: "MAGNUS shows how to play the RUY LOPEZ opening",
+        title: "Ruy Lopez Opening Theory",
         channel: "ChessBase",
-        url: "https://www.youtube.com/watch?v=pHP3qP_y-TQ",
-        thumbnail: "https://i.ytimg.com/vi/pHP3qP_y-TQ/hqdefault.jpg",
-        duration: "14:32",
-        difficulty: "Advanced"
+        url: "https://www.youtube.com/playlist?list=PLssNbVBYrGcC8gwt8Q-dIJ_bBKihu8sT7",
+        thumbnail: "https://i.ytimg.com/vi/PLssNbVBYrGcC8gwt8Q-dIJ_bBKihu8sT7/hqdefault.jpg",
+        duration: "Playlist",
+        difficulty: "Advanced",
+        description: "A comprehensive playlist covering various aspects of the Ruy Lopez."
+      },
+      {
+        id: "9",
+        title: "Ruy Lopez - Ideas, Principles and Common Variations",
+        channel: "Chess Fundamentals",
+        url: "https://www.youtube.com/watch?v=41rPFNY_CAY",
+        thumbnail: "https://i.ytimg.com/vi/41rPFNY_CAY/hqdefault.jpg",
+        duration: "35:20",
+        difficulty: "Intermediate",
+        description: "Explores the fundamental ideas and common variations in the Ruy Lopez."
+      },
+      {
+        id: "10",
+        title: "Ruy Lopez - Berlin Defense",
+        channel: "Chess Openings",
+        url: "https://www.youtube.com/watch?v=41rPFNY_CAY",
+        thumbnail: "https://i.ytimg.com/vi/41rPFNY_CAY/hqdefault.jpg",
+        duration: "28:15",
+        difficulty: "Advanced",
+        description: "Focuses on the Berlin Defense variation within the Ruy Lopez."
+      },
+      {
+        id: "11",
+        title: "MAGNUS shows how to play the RUY LOPEZ opening",
+        channel: "Chess Champions",
+        url: "https://www.youtube.com/watch?v=GN7lp9V0szA",
+        thumbnail: "https://i.ytimg.com/vi/GN7lp9V0szA/hqdefault.jpg",
+        duration: "24:45",
+        difficulty: "Advanced",
+        description: "World Champion Magnus Carlsen demonstrates his approach to the Ruy Lopez."
+      },
+      {
+        id: "12",
+        title: "Magnus Carlsen's favorite Opening: Ruy Lopez",
+        channel: "Chess Analysis",
+        url: "https://www.youtube.com/watch?v=csJKauwbYFk",
+        thumbnail: "https://i.ytimg.com/vi/csJKauwbYFk/hqdefault.jpg",
+        duration: "30:10",
+        difficulty: "Advanced",
+        description: "An analysis of why the Ruy Lopez is favored by Magnus Carlsen."
       }
     ],
     "Sicilian Defense": [
@@ -482,8 +530,11 @@ const OpeningVideos: React.FC<OpeningVideosProps> = ({
                 
                 <CardContent className="p-4">
                   <h3 className="font-medium text-sm line-clamp-2 mb-1">{video.title}</h3>
-                  <p className="text-xs text-gray-500 mb-2">{video.channel}</p>
-                  <div className="flex justify-between items-center">
+                  <p className="text-xs text-gray-500 mb-1">{video.channel}</p>
+                  {video.description && (
+                    <p className="text-xs text-gray-600 line-clamp-2 mb-2">{video.description}</p>
+                  )}
+                  <div className="flex justify-between items-center mt-2">
                     <Badge variant="outline" className={`
                       ${video.difficulty === "Beginner" ? "bg-green-50 text-green-700" : 
                        video.difficulty === "Intermediate" ? "bg-blue-50 text-blue-700" : 
