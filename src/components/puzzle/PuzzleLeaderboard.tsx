@@ -17,6 +17,22 @@ interface PuzzleLeaderboardProps {
 }
 
 const PuzzleLeaderboard: React.FC<PuzzleLeaderboardProps> = ({ leaderboard }) => {
+  // Function to get country flag emoji
+  const getCountryFlag = (countryCode: string): string => {
+    // Simple implementation - convert country name to emoji
+    const countryToFlag: Record<string, string> = {
+      "Norway": "🇳🇴",
+      "USA": "🇺🇸",
+      "France": "🇫🇷",
+      "China": "🇨🇳",
+      "Russia": "🇷🇺",
+      "Netherlands": "🇳🇱",
+      "Azerbaijan": "🇦🇿"
+    };
+    
+    return countryToFlag[countryCode] || "🏳️";
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -42,7 +58,10 @@ const PuzzleLeaderboard: React.FC<PuzzleLeaderboardProps> = ({ leaderboard }) =>
             <div key={player.rank} className={`grid grid-cols-12 px-6 py-2 text-sm hover:bg-gray-50 
               ${player.rank <= 3 ? 'bg-amber-50' : ''}`}>
               <div className="col-span-1 font-medium">{player.rank}</div>
-              <div className="col-span-4 font-medium truncate">{player.name}</div>
+              <div className="col-span-4 font-medium truncate flex items-center gap-1">
+                <span className="mr-1">{getCountryFlag(player.country)}</span>
+                {player.name}
+              </div>
               <div className="col-span-2">{player.rating}</div>
               <div className="col-span-3">{player.solved}</div>
               <div className="col-span-2 flex items-center">
