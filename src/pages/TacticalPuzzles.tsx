@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -418,8 +419,14 @@ const TacticalPuzzles = () => {
       id: "X7txx",
       perf: { key: "rapid", name: "Rapid" },
       players: {
-        white: { name: "DrNykterstein", rating: 2861 },
-        black: { name: "LiquidDream", rating: 2650 }
+        white: { 
+          name: "DrNykterstein", 
+          rating: 2861 
+        },
+        black: { 
+          name: "LiquidDream", 
+          rating: 2650 
+        }
       },
       clock: "10+0",
       rated: true,
