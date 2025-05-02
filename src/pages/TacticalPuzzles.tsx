@@ -23,6 +23,11 @@ import PuzzleHistory from "@/components/PuzzleHistory";
 import PuzzleDifficultyDistribution from "@/components/PuzzleDifficultyDistribution";
 import { format } from 'date-fns';
 import PuzzleCalendar from '@/components/PuzzleCalendar';
+import DailyPuzzlesList from '@/components/puzzle/DailyPuzzlesList';
+import PuzzleCourses from '@/components/puzzle/PuzzleCourses';
+import PuzzleLeaderboard from '@/components/puzzle/PuzzleLeaderboard';
+import PuzzleGeneratorCard from '@/components/puzzle/PuzzleGeneratorCard';
+import UserPuzzleStats from '@/components/puzzle/UserPuzzleStats';
 
 const TacticalPuzzles = () => {
   const [difficulty, setDifficulty] = useState(1200);
@@ -495,122 +500,22 @@ const TacticalPuzzles = () => {
                 </TabsContent>
                 
                 <TabsContent value="generator" className="mt-0">
-                  <Card>
-                    <CardHeader className="pb-4">
-                      <CardTitle>Puzzle Generator</CardTitle>
-                      <CardDescription>Start solving puzzles tailored to your level</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pb-4">
-                      <div className="mb-6">
-                        <div className="flex justify-between mb-2">
-                          <span className="font-medium">Difficulty: {difficulty} Elo</span>
-                          <span className="text-sm text-gray-500">
-                            {difficulty < 1400 ? 'Beginner' : difficulty < 1800 ? 'Intermediate' : 'Advanced'}
-                          </span>
-                        </div>
-                        <div className="px-4">
-                          <Slider
-                            defaultValue={[1200]}
-                            value={[difficulty]}
-                            onValueChange={(value) => setDifficulty(value[0])}
-                            min={800}
-                            max={2400}
-                            step={50}
-                            className="mb-4"
-                          />
-                        </div>
-                        <div className="flex justify-between text-sm text-gray-500">
-                          <span>Easy</span>
-                          <span>Medium</span>
-                          <span>Hard</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <Button 
-                          className="flex-1 bg-chess-deep-red hover:bg-chess-dark-maroon"
-                          onClick={handleStartPuzzleByDifficulty}
-                          disabled={isRefreshing}
-                        >
-                          {isRefreshing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
-                          Start Puzzle
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          className="flex-1"
-                          onClick={() => {
-                            toast({
-                              title: "Puzzle Rush",
-                              description: "Solve as many puzzles as you can in 5 minutes! Coming soon.",
-                            });
-                          }}
-                        >
-                          <Timer className="mr-2 h-4 w-4" />
-                          Puzzle Rush
-                        </Button>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t pt-4">
-                      <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <div className="flex items-center gap-2">
-                          <Trophy className="h-5 w-5 text-amber-500" />
-                          <span className="text-sm">{solvedCount} puzzles solved</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <Badge variant="outline" className="bg-green-50">
-                            <TrendingUp className="h-3 w-3 mr-1" />
-                            <span>+{puzzleStats.ratingDelta} rating today</span>
-                          </Badge>
-                          <Badge variant="outline" className="bg-amber-50">
-                            <Star className="h-3 w-3 mr-1 text-amber-500" />
-                            <span>{puzzleStats.streak} day streak</span>
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardFooter>
-                  </Card>
+                  <PuzzleGeneratorCard 
+                    difficulty={difficulty}
+                    setDifficulty={setDifficulty}
+                    solvedCount={solvedCount}
+                    puzzleStats={puzzleStats}
+                    isRefreshing={isRefreshing}
+                    onStartPuzzleByDifficulty={handleStartPuzzleByDifficulty}
+                  />
                   
-                  <Card className="mt-6 overflow-hidden">
-                    <CardHeader className="pb-2">
-                      <CardTitle>Daily Puzzles</CardTitle>
-                      <CardDescription>Fresh puzzles updated every day</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {dailyPuzzles.map((puzzle) => (
-                          <div key={puzzle.id} className="border rounded-md p-4 hover:border-chess-deep-red transition-colors">
-                            <div className="flex justify-between items-center mb-3">
-                              <div>
-                                <h4 className="font-medium">{puzzle.difficulty} Puzzle</h4>
-                                <div className="text-sm text-gray-500 flex items-center gap-2">
-                                  <span>Rating: {puzzle.rating}</span>
-                                  <span className="text-xs">•</span>
-                                  <span>Theme: {puzzle.theme}</span>
-                                </div>
-                              </div>
-                              <Button 
-                                size="sm" 
-                                className="bg-chess-deep-red hover:bg-chess-dark-maroon"
-                                onClick={() => {
-                                  generatePuzzleByDifficulty(puzzle.rating);
-                                  setActiveTab("daily");
-                                }}
-                              >
-                                Solve
-                              </Button>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Progress value={puzzle.solvedPercentage} className="h-2 flex-1" />
-                              <span className="text-xs font-medium">{puzzle.solvedPercentage}% solved</span>
-                            </div>
-                            <div className="text-xs text-gray-500 mt-1">
-                              {puzzle.solvedCount} players have attempted this puzzle
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <DailyPuzzlesList 
+                    dailyPuzzles={dailyPuzzles} 
+                    onSelectPuzzle={(rating) => {
+                      generatePuzzleByDifficulty(rating);
+                      setActiveTab("daily");
+                    }} 
+                  />
                 </TabsContent>
                 
                 <TabsContent value="themes" className="mt-0">
@@ -640,219 +545,20 @@ const TacticalPuzzles = () => {
                 </TabsContent>
               </Tabs>
               
-              <Card className="overflow-hidden">
-                <CardHeader className="pb-2">
-                  <CardTitle>Puzzle Courses</CardTitle>
-                  <CardDescription>Structured learning paths to master chess tactics</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle>Basic Tactics Course</CardTitle>
-                        <CardDescription>Master the fundamental tactical patterns</CardDescription>
-                      </CardHeader>
-                      <CardContent className="pb-2">
-                        <p className="text-sm mb-2">
-                          A structured course with 120 puzzles covering forks, pins, skewers, and more.
-                        </p>
-                        <div className="flex items-center gap-2 mb-3">
-                          <Gauge className="text-chess-deep-red h-4 w-4" />
-                          <span className="text-sm">Difficulty: Beginner-Friendly</span>
-                        </div>
-                        <div className="mt-3">
-                          <div className="flex justify-between text-xs mb-1">
-                            <span>Progress</span>
-                            <span>0/120 puzzles</span>
-                          </div>
-                          <Progress value={0} className="h-1" />
-                        </div>
-                      </CardContent>
-                      <CardFooter className="pt-2">
-                        <Button 
-                          className="w-full bg-chess-deep-red hover:bg-chess-dark-maroon"
-                          onClick={() => {
-                            toast({
-                              title: "Course Coming Soon",
-                              description: "Our structured courses are being prepared and will be available soon!",
-                            });
-                          }}
-                        >
-                          Start Course
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle>Advanced Combinations</CardTitle>
-                        <CardDescription>Complex multi-move tactical sequences</CardDescription>
-                      </CardHeader>
-                      <CardContent className="pb-2">
-                        <p className="text-sm mb-2">
-                          Challenge yourself with 80 advanced puzzles requiring deep calculation.
-                        </p>
-                        <div className="flex items-center gap-2 mb-3">
-                          <Gauge className="text-chess-deep-red h-4 w-4" />
-                          <span className="text-sm">Difficulty: Advanced</span>
-                        </div>
-                        <div className="mt-3">
-                          <div className="flex justify-between text-xs mb-1">
-                            <span>Progress</span>
-                            <span>0/80 puzzles</span>
-                          </div>
-                          <Progress value={0} className="h-1" />
-                        </div>
-                      </CardContent>
-                      <CardFooter className="pt-2">
-                        <Button 
-                          className="w-full bg-chess-deep-red hover:bg-chess-dark-maroon"
-                          onClick={() => {
-                            toast({
-                              title: "Course Coming Soon",
-                              description: "Our advanced courses are being prepared and will be available soon!",
-                            });
-                          }}
-                        >
-                          Start Course
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </div>
-                </CardContent>
-              </Card>
+              <PuzzleCourses />
             </div>
             
             <div className="space-y-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Trophy className="h-5 w-5 text-amber-500" />
-                    Puzzle Leaderboard
-                  </CardTitle>
-                  <CardDescription>Top performers this month</CardDescription>
-                </CardHeader>
-                <CardContent className="px-0">
-                  <div className="border-b">
-                    <div className="grid grid-cols-12 px-6 py-2 text-xs font-medium text-gray-500">
-                      <div className="col-span-1">#</div>
-                      <div className="col-span-4">Player</div>
-                      <div className="col-span-2">Rating</div>
-                      <div className="col-span-3">Solved</div>
-                      <div className="col-span-2">Streak</div>
-                    </div>
-                  </div>
-                  
-                  <div className="divide-y">
-                    {leaderboard.map((player) => (
-                      <div key={player.rank} className={`grid grid-cols-12 px-6 py-2 text-sm hover:bg-gray-50 
-                        ${player.rank <= 3 ? 'bg-amber-50' : ''}`}>
-                        <div className="col-span-1 font-medium">{player.rank}</div>
-                        <div className="col-span-4 font-medium truncate">{player.name}</div>
-                        <div className="col-span-2">{player.rating}</div>
-                        <div className="col-span-3">{player.solved}</div>
-                        <div className="col-span-2 flex items-center">
-                          <Star className={`h-3 w-3 mr-1 ${player.streak >= 7 ? 'text-amber-500' : 'text-gray-400'}`} />
-                          {player.streak}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <PuzzleLeaderboard leaderboard={leaderboard} />
               
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle>Your Puzzle Statistics</CardTitle>
-                    <CardDescription>Your tactical performance</CardDescription>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="text-xs"
-                      onClick={() => setActiveTab("dashboard")}
-                    >
-                      <Activity className="h-3.5 w-3.5 mr-1" />
-                      View Details
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Puzzle Rating</span>
-                        <span className="font-medium">{userRating}</span>
-                      </div>
-                      <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-chess-deep-red to-chess-dark-maroon"
-                          style={{ width: `${(userRating / 2400) * 100}%` }}
-                        ></div>
-                      </div>
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>800</span>
-                        <span>2400</span>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <div className="text-sm text-gray-500">Accuracy</div>
-                        <div className="font-bold text-xl">
-                          {isDashboardLoading ? (
-                            <Skeleton className="h-7 w-16" />
-                          ) : (
-                            dashboardData?.global ? 
-                              `${Math.round((dashboardData.global.firstWins / dashboardData.global.nb) * 100)}%` : 
-                              `${puzzleStats.accuracy}%`
-                          )}
-                        </div>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <div className="text-sm text-gray-500">Solved Today</div>
-                        <div className="font-bold text-xl">
-                          {isDashboardLoading ? (
-                            <Skeleton className="h-7 w-8" />
-                          ) : puzzleStats.solved - (dashboardData?.global?.wins || 0) || "0"}
-                        </div>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <div className="text-sm text-gray-500">Current Streak</div>
-                        <div className="font-bold text-xl">
-                          {isDashboardLoading ? (
-                            <Skeleton className="h-7 w-16" />
-                          ) : `${puzzleStats.streak} days`}
-                        </div>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded-lg">
-                        <div className="text-sm text-gray-500">Best Time</div>
-                        <div className="font-bold text-xl">
-                          {isDashboardLoading ? (
-                            <Skeleton className="h-7 w-12" />
-                          ) : puzzleStats.bestTime}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-center mt-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="text-xs" 
-                        onClick={() => setActiveTab("dashboard")}
-                      >
-                        <History className="h-3.5 w-3.5 mr-1" />
-                        View History
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <UserPuzzleStats 
+                userRating={userRating}
+                puzzleStats={puzzleStats}
+                isDashboardLoading={isDashboardLoading}
+                dashboardData={dashboardData}
+                onViewDetails={() => setActiveTab("dashboard")}
+              />
               
-              {/* Replace the existing calendar with our enhanced PuzzleCalendar component */}
               <PuzzleCalendar puzzleActivity={puzzleActivity} />
             </div>
           </div>
