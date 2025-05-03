@@ -1,33 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { Slider } from "@/components/ui/slider";
-import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  Trophy, Star, TrendingUp, Timer, Brain, Zap, 
-  Sword, Target, Crosshair, Gauge, CheckCircle2,
-  Loader2, RefreshCw, Info, Calendar, History, Activity
-} from "lucide-react";
 import { useChessPuzzles } from "@/hooks/useChessPuzzles";
 import { toast } from "@/hooks/use-toast";
-import PuzzleViewer from "@/components/PuzzleViewer";
-import PuzzleThemeSelector from "@/components/PuzzleThemeSelector";
-import PuzzleHistoryChart from "@/components/PuzzleHistoryChart";
-import PuzzleStats from "@/components/PuzzleStats";
-import PuzzleHistory from "@/components/PuzzleHistory";
-import PuzzleDifficultyDistribution from "@/components/PuzzleDifficultyDistribution";
-import { format } from 'date-fns';
-import PuzzleCalendar from '@/components/PuzzleCalendar';
-import DailyPuzzlesList from '@/components/puzzle/DailyPuzzlesList';
-import PuzzleCourses from '@/components/puzzle/PuzzleCourses';
-import PuzzleLeaderboard from '@/components/puzzle/PuzzleLeaderboard';
-import PuzzleGeneratorCard from '@/components/puzzle/PuzzleGeneratorCard';
-import UserPuzzleStats from '@/components/puzzle/UserPuzzleStats';
+import PuzzleViewTabs from '@/components/puzzle/PuzzleViewTabs';
+import PuzzleActivityTracking from '@/components/puzzle/PuzzleActivityTracking';
 
 const TacticalPuzzles = () => {
   const [difficulty, setDifficulty] = useState(1200);
@@ -49,15 +27,13 @@ const TacticalPuzzles = () => {
   const [isDashboardLoading, setIsDashboardLoading] = useState(false);
   const [isReversed, setIsReversed] = useState(true); // Default to reversed (attack) mode
   const [puzzleActivity, setPuzzleActivity] = useState<Record<string, { count: number, solved: number, failed: number, time: number }>>({});
-
-  // Sample rating history data
   const [ratingHistoryData, setRatingHistoryData] = useState([
-    { date: format(new Date(2025, 3, 10), 'MMM dd'), rating: 1150 },
-    { date: format(new Date(2025, 3, 11), 'MMM dd'), rating: 1175 },
-    { date: format(new Date(2025, 3, 12), 'MMM dd'), rating: 1160 },
-    { date: format(new Date(2025, 3, 13), 'MMM dd'), rating: 1185 },
-    { date: format(new Date(2025, 3, 14), 'MMM dd'), rating: 1170 },
-    { date: format(new Date(2025, 3, 15), 'MMM dd'), rating: 1200 }
+    { date: 'Apr 10', rating: 1150 },
+    { date: 'Apr 11', rating: 1175 },
+    { date: 'Apr 12', rating: 1160 },
+    { date: 'Apr 13', rating: 1185 },
+    { date: 'Apr 14', rating: 1170 },
+    { date: 'Apr 15', rating: 1200 }
   ]);
 
   // Sample difficulty distribution data
@@ -91,96 +67,21 @@ const TacticalPuzzles = () => {
     }
   };
 
-  // Update solved count from localStorage on load
+  // Initialize states from localStorage
   useEffect(() => {
-    const storedSolvedCount = localStorage.getItem('puzzlesSolvedCount');
-    if (storedSolvedCount) {
-      setSolvedCount(parseInt(storedSolvedCount));
-    }
-    
-    // Load solved counts by theme
-    const storedThemeCounts = localStorage.getItem('solvedPuzzlesByTheme');
-    if (storedThemeCounts) {
-      setSolvedCountByTheme(JSON.parse(storedThemeCounts));
-    } else {
-      // Initialize with some default values
-      setSolvedCountByTheme({
-        fork: 15,
-        pin: 12,
-        skewer: 8,
-        discovery: 7,
-        mate: 0,
-        sacrifice: 0
-      });
-    }
+    // Initialize puzzle activity tracking
+    const {
+      solvedCount: initialSolvedCount,
+      solvedCountByTheme: initialThemeCounts,
+      puzzleHistory: initialHistory,
+      puzzleActivity: initialActivity,
+    } = PuzzleActivityTracking.initializeFromLocalStorage();
 
-    // Load puzzle history
-    const storedHistory = localStorage.getItem('puzzleHistory');
-    if (storedHistory) {
-      setPuzzleHistory(JSON.parse(storedHistory));
-    } else {
-      // Initialize with some sample data
-      const sampleHistory = [
-        {
-          id: "ABCDE",
-          date: new Date().toISOString(),
-          rating: 1200,
-          theme: "fork",
-          success: true,
-          timeSpent: 15
-        },
-        {
-          id: "FGHIJ",
-          date: new Date(Date.now() - 3600000).toISOString(),
-          rating: 1350,
-          theme: "pin",
-          success: false,
-          timeSpent: 45
-        },
-        {
-          id: "KLMNO",
-          date: new Date(Date.now() - 7200000).toISOString(),
-          rating: 1100,
-          theme: "mate",
-          success: true,
-          timeSpent: 22
-        }
-      ];
-      setPuzzleHistory(sampleHistory);
-      localStorage.setItem('puzzleHistory', JSON.stringify(sampleHistory));
-    }
-    
-    // Load puzzle activity data
-    const storedActivity = localStorage.getItem('puzzleActivity');
-    if (storedActivity) {
-      setPuzzleActivity(JSON.parse(storedActivity));
-    } else {
-      // Initialize with some sample data for the past week
-      const sampleActivity: Record<string, { count: number, solved: number, failed: number, time: number }> = {};
-      const today = new Date();
-      
-      // Generate sample data for the past 30 days
-      for (let i = 0; i < 30; i++) {
-        const date = new Date();
-        date.setDate(today.getDate() - i);
-        const dateKey = format(date, 'yyyy-MM-dd');
-        
-        // More recent days have more activity
-        const count = Math.max(0, Math.floor(Math.random() * 10 * (1 - i/30)));
-        if (count > 0) {
-          const solved = Math.floor(count * 0.7); // 70% solved
-          sampleActivity[dateKey] = {
-            count, 
-            solved,
-            failed: count - solved,
-            time: Math.floor(count * (30 + Math.random() * 30)) // 30-60 seconds per puzzle
-          };
-        }
-      }
-      
-      setPuzzleActivity(sampleActivity);
-      localStorage.setItem('puzzleActivity', JSON.stringify(sampleActivity));
-    }
+    // Set state with retrieved or default values
+    setSolvedCount(initialSolvedCount);
+    setSolvedCountByTheme(initialThemeCounts);
+    setPuzzleHistory(initialHistory);
+    setPuzzleActivity(initialActivity);
     
     // Load puzzle stats
     if (dashboardData?.global) {
@@ -203,82 +104,36 @@ const TacticalPuzzles = () => {
     if (puzzleData?.puzzle) {
       markPuzzleSolved(puzzleData.puzzle.id);
       
-      // Update solved count
-      const newCount = solvedCount + 1;
-      setSolvedCount(newCount);
-      localStorage.setItem('puzzlesSolvedCount', newCount.toString());
+      // Update tracking with the new solved puzzle
+      const {
+        newSolvedCount,
+        newThemeCounts,
+        updatedHistory,
+        updatedActivity,
+        updatedStats
+      } = PuzzleActivityTracking.trackPuzzleSolved(
+        puzzleData,
+        solvedCount,
+        solvedCountByTheme,
+        puzzleHistory,
+        puzzleActivity,
+        puzzleStats
+      );
       
-      // Update theme-specific count if this puzzle has a theme
-      if (puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0) {
-        const theme = puzzleData.puzzle.themes[0];
-        const newThemeCounts = { ...solvedCountByTheme };
-        newThemeCounts[theme] = (newThemeCounts[theme] || 0) + 1;
-        setSolvedCountByTheme(newThemeCounts);
-        localStorage.setItem('solvedPuzzlesByTheme', JSON.stringify(newThemeCounts));
-      }
-      
-      // Add to puzzle history
-      const newHistoryEntry = {
-        id: puzzleData.puzzle.id,
-        date: new Date().toISOString(),
-        rating: puzzleData.puzzle.rating || 1200,
-        theme: puzzleData.puzzle.themes && puzzleData.puzzle.themes.length > 0 ? 
-          puzzleData.puzzle.themes[0] : undefined,
-        success: true,
-        timeSpent: Math.floor(Math.random() * 30) + 5 // Random time between 5-35s
-      };
-      
-      const updatedHistory = [newHistoryEntry, ...puzzleHistory];
-      if (updatedHistory.length > 50) {
-        updatedHistory.pop(); // Keep only the latest 50 entries
-      }
-      
+      // Update all states
+      setSolvedCount(newSolvedCount);
+      setSolvedCountByTheme(newThemeCounts);
       setPuzzleHistory(updatedHistory);
-      localStorage.setItem('puzzleHistory', JSON.stringify(updatedHistory));
-      
-      // Update stats
-      setPuzzleStats(prev => ({
-        ...prev,
-        solved: prev.solved + 1,
-        attempts: prev.attempts + 1,
-        accuracy: Math.round(((prev.solved + 1) / (prev.attempts + 1)) * 100)
-      }));
-      
-      // Update puzzle activity for today's date
-      const today = format(new Date(), 'yyyy-MM-dd');
-      const updatedActivity = { ...puzzleActivity };
-      
-      if (!updatedActivity[today]) {
-        updatedActivity[today] = { count: 1, solved: 1, failed: 0, time: newHistoryEntry.timeSpent };
-      } else {
-        updatedActivity[today].count += 1;
-        updatedActivity[today].solved += 1;
-        updatedActivity[today].time += newHistoryEntry.timeSpent;
-      }
-      
       setPuzzleActivity(updatedActivity);
-      localStorage.setItem('puzzleActivity', JSON.stringify(updatedActivity));
+      setPuzzleStats(updatedStats);
     }
   };
 
   // Handle puzzle failed - update activity tracking
   const handlePuzzleFailed = () => {
     if (puzzleData?.puzzle) {
-      // Update puzzle activity for today's date
-      const today = format(new Date(), 'yyyy-MM-dd');
-      const updatedActivity = { ...puzzleActivity };
-      const timeSpent = Math.floor(Math.random() * 30) + 5; // Random time
-      
-      if (!updatedActivity[today]) {
-        updatedActivity[today] = { count: 1, solved: 0, failed: 1, time: timeSpent };
-      } else {
-        updatedActivity[today].count += 1;
-        updatedActivity[today].failed += 1;
-        updatedActivity[today].time += timeSpent;
-      }
-      
+      const { updatedActivity } = PuzzleActivityTracking.trackPuzzleFailed(puzzleActivity);
       setPuzzleActivity(updatedActivity);
-      localStorage.setItem('puzzleActivity', JSON.stringify(updatedActivity));
       
       toast({
         title: "Puzzle Failed",
@@ -367,6 +222,7 @@ const TacticalPuzzles = () => {
     }
   };
 
+  // Data for the page
   const leaderboard = [
     { rank: 1, name: "MagnusCarlsen", rating: 2850, solved: 1254, streak: 42, country: "Norway" },
     { rank: 2, name: "HikaNak", rating: 2736, solved: 1187, streak: 28, country: "USA" },
@@ -453,115 +309,35 @@ const TacticalPuzzles = () => {
         </div>
         
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-8">
-              <Tabs defaultValue="daily" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="mb-4 bg-chess-muted-rose/20">
-                  <TabsTrigger value="daily" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
-                    Daily Attack
-                  </TabsTrigger>
-                  <TabsTrigger value="generator" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
-                    Attack Generator
-                  </TabsTrigger>
-                  <TabsTrigger value="themes" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
-                    Attack Themes
-                  </TabsTrigger>
-                  <TabsTrigger value="dashboard" className="data-[state=active]:bg-chess-deep-red data-[state=active]:text-white">
-                    Dashboard
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="daily" className="mt-0 space-y-6">
-                  <Card className="mb-4">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="font-medium text-lg">
-                          Tactical Attack Mode
-                        </div>
-                        <Badge variant="outline" className="bg-chess-deep-red text-white">
-                          You're the attacker
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-4">
-                        You're delivering the tactics! Find the best moves to gain advantage against your opponent.
-                      </p>
-                    </CardContent>
-                  </Card>
-                  
-                  <PuzzleViewer
-                    puzzleData={puzzleData}
-                    isLoading={isPuzzleLoading}
-                    onGetNextPuzzle={handleGetNextPuzzle}
-                    onSolved={handlePuzzleSolved}
-                    onFailed={handlePuzzleFailed}
-                    isRefreshing={isRefreshing}
-                    isReversed={isReversed}
-                  />
-                </TabsContent>
-                
-                <TabsContent value="generator" className="mt-0">
-                  <PuzzleGeneratorCard 
-                    difficulty={difficulty}
-                    setDifficulty={setDifficulty}
-                    solvedCount={solvedCount}
-                    puzzleStats={puzzleStats}
-                    isRefreshing={isRefreshing}
-                    onStartPuzzleByDifficulty={handleStartPuzzleByDifficulty}
-                  />
-                  
-                  <DailyPuzzlesList 
-                    dailyPuzzles={dailyPuzzles} 
-                    onSelectPuzzle={(rating) => {
-                      generatePuzzleByDifficulty(rating);
-                      setActiveTab("daily");
-                    }} 
-                  />
-                </TabsContent>
-                
-                <TabsContent value="themes" className="mt-0">
-                  <PuzzleThemeSelector 
-                    themes={themesData}
-                    solvedCountByTheme={solvedCountByTheme}
-                    isLoading={isThemesLoading}
-                    onSelectTheme={handleSelectTheme}
-                  />
-                </TabsContent>
-                
-                <TabsContent value="dashboard" className="mt-0 space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <PuzzleStats stats={puzzleStats} isLoading={isDashboardLoading} />
-                    <PuzzleHistoryChart data={ratingHistoryData} isLoading={isDashboardLoading} />
-                  </div>
-                  
-                  <PuzzleDifficultyDistribution 
-                    data={difficultyDistributionData} 
-                    isLoading={isDashboardLoading}
-                  />
-                  
-                  <PuzzleHistory 
-                    history={puzzleHistory} 
-                    isLoading={isDashboardLoading}
-                  />
-                </TabsContent>
-              </Tabs>
-              
-              <PuzzleCourses />
-            </div>
-            
-            <div className="space-y-8">
-              <PuzzleLeaderboard leaderboard={leaderboard} />
-              
-              <UserPuzzleStats 
-                userRating={userRating}
-                puzzleStats={puzzleStats}
-                isDashboardLoading={isDashboardLoading}
-                dashboardData={dashboardData}
-                onViewDetails={() => setActiveTab("dashboard")}
-              />
-              
-              <PuzzleCalendar puzzleActivity={puzzleActivity} />
-            </div>
-          </div>
+          <PuzzleViewTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            difficulty={difficulty}
+            setDifficulty={setDifficulty}
+            solvedCount={solvedCount}
+            puzzleStats={puzzleStats}
+            isRefreshing={isRefreshing}
+            puzzleData={puzzleData}
+            isPuzzleLoading={isPuzzleLoading}
+            themesData={themesData}
+            isThemesLoading={isThemesLoading}
+            solvedCountByTheme={solvedCountByTheme}
+            puzzleHistory={puzzleHistory}
+            isDashboardLoading={isDashboardLoading}
+            difficultyDistributionData={difficultyDistributionData}
+            ratingHistoryData={ratingHistoryData}
+            dailyPuzzles={dailyPuzzles}
+            isReversed={isReversed}
+            userRating={userRating}
+            puzzleActivity={puzzleActivity}
+            dashboardData={dashboardData}
+            leaderboard={leaderboard}
+            onSelectTheme={handleSelectTheme}
+            onStartPuzzleByDifficulty={handleStartPuzzleByDifficulty}
+            onGetNextPuzzle={handleGetNextPuzzle}
+            onPuzzleSolved={handlePuzzleSolved}
+            onPuzzleFailed={handlePuzzleFailed}
+          />
         </div>
       </main>
       <Footer />
