@@ -1,7 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const CHESS_API_KEY = Deno.env.get("CHESS_RAPID_API_KEY");
+const CHESS_API_KEY = Deno.env.get("CHESS_RAPID_API_KEY") || "a0300f8454msh9b4ee5e304028ebp16e757jsnff1958562942"; 
 const CHESS_API_HOST = "chess-puzzles.p.rapidapi.com";
 
 // CORS headers for browser requests
