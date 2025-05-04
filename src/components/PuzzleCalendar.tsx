@@ -9,11 +9,14 @@ import { Calendar as CalendarIcon, Clock, CheckCircle2, X, Expand } from 'lucide
 import { cn } from '@/lib/utils';
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from 'react-router-dom';
+import { Progress } from "@/components/ui/progress";
 
 interface PuzzleCalendarProps {
   puzzleActivity?: Record<string, { count: number, solved: number, failed: number, time: number }>;
   isLoading?: boolean;
 }
+
+const DAILY_PUZZLE_GOAL = 50; // Daily goal of 50 puzzles
 
 const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({ 
   puzzleActivity = {},
@@ -50,6 +53,11 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
   const formattedSelectedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '';
   const selectedActivity = formattedSelectedDate ? activity[formattedSelectedDate] : undefined;
 
+  // Calculate progress percentage against daily goal
+  const getProgressPercentage = (count: number) => {
+    return Math.min(100, Math.round((count / DAILY_PUZZLE_GOAL) * 100));
+  };
+
   // Create a customized day render function that makes ALL days clickable
   const renderDay = (day: Date) => {
     const dateString = format(day, 'yyyy-MM-dd');
@@ -59,10 +67,18 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
     const count = dayActivity?.count || 0;
     const intensity = Math.min(100, (count / 10) * 100);
     const bgColor = count > 0 ? `rgba(152, 27, 27, ${intensity/100})` : 'transparent';
+    const showBadge = count > 0;
     
     return (
       <div className="relative w-full h-full flex items-center justify-center cursor-pointer">
-        {day.getDate()}
+        <div className="relative">
+          {day.getDate()}
+          {showBadge && (
+            <span className="absolute -top-2 -right-2 text-[9px] bg-chess-deep-red text-white rounded-full w-4 h-4 flex items-center justify-center">
+              {count}
+            </span>
+          )}
+        </div>
         <div 
           className="absolute bottom-0.5 left-1/2 transform -translate-x-1/2 w-4 h-1.5 rounded-sm" 
           style={{ backgroundColor: bgColor }}
@@ -129,8 +145,25 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
                 {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Today'}
               </h3>
               <Badge className="mt-1 bg-chess-deep-red">
-                {selectedActivity.count} {selectedActivity.count === 1 ? 'puzzle' : 'puzzles'} solved
+                {selectedActivity.count} / {DAILY_PUZZLE_GOAL} puzzles
               </Badge>
+            </div>
+            
+            {/* Daily progress bar */}
+            <div className="mb-2">
+              <div className="flex justify-between text-xs mb-1">
+                <span>Daily Progress</span>
+                <span className="font-medium">{getProgressPercentage(selectedActivity.count)}%</span>
+              </div>
+              <Progress 
+                value={getProgressPercentage(selectedActivity.count)} 
+                className="h-1.5"
+                indicatorClassName={
+                  selectedActivity.count >= DAILY_PUZZLE_GOAL 
+                    ? "bg-green-500" 
+                    : "bg-chess-deep-red"
+                }
+              />
             </div>
 
             <div className="grid grid-cols-3 gap-2 mt-3">

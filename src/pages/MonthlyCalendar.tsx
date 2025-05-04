@@ -1,12 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, ArrowLeft } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from 'react-router-dom';
+import { Progress } from "@/components/ui/progress";
 
 interface DailyActivity {
   count: number;
@@ -15,10 +18,13 @@ interface DailyActivity {
   time: number;
 }
 
+const DAILY_PUZZLE_GOAL = 50; // Daily goal of 50 puzzles
+
 const MonthlyCalendar = () => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [puzzleActivity, setPuzzleActivity] = useState<Record<string, DailyActivity>>({});
+  const navigate = useNavigate();
   
   useEffect(() => {
     // Load puzzle activity data from localStorage
@@ -55,6 +61,11 @@ const MonthlyCalendar = () => {
 
   const formattedSelectedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '';
   const selectedActivity = formattedSelectedDate ? puzzleActivity[formattedSelectedDate] : undefined;
+  
+  // Calculate progress percentage against daily goal
+  const getProgressPercentage = (count: number) => {
+    return Math.min(100, Math.round((count / DAILY_PUZZLE_GOAL) * 100));
+  };
 
   // Custom day rendering to show activity - make ALL dates clickable
   const renderDay = (day: Date) => {
@@ -66,9 +77,20 @@ const MonthlyCalendar = () => {
     const intensity = Math.min(100, (count / 10) * 100);
     const bgColor = count > 0 ? `rgba(152, 27, 27, ${intensity/100})` : 'transparent';
     
+    // Calculate progress percentage for the badge
+    const progressPercentage = getProgressPercentage(count);
+    const showBadge = count > 0;
+    
     return (
       <div className="relative w-full h-full flex items-center justify-center cursor-pointer">
-        {day.getDate()}
+        <div className="relative">
+          {day.getDate()}
+          {showBadge && (
+            <span className="absolute -top-2 -right-2 text-[9px] bg-chess-deep-red text-white rounded-full w-4 h-4 flex items-center justify-center">
+              {count}
+            </span>
+          )}
+        </div>
         <div 
           className="absolute bottom-0.5 left-1/2 transform -translate-x-1/2 w-4 h-1.5 rounded-sm" 
           style={{ backgroundColor: bgColor }}
@@ -77,11 +99,33 @@ const MonthlyCalendar = () => {
     );
   };
 
+  // Handle back button click
+  const handleBackClick = () => {
+    navigate('/tactical-puzzles');
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-chess-dark-maroon mb-6">Monthly Puzzle Calendar</h1>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mr-4 flex items-center gap-1"
+              onClick={handleBackClick}
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Puzzles
+            </Button>
+            <h1 className="text-3xl font-bold text-chess-dark-maroon">Monthly Puzzle Calendar</h1>
+          </div>
+          
+          <div>
+            <Badge className="bg-chess-deep-red">Goal: {DAILY_PUZZLE_GOAL} puzzles per day</Badge>
+          </div>
+        </div>
         
         <div className="grid md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
@@ -221,8 +265,25 @@ const MonthlyCalendar = () => {
                         {selectedDate ? format(selectedDate, 'MMMM d, yyyy') : 'Today'}
                       </h3>
                       <Badge className="mt-1 bg-chess-deep-red">
-                        {selectedActivity.count} {selectedActivity.count === 1 ? 'puzzle' : 'puzzles'} solved
+                        {selectedActivity.count} / {DAILY_PUZZLE_GOAL} puzzles
                       </Badge>
+                    </div>
+                    
+                    {/* Daily progress bar */}
+                    <div className="mb-4">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Daily Progress</span>
+                        <span className="font-medium">{getProgressPercentage(selectedActivity.count)}%</span>
+                      </div>
+                      <Progress 
+                        value={getProgressPercentage(selectedActivity.count)} 
+                        className="h-2"
+                        indicatorClassName={
+                          selectedActivity.count >= DAILY_PUZZLE_GOAL 
+                            ? "bg-green-500" 
+                            : "bg-chess-deep-red"
+                        }
+                      />
                     </div>
                     
                     <div className="grid grid-cols-1 gap-3">
