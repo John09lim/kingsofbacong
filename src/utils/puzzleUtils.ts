@@ -1,4 +1,3 @@
-
 /**
  * Utility functions for chess puzzles
  */
@@ -36,15 +35,16 @@ export const getEffectiveTurnText = (turn?: string, isReversed: boolean = false)
 /**
  * Get effective player turn based on the puzzle data and attack mode setting.
  * In Attack Mode (isReversed=true), we ensure the player always makes the first move.
+ * In regular mode (isReversed=false), we follow the color specified in the puzzle.
  */
-export const getEffectivePlayerTurn = (playerTurn?: string, isReversed: boolean = false): 'w' | 'b' => {
-  if (!playerTurn) return 'w';
+export const getEffectivePlayerTurn = (playerTurn: 'w' | 'b', isReversed: boolean = false): 'w' | 'b' => {
+  // In reversed (attack) mode, player is always the attacker regardless of original puzzle
+  if (isReversed) {
+    return playerTurn; // In attack mode, player is always the one to move first
+  } 
   
-  const turn = playerTurn === 'b' ? 'b' : 'w';  // Normalize to 'w' or 'b'
-  
-  // In reversed (attack) mode, we make sure player is always the attacker
-  // If original puzzle had black to move, player becomes white
-  return isReversed ? (turn === 'w' ? 'b' : 'w') : turn;
+  // In regular mode, return the specified player turn
+  return playerTurn;
 };
 
 /**
@@ -64,18 +64,8 @@ export const getEffectiveSolution = (solution?: string[], isReversed: boolean = 
     return solution;
   } else {
     // In reversed mode (attack mode):
-    // We need to modify the solution so that:
-    // 1. The user makes the attacking moves (which were originally computer moves)
-    // 2. The computer makes the defending moves (which were originally player moves)
-    
-    // We take every second move starting from index 0
-    // These will be the computer's responses to the user's attacking moves
-    const reversedSolution = [];
-    for (let i = 1; i < solution.length; i += 2) {
-      reversedSolution.push(solution[i]);
-    }
-    
-    return reversedSolution;
+    // Player makes the first move in the solution
+    return solution;
   }
 };
 
@@ -120,4 +110,3 @@ export const debugPuzzle = (puzzleData: any): void => {
   console.log("- Solution:", puzzleData.puzzle.solution);
   console.log("- Themes:", puzzleData.puzzle.themes);
 };
-

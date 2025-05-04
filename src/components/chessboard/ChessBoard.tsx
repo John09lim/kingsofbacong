@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from "@/hooks/use-toast";
 import ChessSquare from './ChessSquare';
@@ -81,7 +80,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       setStartTime(Date.now());
       setUserHasMadeFirstMove(false); // Reset this flag when puzzle changes
       
-      // Always use proper orientation
+      // Always use proper orientation - board flipped when Black to move in regular mode
       setBoardFlipped(getProperBoardOrientation(isReversed, playerTurn));
       
       // Parse the FEN to set up the board
@@ -182,7 +181,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     }
   }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved, startTime, isReversed, userHasMadeFirstMove]);
   
-  // Show hint for next move - FIXED to only highlight player's pieces
+  // Show hint for next move - Improve to only highlight player's pieces
   const showHintMove = () => {
     if (currentSolutionIndex < solution.length) {
       const nextMove = solution[currentSolutionIndex];
@@ -240,7 +239,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     return correctMove ? correctMove.startsWith(`${selectedSquare}${square}`) : false;
   };
 
-  // Handle square click
+  // Handle square click - improved to enforce correct moves
   const handleSquareClick = (row: number, col: number) => {
     if (isSolved || waitingForComputerMove) return;
     
@@ -282,10 +281,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           setCurrentSolutionIndex(nextSolutionIndex);
         }
       } else {
-        // Incorrect move
+        // Incorrect move - improved feedback
         toast({
           title: "Incorrect move",
-          description: "Try again with a different move.",
+          description: "Please try again with a different move.",
           variant: "destructive",
         });
         setSelectedSquare(null);

@@ -7,7 +7,11 @@ interface ChessPieceProps {
   isAnimating: boolean;
 }
 
-const ChessPiece: React.FC<ChessPieceProps> = ({ piece, isSelected, isAnimating }) => {
+const ChessPiece: React.FC<ChessPieceProps> = ({ 
+  piece, 
+  isSelected,
+  isAnimating 
+}) => {
   // Get piece image path based on piece symbol
   const getPieceImage = (piece: string) => {
     const pieceMap: { [key: string]: string } = {
@@ -27,17 +31,14 @@ const ChessPiece: React.FC<ChessPieceProps> = ({ piece, isSelected, isAnimating 
     return pieceMap[piece] || '';
   };
   
-  // Check if a piece is white
-  const isWhitePiece = (piece: string) => {
-    return piece !== '' && piece === piece.toUpperCase();
-  };
+  const pieceImage = getPieceImage(piece);
   
-  if (!piece) return null;
+  if (!pieceImage) return null;
   
   return (
     <img 
-      src={getPieceImage(piece)} 
-      alt={`${isWhitePiece(piece) ? 'White' : 'Black'} ${piece.toLowerCase()}`}
+      src={pieceImage} 
+      alt={`${piece.toUpperCase() === piece ? 'White' : 'Black'} ${piece.toLowerCase()}`}
       className={`
         chess-piece w-10 h-10
         ${isSelected ? 'opacity-70' : ''}

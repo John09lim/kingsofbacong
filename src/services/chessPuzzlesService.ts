@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface ChessPuzzle {
@@ -64,10 +65,16 @@ export const adaptToLichessPuzzleFormat = (puzzle: ChessPuzzle) => {
         key: "rapid",
         name: "Rapid"
       },
-      players: [
-        { name: "Player 1", rating: Math.floor(Math.random() * 300) + 1600, color: "white" },
-        { name: "Player 2", rating: Math.floor(Math.random() * 300) + 1600, color: "black" }
-      ],
+      players: {
+        white: { 
+          name: "Player 1", 
+          rating: Math.floor(Math.random() * 300) + 1600
+        },
+        black: { 
+          name: "Player 2", 
+          rating: Math.floor(Math.random() * 300) + 1600
+        }
+      },
       clock: "5+0",
       rated: true,
       pgn: ""

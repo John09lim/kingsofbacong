@@ -71,15 +71,13 @@ export const isWhitePiece = (piece: string): boolean => {
  */
 export const getProperBoardOrientation = (isReversed: boolean, playerTurn: 'w' | 'b'): boolean => {
   // In standard chess orientation, a1 is a dark square
-  // We need to flip the board based on player color and mode
   
-  // In Attack Mode, player is always at the bottom
   if (isReversed) {
-    // No need to flip for attack mode - player is always at the bottom
+    // In attack mode, player is always at the bottom
     return false;
   }
   
-  // In regular mode, flip based on player color
+  // In regular mode, if it's black's turn, flip the board so black is at bottom
   return playerTurn === 'b';
 };
 
@@ -95,7 +93,10 @@ export const getSquareClasses = (
   hintSquare: string | null,
   isLegalMoveFunction: (r: number, c: number) => boolean
 ): string => {
-  const isWhiteSquare = (row + col) % 2 === 1; // Lichess-style alternating pattern
+  // Correct pattern: a1 (row=7, col=0) should be dark
+  // In chess, the sum of ranks and file should be odd for light squares
+  const isWhiteSquare = (row + col) % 2 === 0; // Fixed pattern for proper chess coloring
+  
   const square = getSquareName(row, col);
   const isSelected = selectedSquare === square;
   const isHovered = hoveredSquare === square;
