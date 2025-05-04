@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 export interface RapidApiPuzzle {
   id: string;
@@ -14,10 +15,71 @@ export interface RapidApiPuzzle {
   color?: string; // Add optional color property
 }
 
+// Sample puzzles to use when API is unavailable
+const FALLBACK_PUZZLES = [
+  {
+    id: "fallback1",
+    fen: "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
+    moves: ["g1f3", "b8c6", "f1c4", "g8f6"],
+    rating: "1200",
+    openingFamily: "Italian Game",
+    openingVariation: "Classical Variation",
+    themes: "opening,development",
+    color: "white"
+  },
+  {
+    id: "fallback2",
+    fen: "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3",
+    moves: ["f1b5", "a7a6", "b5a4", "b8c6"],
+    rating: "1100",
+    openingFamily: "Ruy Lopez",
+    openingVariation: "Exchange Variation",
+    themes: "opening,development",
+    color: "white"
+  },
+  {
+    id: "fallback3",
+    fen: "rnbqkbnr/ppp2ppp/8/3pp3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
+    moves: ["e4d5", "d8d5", "d2d4", "d5e6"],
+    rating: "1300",
+    openingFamily: "Scandinavian Defense",
+    openingVariation: "Modern Variation",
+    themes: "opening,tactics",
+    color: "white"
+  },
+  {
+    id: "fallback4",
+    fen: "rnbqkb1r/pppppp1p/5np1/8/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3",
+    moves: ["b1c3", "f8g7", "c1e3", "e8g8"],
+    rating: "1400",
+    openingFamily: "King's Indian Defense",
+    openingVariation: "Main Line",
+    themes: "opening,fianchetto",
+    color: "white"
+  },
+  {
+    id: "fallback5",
+    fen: "r1bqkb1r/pp2pppp/2np1n2/6B1/3NP3/2N5/PPP2PPP/R2QKB1R b KQkq - 3 6",
+    moves: ["c8d7", "d1d2", "d7c6", "e1c1"],
+    rating: "1500",
+    openingFamily: "Sicilian Defense",
+    openingVariation: "Najdorf Variation",
+    themes: "middlegame,development",
+    color: "black"
+  }
+];
+
 export const useChessPuzzleApi = () => {
   const [puzzle, setPuzzle] = useState<RapidApiPuzzle | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [apiUnavailable, setApiUnavailable] = useState<boolean>(false);
+
+  const getFallbackPuzzle = () => {
+    // Get random fallback puzzle
+    const randomIndex = Math.floor(Math.random() * FALLBACK_PUZZLES.length);
+    return FALLBACK_PUZZLES[randomIndex];
+  };
 
   const fetchPuzzle = async (options?: {
     rating?: string;
@@ -30,7 +92,19 @@ export const useChessPuzzleApi = () => {
     setError(null);
     
     try {
-      // Use the Supabase edge function to fetch the puzzle
+      // If we already know API is unavailable, use fallback immediately
+      if (apiUnavailable) {
+        const fallbackPuzzle = getFallbackPuzzle();
+        setPuzzle(fallbackPuzzle);
+        setIsLoading(false);
+        toast({
+          title: "Using offline puzzle",
+          description: "Using built-in puzzle since the API is unavailable"
+        });
+        return;
+      }
+      
+      // Try to use the Supabase edge function to fetch the puzzle
       const { data, error } = await supabase.functions.invoke('chess-api', {
         body: { 
           endpoint: '/puzzles', 
@@ -73,7 +147,27 @@ export const useChessPuzzleApi = () => {
       }
     } catch (err: any) {
       console.error("Failed to fetch puzzle:", err);
-      setError(err.message || 'Failed to fetch puzzle');
+      
+      // Check if it's a 429 error (rate limit) or a missing API key
+      if (err.message && (
+          err.message.includes("429") || 
+          err.message.includes("quota") ||
+          err.message.includes("API key") ||
+          err.message.includes("Too Many Requests"))
+      ) {
+        setApiUnavailable(true);
+        toast({
+          title: "API Unavailable",
+          description: "The Chess Puzzles API is currently unavailable. Using built-in puzzles instead.",
+          variant: "warning",
+        });
+        
+        // Use a fallback puzzle
+        const fallbackPuzzle = getFallbackPuzzle();
+        setPuzzle(fallbackPuzzle);
+      } else {
+        setError(err.message || 'Failed to fetch puzzle');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -83,5 +177,5 @@ export const useChessPuzzleApi = () => {
     fetchPuzzle();
   }, []);
 
-  return { puzzle, isLoading, error, refetch: fetchPuzzle };
+  return { puzzle, isLoading, error, refetch: fetchPuzzle, apiUnavailable };
 };

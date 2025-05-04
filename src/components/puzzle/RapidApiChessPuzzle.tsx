@@ -6,10 +6,11 @@ import { useChessPuzzleApi } from '@/hooks/useChessPuzzleApi';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Loader, Lightbulb, RefreshCw } from "lucide-react";
+import { Loader, Lightbulb, RefreshCw, AlertTriangle } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const RapidApiChessPuzzle = () => {
-  const { puzzle, error, isLoading, refetch } = useChessPuzzleApi();
+  const { puzzle, error, isLoading, refetch, apiUnavailable } = useChessPuzzleApi();
   const [game, setGame] = useState<Chess>(new Chess());
   const [moveIndex, setMoveIndex] = useState(0);
   const [correctPath, setCorrectPath] = useState(true);
@@ -146,12 +147,16 @@ const RapidApiChessPuzzle = () => {
     refetch();
   };
 
-  if (error) {
+  if (error && !apiUnavailable) {
     return (
       <Card className="w-full max-w-3xl mx-auto">
         <CardContent className="pt-6">
           <div className="flex flex-col items-center gap-4">
-            <p className="text-red-500">{error}</p>
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Error Loading Puzzle</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
             <Button onClick={handleNewPuzzle}>Try Again</Button>
           </div>
         </CardContent>
@@ -163,9 +168,18 @@ const RapidApiChessPuzzle = () => {
     <Card className="w-full max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
-          <span>RapidAPI Chess Puzzle</span>
+          <span>Chess Puzzle</span>
           {isLoading && <Loader className="animate-spin" />}
         </CardTitle>
+        {apiUnavailable && (
+          <Alert variant="warning" className="mt-2">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Using Offline Puzzles</AlertTitle>
+            <AlertDescription>
+              The Chess Puzzles API is currently unavailable. Using built-in puzzles instead.
+            </AlertDescription>
+          </Alert>
+        )}
       </CardHeader>
       <CardContent>
         <div className="flex flex-col items-center gap-4">
