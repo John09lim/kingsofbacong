@@ -157,12 +157,7 @@ const PuzzleCalendar: React.FC<PuzzleCalendarProps> = ({
               </div>
               <Progress 
                 value={getProgressPercentage(selectedActivity.count)} 
-                className="h-1.5"
-                indicatorClassName={
-                  selectedActivity.count >= DAILY_PUZZLE_GOAL 
-                    ? "bg-green-500" 
-                    : "bg-chess-deep-red"
-                }
+                className={`h-1.5 ${selectedActivity.count >= DAILY_PUZZLE_GOAL ? "bg-green-500" : "bg-chess-deep-red"}`}
               />
             </div>
 

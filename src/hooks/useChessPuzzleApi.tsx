@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { supabase } from "@/integrations/supabase/client";
 
 export interface RapidApiPuzzle {
   id: string;
@@ -29,9 +30,10 @@ export const useChessPuzzleApi = () => {
     setError(null);
     
     try {
-      const response = await axios.get(
-        'https://chess-puzzles2.p.rapidapi.com/advanced',
-        {
+      // Use the Supabase edge function to fetch the puzzle
+      const { data, error } = await supabase.functions.invoke('chess-api', {
+        body: { 
+          endpoint: '/puzzles', 
           params: {
             rating: options?.rating || '1200',
             number_of_moves: options?.numberOfMoves || '4',
@@ -40,25 +42,35 @@ export const useChessPuzzleApi = () => {
             themes: options?.themes || 'kingsideAttack,middlegame',
             theme_search_type: 'AND',
             number_of_puzzles: '1',
-          },
-          headers: {
-            'x-rapidapi-host': 'chess-puzzles2.p.rapidapi.com',
-            'x-rapidapi-key': 'a0300f8454msh9b4ee5e304028ebp16e757jsnff1958562942',
-          },
-        }
-      );
+          }
+        },
+      });
       
-      // Add the color property to the puzzle data
-      // Determine color based on FEN if possible, defaulting to white
-      const fen = response.data[0]?.fen || '';
-      const color = fen.includes(' w ') ? 'white' : fen.includes(' b ') ? 'black' : 'white';
+      if (error) {
+        throw error;
+      }
       
-      const puzzleWithColor = {
-        ...response.data[0],
-        color: color
-      };
-      
-      setPuzzle(puzzleWithColor);
+      if (data && data.puzzles && data.puzzles.length > 0) {
+        // Add the color property to the puzzle data
+        // Determine color based on FEN if possible, defaulting to white
+        const fen = data.puzzles[0]?.fen || '';
+        const color = fen.includes(' w ') ? 'white' : fen.includes(' b ') ? 'black' : 'white';
+        
+        const puzzleWithColor = {
+          id: data.puzzles[0].puzzleid,
+          fen: data.puzzles[0].fen,
+          moves: data.puzzles[0].moves,
+          rating: data.puzzles[0].rating.toString(),
+          themes: data.puzzles[0].themes.join(','),
+          openingFamily: '',
+          openingVariation: '',
+          color: color
+        };
+        
+        setPuzzle(puzzleWithColor);
+      } else {
+        throw new Error("No puzzles returned from API");
+      }
     } catch (err: any) {
       console.error("Failed to fetch puzzle:", err);
       setError(err.message || 'Failed to fetch puzzle');
