@@ -47,16 +47,6 @@ const RapidApiChessPuzzle = () => {
     setGameState(result);
   };
 
-  const showHint = () => {
-    if (!puzzle?.moves[gameState.moveIndex]) return;
-    const hintFrom = puzzle.moves[gameState.moveIndex].slice(0, 2);
-    setGameState({
-      ...gameState,
-      feedback: `Hint: Move piece from ${hintFrom.toUpperCase()}`,
-      isCorrect: true
-    });
-  };
-
   const handleNewPuzzle = () => {
     refetch();
   };
@@ -110,7 +100,6 @@ const RapidApiChessPuzzle = () => {
       </CardContent>
       <CardFooter>
         <PuzzleControls 
-          onShowHint={showHint}
           onNewPuzzle={handleNewPuzzle}
           isSolved={gameState.isSolved}
           isLoading={isLoading}
