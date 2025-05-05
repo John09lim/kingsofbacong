@@ -1,5 +1,7 @@
+
 import React from 'react';
 import ChessPiece from './ChessPiece';
+
 interface ChessSquareProps {
   row: number;
   col: number;
@@ -14,6 +16,7 @@ interface ChessSquareProps {
   onMouseEnter: () => void;
   onMouseLeave: () => void;
 }
+
 const ChessSquare: React.FC<ChessSquareProps> = ({
   row,
   col,
@@ -28,18 +31,38 @@ const ChessSquare: React.FC<ChessSquareProps> = ({
   onMouseEnter,
   onMouseLeave
 }) => {
-  return <div onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className="">
-      {piece && <ChessPiece piece={piece} isSelected={isSelected} isAnimating={isAnimating && isLastMoveTo} />}
+  return (
+    <div 
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className={squareClasses}
+    >
+      {piece && (
+        <ChessPiece 
+          piece={piece} 
+          isSelected={isSelected}
+          isAnimating={isAnimating && isLastMoveTo}
+        />
+      )}
       
       {/* File and rank labels */}
-      {showCoordinates && <>
-          {col === 0 && <span className="chess-coordinates chess-rank">
+      {showCoordinates && (
+        <>
+          {col === 0 && (
+            <span className="chess-coordinates chess-rank">
               {8 - row}
-            </span>}
-          {row === 7 && <span className="chess-coordinates chess-file">
+            </span>
+          )}
+          {row === 7 && (
+            <span className="chess-coordinates chess-file">
               {"abcdefgh"[col]}
-            </span>}
-        </>}
-    </div>;
+            </span>
+          )}
+        </>
+      )}
+    </div>
+  );
 };
+
 export default ChessSquare;
