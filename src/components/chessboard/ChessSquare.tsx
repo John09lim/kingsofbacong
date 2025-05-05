@@ -36,7 +36,7 @@ const ChessSquare: React.FC<ChessSquareProps> = ({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={`${squareClasses} aspect-square flex items-center justify-center relative p-1 sm:p-0 touch-manipulation`}
+      className={`${squareClasses} aspect-square flex items-center justify-center relative p-0 touch-manipulation`}
     >
       <div className="w-full h-full flex items-center justify-center">
         {piece && (

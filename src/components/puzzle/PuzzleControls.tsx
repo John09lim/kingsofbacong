@@ -15,13 +15,16 @@ const PuzzleControls: React.FC<PuzzleControlsProps> = ({
   isSolved,
   isLoading
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <div className="flex justify-end">
+    <div className={`flex ${isMobile ? 'justify-center puzzle-controls' : 'justify-end'}`}>
       <Button 
         onClick={onNewPuzzle} 
         disabled={isLoading}
+        className={isMobile ? 'w-full max-w-[200px]' : ''}
       >
-        <RefreshCw className="mr-2 h-4 w-4" /> New Puzzle
+        <RefreshCw className="mr-2 h-4 w-4" /> {isMobile ? "Next Puzzle" : "New Puzzle"}
       </Button>
     </div>
   );

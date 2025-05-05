@@ -40,7 +40,7 @@ const ChessPiece: React.FC<ChessPieceProps> = ({
       src={pieceImage} 
       alt={`${piece.toUpperCase() === piece ? 'White' : 'Black'} ${piece.toLowerCase()}`}
       className={`
-        chess-piece w-3/4 h-3/4 object-contain
+        chess-piece w-2/3 h-2/3 object-contain
         ${isSelected ? 'opacity-70' : ''}
         ${isAnimating ? 'animate-scale-in' : ''}
       `}

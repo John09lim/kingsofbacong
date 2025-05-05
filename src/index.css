@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -195,8 +196,8 @@
   /* Add specific mobile styles for chess pieces */
   @media (max-width: 640px) {
     .chess-piece {
-      width: 80% !important;
-      height: 80% !important;
+      width: 65% !important;
+      height: 65% !important;
       object-fit: contain;
       margin: 0 auto;
     }
@@ -289,6 +290,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    
+    /* Fix for puzzle controls in mobile view */
+    .puzzle-controls {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
     }
   }
 }

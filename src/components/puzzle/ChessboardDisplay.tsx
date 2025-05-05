@@ -22,10 +22,10 @@ const ChessboardDisplay: React.FC<ChessboardDisplayProps> = ({
   useEffect(() => {
     const calculateWidth = () => {
       if (isMobile) {
-        // For mobile, use a percentage of viewport width that ensures proper spacing
+        // For mobile, calculate a width that ensures all squares are visible (1-8)
         const screenWidth = window.innerWidth;
-        // Using a smaller percentage to ensure better spacing on mobile
-        const calculatedWidth = Math.min(screenWidth * 0.85, 360); 
+        // Use 92% of screen width on mobile for better visibility of all squares
+        const calculatedWidth = Math.min(screenWidth * 0.92, 360); 
         setBoardWidth(calculatedWidth);
       } else {
         // For desktop, use fixed width
