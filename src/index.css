@@ -115,19 +115,24 @@
   
   /* Chess board specific styles - blue theme */
   .chess-board {
-    @apply border-4 rounded shadow-lg relative overflow-hidden;
+    @apply border-4 rounded shadow-lg relative overflow-hidden w-full aspect-square max-w-md mx-auto;
     border-color: #2c5282; 
     background: linear-gradient(145deg, #3182ce, #2b6cb0);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
   
+  /* Make sure each square is perfect square */
+  .chess-board .grid {
+    @apply aspect-square w-full;
+  }
+  
   .chess-light-square {
-    @apply bg-[hsl(var(--light-square))] relative z-10;
+    @apply bg-[hsl(var(--light-square))] relative z-10 aspect-square;
     box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
   }
   
   .chess-dark-square {
-    @apply bg-[hsl(var(--dark-square))] relative z-10;
+    @apply bg-[hsl(var(--dark-square))] relative z-10 aspect-square;
     box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
   }
   
@@ -245,6 +250,11 @@
     margin: 0 auto;
   }
 
+  /* Ensure each chess square maintains proper aspect ratio */
+  .chess-board > div > div {
+    @apply aspect-square;
+  }
+  
   /* Ensure react-chessboard has correct aspect-ratio */
   .react-chessboard {
     aspect-ratio: 1/1;

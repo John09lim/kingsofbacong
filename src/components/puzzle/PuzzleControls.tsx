@@ -1,30 +1,22 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Lightbulb, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PuzzleControlsProps {
-  onShowHint: () => void;
   onNewPuzzle: () => void;
   isSolved: boolean;
   isLoading: boolean;
 }
 
 const PuzzleControls: React.FC<PuzzleControlsProps> = ({ 
-  onShowHint, 
   onNewPuzzle, 
   isSolved,
   isLoading
 }) => {
   return (
-    <div className="flex justify-between">
-      <Button 
-        variant="outline" 
-        onClick={onShowHint} 
-        disabled={isLoading || isSolved}
-      >
-        <Lightbulb className="mr-2 h-4 w-4" /> Hint
-      </Button>
+    <div className="flex justify-end">
       <Button 
         onClick={onNewPuzzle} 
         disabled={isLoading}

@@ -9,10 +9,8 @@ import {
   getSquarePosition, 
   isWhitePiece, 
   getSquareClasses, 
-  validateHintTarget,
   getProperBoardOrientation 
 } from './ChessBoardUtils';
-import { debugPuzzle } from '@/utils/puzzleUtils';
 
 interface ChessBoardProps {
   fen?: string;
@@ -40,8 +38,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [isSolved, setIsSolved] = useState<boolean>(false);
   const [hoveredSquare, setHoveredSquare] = useState<string | null>(null);
   const [boardFlipped, setBoardFlipped] = useState<boolean>(getProperBoardOrientation(isReversed, playerTurn));
-  const [showHint, setShowHint] = useState<boolean>(false);
-  const [hintSquare, setHintSquare] = useState<string | null>(null);
   const [waitingForComputerMove, setWaitingForComputerMove] = useState<boolean>(false);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const [lastMove, setLastMove] = useState<[string, string] | null>(null);
@@ -74,9 +70,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       setMoveHistory([]);
       setCurrentSolutionIndex(0);
       setIsSolved(false);
-      setShowHint(false);
-      setHintSquare(null);
-      setWaitingForComputerMove(false);
       setLastMove(null);
       setMoveCount(0);
       setStartTime(Date.now());
@@ -177,52 +170,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     }
   }, [currentSolutionIndex, solution, waitingForComputerMove, isSolved, makeComputerMove, onSolved, startTime, userHasMadeFirstMove, isPlayerTurn]);
   
-  // Show hint for next move - Improve to only highlight player's pieces
-  const showHintMove = () => {
-    if (currentSolutionIndex < solution.length && isPlayerTurn) {
-      const nextMove = solution[currentSolutionIndex];
-      if (nextMove && nextMove.length >= 2) {
-        // Extract the first two characters (from square)
-        const suggestedSquare = nextMove.substring(0, 2);
-        
-        // Verify that the hint is targeting the player's piece
-        const [row, col] = getSquarePosition(suggestedSquare);
-        
-        if (row >= 0 && col >= 0 && row < 8 && col < 8) {
-          const piece = board[row][col];
-          
-          if (piece) {
-            const isWhite = isWhitePiece(piece);
-            const isPlayerPiece = (playerTurn === 'w' && isWhite) || (playerTurn === 'b' && !isWhite);
-            
-            if (isPlayerPiece) {
-              setHintSquare(suggestedSquare);
-              setShowHint(true);
-              
-              toast({
-                title: "Hint",
-                description: `Try moving the piece at ${suggestedSquare.toUpperCase()}.`,
-              });
-              
-              setTimeout(() => {
-                setShowHint(false);
-                setHintSquare(null);
-              }, 3000); // Show hint for 3 seconds
-              return;
-            }
-          }
-        }
-        
-        // If we got here, the hint was invalid
-        toast({
-          title: "Invalid hint",
-          description: "This puzzle may have an incorrect solution. Try a new puzzle.",
-          variant: "destructive",
-        });
-      }
-    }
-  };
-
   // Check if a square is a legal move
   const isLegalMoveSquare = (row: number, col: number): boolean => {
     if (!selectedSquare) return false;
@@ -322,9 +269,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     setCurrentSolutionIndex(0);
     setIsSolved(false);
     setBoard(parseFen(fen));
-    setShowHint(false);
-    setHintSquare(null);
-    setWaitingForComputerMove(false);
     setLastMove(null);
     setMoveCount(0);
     setStartTime(Date.now());
@@ -347,7 +291,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       <ChessBoardControls 
         boardFlipped={boardFlipped}
         onFlipBoard={handleFlipBoard}
-        onShowHint={showHintMove}
         onReset={resetPuzzle}
         isSolved={isSolved}
         waitingForComputerMove={waitingForComputerMove}
@@ -355,11 +298,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         solutionLength={solution.length}
         solveTime={solveTime}
         playerTurn={playerTurn}
-        disableHint={isSolved || currentSolutionIndex >= solution.length || waitingForComputerMove || !isPlayerTurn}
       />
       
       <div className="chess-board">
-        <div className="grid grid-cols-8 gap-0 w-full max-w-md mx-auto">
+        <div className="grid grid-cols-8 gap-0 w-full aspect-square mx-auto">
           {/* Render the board according to player's perspective */}
           {!boardFlipped ? (
             // White's perspective (a1 at bottom left)
@@ -367,7 +309,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
               row.map((piece, colIndex) => {
                 const squareClasses = getSquareClasses(
                   rowIndex, colIndex, board, selectedSquare, hoveredSquare, 
-                  lastMove, showHint, hintSquare, isLegalMoveSquare
+                  lastMove, false, null, isLegalMoveSquare
                 );
                 const squareName = getSquareName(rowIndex, colIndex);
                 const isLastMoveFrom = lastMove && lastMove[0] === squareName;
@@ -401,7 +343,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 const colIndex = 7 - reversedColIndex;
                 const squareClasses = getSquareClasses(
                   rowIndex, colIndex, board, selectedSquare, hoveredSquare, 
-                  lastMove, showHint, hintSquare, isLegalMoveSquare
+                  lastMove, false, null, isLegalMoveSquare
                 );
                 const squareName = getSquareName(rowIndex, colIndex);
                 const isLastMoveFrom = lastMove && lastMove[0] === squareName;

@@ -36,7 +36,7 @@ const ChessSquare: React.FC<ChessSquareProps> = ({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={squareClasses}
+      className={`${squareClasses} aspect-square`} // Added aspect-square to ensure perfect square shape
     >
       {piece && (
         <ChessPiece 

@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { RotateCcw, Lightbulb } from "lucide-react";
+import { RotateCcw } from "lucide-react";
+import { Check } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ChessBoardControlsProps {
   boardFlipped: boolean;
   onFlipBoard: () => void;
-  onShowHint: () => void;
   onReset: () => void;
   isSolved: boolean;
   waitingForComputerMove: boolean;
@@ -17,49 +18,39 @@ interface ChessBoardControlsProps {
   solutionLength: number;
   solveTime?: number;
   playerTurn: 'w' | 'b';
-  disableHint: boolean;
 }
 
 const ChessBoardControls: React.FC<ChessBoardControlsProps> = ({
   boardFlipped,
   onFlipBoard,
-  onShowHint,
   onReset,
   isSolved,
   waitingForComputerMove,
   currentSolutionIndex,
   solutionLength,
   solveTime,
-  playerTurn,
-  disableHint
+  playerTurn
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <>
       <div className="mb-4 flex items-center justify-between w-full">
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="board-orientation"
-            checked={!boardFlipped}
-            onCheckedChange={onFlipBoard}
-          />
-          <Label htmlFor="board-orientation">
-            <RotateCcw className="h-4 w-4" />
-            <span className="sr-only">Flip Board</span>
-          </Label>
-        </div>
+        {!isMobile && (
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="board-orientation"
+              checked={!boardFlipped}
+              onCheckedChange={onFlipBoard}
+            />
+            <Label htmlFor="board-orientation">
+              <RotateCcw className="h-4 w-4" />
+              <span className="sr-only">Flip Board</span>
+            </Label>
+          </div>
+        )}
         
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={onShowHint}
-            className="flex items-center gap-1"
-            disabled={disableHint}
-          >
-            <Lightbulb className="h-4 w-4" />
-            Hint
-          </Button>
-          
+        <div className={`flex gap-2 ${isMobile ? 'w-full justify-end' : ''}`}>
           {waitingForComputerMove && (
             <Badge className="bg-amber-500">
               Computer thinking...
@@ -74,7 +65,7 @@ const ChessBoardControls: React.FC<ChessBoardControlsProps> = ({
         </div>
       </div>
       
-      <div className="flex items-center gap-2 mt-4">
+      <div className="flex items-center gap-2 mt-4 justify-between w-full">
         <Button 
           variant="outline" 
           size="sm" 
@@ -99,8 +90,5 @@ const ChessBoardControls: React.FC<ChessBoardControlsProps> = ({
     </>
   );
 };
-
-// Import the Check icon for the solved state
-import { Check } from 'lucide-react';
 
 export default ChessBoardControls;
