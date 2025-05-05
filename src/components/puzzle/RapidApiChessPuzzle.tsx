@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useChessPuzzleApi } from '@/hooks/useChessPuzzleApi';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Loader } from "lucide-react";
@@ -21,6 +21,20 @@ const RapidApiChessPuzzle = () => {
     boardOrientation: "white" as "white" | "black",
     moveIndex: 0
   });
+  
+  // Initialize the game state when we get a puzzle
+  useEffect(() => {
+    if (puzzle) {
+      setGameState(prev => ({
+        ...prev,
+        fen: puzzle.fen || '',
+        feedback: '',
+        isSolved: false,
+        boardOrientation: puzzle.color === 'black' ? 'black' : 'white',
+        moveIndex: 0
+      }));
+    }
+  }, [puzzle]);
 
   const handleMoveResult = (result: {
     fen: string;

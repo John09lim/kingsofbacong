@@ -74,6 +74,7 @@ export const useChessPuzzleApi = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [apiUnavailable, setApiUnavailable] = useState<boolean>(false);
+  const [retryCount, setRetryCount] = useState<number>(0);
 
   const getFallbackPuzzle = () => {
     // Get random fallback puzzle
@@ -105,6 +106,7 @@ export const useChessPuzzleApi = () => {
       }
       
       // Try to use the Supabase edge function to fetch the puzzle
+      console.log("Attempting to fetch puzzle from API...");
       const { data, error } = await supabase.functions.invoke('chess-api', {
         body: { 
           endpoint: '/puzzles', 
@@ -121,7 +123,22 @@ export const useChessPuzzleApi = () => {
       });
       
       if (error) {
+        console.error("Supabase function error:", error);
         throw error;
+      }
+      
+      // Check if we got a response indicating we should use fallback
+      if (data && data.fallback) {
+        console.log("API indicated to use fallback");
+        setApiUnavailable(true);
+        const fallbackPuzzle = getFallbackPuzzle();
+        setPuzzle(fallbackPuzzle);
+        toast({
+          title: "API Unavailable",
+          description: "Using built-in puzzles instead.",
+          variant: "destructive",
+        });
+        return;
       }
       
       if (data && data.puzzles && data.puzzles.length > 0) {
@@ -148,16 +165,19 @@ export const useChessPuzzleApi = () => {
     } catch (err: any) {
       console.error("Failed to fetch puzzle:", err);
       
-      // Check if it's a 429 error (rate limit) or a missing API key
-      if (err.message && (
-          err.message.includes("429") || 
-          err.message.includes("quota") ||
-          err.message.includes("API key") ||
-          err.message.includes("Too Many Requests"))
-      ) {
+      // Check for various API error conditions that should trigger fallback
+      const errorMessage = err.message || '';
+      const useOffline = errorMessage.includes("429") || 
+                         errorMessage.includes("quota") ||
+                         errorMessage.includes("API key") ||
+                         errorMessage.includes("Too Many Requests") ||
+                         errorMessage.includes("configuration error") ||
+                         retryCount >= 2;
+      
+      if (useOffline) {
         setApiUnavailable(true);
         toast({
-          title: "API Unavailable",
+          title: "Using Offline Puzzles",
           description: "The Chess Puzzles API is currently unavailable. Using built-in puzzles instead.",
           variant: "destructive",
         });
@@ -167,6 +187,14 @@ export const useChessPuzzleApi = () => {
         setPuzzle(fallbackPuzzle);
       } else {
         setError(err.message || 'Failed to fetch puzzle');
+        setRetryCount(prev => prev + 1);
+        
+        if (retryCount < 2) {
+          // Auto-retry once with fallback puzzles if this is the first failure
+          console.log("Auto-retrying with fallback puzzle");
+          const fallbackPuzzle = getFallbackPuzzle();
+          setPuzzle(fallbackPuzzle);
+        }
       }
     } finally {
       setIsLoading(false);
@@ -177,5 +205,12 @@ export const useChessPuzzleApi = () => {
     fetchPuzzle();
   }, []);
 
-  return { puzzle, isLoading, error, refetch: fetchPuzzle, apiUnavailable };
+  return { 
+    puzzle, 
+    isLoading, 
+    error, 
+    refetch: fetchPuzzle, 
+    apiUnavailable, 
+    retryCount 
+  };
 };

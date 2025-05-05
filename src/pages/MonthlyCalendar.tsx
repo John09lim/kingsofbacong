@@ -124,7 +124,8 @@ const MonthlyCalendar = () => {
   };
   
   const handleGoBack = () => {
-    navigate(-1); // Go back to the previous page
+    // Go back to tactics page specifically
+    navigate('/tactics');
   };
   
   // Extract days of the current month

@@ -15,7 +15,8 @@ const ApiUnavailableAlert: React.FC<ApiUnavailableAlertProps> = ({ isVisible }) 
       <AlertTriangle className="h-4 w-4" />
       <AlertTitle>Using Offline Puzzles</AlertTitle>
       <AlertDescription>
-        The Chess Puzzles API is currently unavailable. Using built-in puzzles instead.
+        The Chess Puzzles API is currently unavailable. Using built-in puzzles instead. 
+        You can continue solving puzzles in offline mode.
       </AlertDescription>
     </Alert>
   );
