@@ -75,22 +75,24 @@ const RapidApiChessPuzzle = () => {
             />
           )}
           
-          {gameState.fen && (
-            <ChessboardDisplay
-              fen={gameState.fen} 
-              onPieceDrop={(source, target) => {
-                // This will be handled by the PuzzleChessEngine
-                // We just need to pass the call through
-                if (puzzle && !gameState.isSolved) {
-                  const userMoveString = source + target;
-                  const expectedMove = puzzle.moves[gameState.moveIndex];
-                  return userMoveString === expectedMove;
-                }
-                return false;
-              }}
-              boardOrientation={gameState.boardOrientation}
-            />
-          )}
+          <div className="w-full sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 mx-auto">
+            {gameState.fen && (
+              <ChessboardDisplay
+                fen={gameState.fen} 
+                onPieceDrop={(source, target) => {
+                  // This will be handled by the PuzzleChessEngine
+                  // We just need to pass the call through
+                  if (puzzle && !gameState.isSolved) {
+                    const userMoveString = source + target;
+                    const expectedMove = puzzle.moves[gameState.moveIndex];
+                    return userMoveString === expectedMove;
+                  }
+                  return false;
+                }}
+                boardOrientation={gameState.boardOrientation}
+              />
+            )}
+          </div>
           
           <FeedbackMessage 
             message={gameState.feedback} 
