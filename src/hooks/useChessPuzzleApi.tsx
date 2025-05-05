@@ -159,7 +159,7 @@ export const useChessPuzzleApi = () => {
         toast({
           title: "API Unavailable",
           description: "The Chess Puzzles API is currently unavailable. Using built-in puzzles instead.",
-          variant: "warning",
+          variant: "destructive",
         });
         
         // Use a fallback puzzle
