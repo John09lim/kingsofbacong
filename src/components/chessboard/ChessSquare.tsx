@@ -36,15 +36,17 @@ const ChessSquare: React.FC<ChessSquareProps> = ({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={`${squareClasses} aspect-square flex items-center justify-center relative`}
+      className={`${squareClasses} aspect-square flex items-center justify-center relative p-1 sm:p-0 touch-manipulation`}
     >
-      {piece && (
-        <ChessPiece 
-          piece={piece} 
-          isSelected={isSelected}
-          isAnimating={isAnimating && isLastMoveTo}
-        />
-      )}
+      <div className="w-full h-full flex items-center justify-center">
+        {piece && (
+          <ChessPiece 
+            piece={piece} 
+            isSelected={isSelected}
+            isAnimating={isAnimating && isLastMoveTo}
+          />
+        )}
+      </div>
       
       {/* File and rank labels */}
       {showCoordinates && (

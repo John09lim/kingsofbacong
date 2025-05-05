@@ -192,6 +192,16 @@
     filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
   }
   
+  /* Add specific mobile styles for chess pieces */
+  @media (max-width: 640px) {
+    .chess-piece {
+      width: 80% !important;
+      height: 80% !important;
+      object-fit: contain;
+      margin: 0 auto;
+    }
+  }
+  
   .chess-piece:hover {
     transform: translateY(-2px);
   }
@@ -248,6 +258,7 @@
     aspect-ratio: 1/1;
     max-width: 600px;
     margin: 0 auto;
+    touch-action: manipulation;
   }
 
   /* Ensure each chess square maintains proper aspect ratio */
@@ -266,5 +277,18 @@
   .react-chessboard > div {
     width: 100% !important;
     height: 100% !important;
+  }
+  
+  /* Improved mobile chess square styling */
+  @media (max-width: 640px) {
+    .react-chessboard > div > div {
+      padding: 0 !important;
+    }
+    
+    .react-chessboard > div > div > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }

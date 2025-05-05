@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Chessboard } from 'react-chessboard';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -16,9 +16,30 @@ const ChessboardDisplay: React.FC<ChessboardDisplayProps> = ({
   boardOrientation 
 }) => {
   const isMobile = useIsMobile();
+  const [boardWidth, setBoardWidth] = useState(400);
+  
+  // Calculate board width based on screen size
+  useEffect(() => {
+    const calculateWidth = () => {
+      if (isMobile) {
+        // For mobile, use a percentage of viewport width that ensures proper spacing
+        const screenWidth = window.innerWidth;
+        // Using a smaller percentage to ensure better spacing on mobile
+        const calculatedWidth = Math.min(screenWidth * 0.85, 360); 
+        setBoardWidth(calculatedWidth);
+      } else {
+        // For desktop, use fixed width
+        setBoardWidth(400);
+      }
+    };
+    
+    calculateWidth();
+    window.addEventListener('resize', calculateWidth);
+    return () => window.removeEventListener('resize', calculateWidth);
+  }, [isMobile]);
   
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md mx-auto chess-board-container">
       <AspectRatio ratio={1 / 1} className="w-full">
         <Chessboard 
           position={fen} 
@@ -34,7 +55,7 @@ const ChessboardDisplay: React.FC<ChessboardDisplayProps> = ({
           }}
           customDarkSquareStyle={{ backgroundColor: "#b58863" }} 
           customLightSquareStyle={{ backgroundColor: "#f0d9b5" }}
-          boardWidth={isMobile ? window.innerWidth * 0.9 : 400}
+          boardWidth={boardWidth}
         />
       </AspectRatio>
     </div>
