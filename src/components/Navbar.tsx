@@ -31,9 +31,28 @@ const Navbar = () => {
         }
       }
     );
+
+    // Set up real-time subscription for profile updates
+    const profileChannel = supabase
+      .channel('profile-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles'
+        },
+        (payload) => {
+          if (user && payload.new.id === user.id) {
+            setProfile(payload.new);
+          }
+        }
+      )
+      .subscribe();
     
     return () => {
       subscription.unsubscribe();
+      supabase.removeChannel(profileChannel);
     };
   }, []);
   
