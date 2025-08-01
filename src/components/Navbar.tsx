@@ -7,9 +7,24 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const navigate = useNavigate();
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownOpen) {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileDropdownOpen]);
   
   useEffect(() => {
     // Get the current session
@@ -44,6 +59,7 @@ const Navbar = () => {
         },
         (payload) => {
           if (user && payload.new.id === user.id) {
+            console.log('Profile updated in real-time:', payload.new);
             setProfile(payload.new);
           }
         }
@@ -54,16 +70,26 @@ const Navbar = () => {
       subscription.unsubscribe();
       supabase.removeChannel(profileChannel);
     };
-  }, []);
+  }, [user]);
   
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    
-    setProfile(data);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return;
+      }
+      
+      console.log('Fetched profile:', data); // Debug log
+      setProfile(data);
+    } catch (error) {
+      console.error('Profile fetch error:', error);
+    }
   };
   
   const handleSignOut = async () => {
@@ -92,27 +118,45 @@ const Navbar = () => {
           <Link to="/community" className="hover:text-chess-light-pink transition-colors">Community</Link>
           
           {user ? (
-            <div className="relative flex items-center group">
-              <Avatar className="h-10 w-10 border-2 border-chess-light-pink cursor-pointer">
-                <AvatarImage src={profile?.avatar_url} />
+            <div className="relative">
+              <Avatar 
+                className="h-10 w-10 border-2 border-chess-light-pink cursor-pointer"
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+              >
+                <AvatarImage 
+                  src={profile?.avatar_url} 
+                  alt={profile?.full_name || 'User Avatar'}
+                  onError={(e) => console.log('Avatar load error:', e)}
+                />
                 <AvatarFallback className="bg-chess-deep-red text-white">
                   {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
                 </AvatarFallback>
               </Avatar>
               
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white text-chess-dark-maroon rounded shadow-lg py-2 hidden group-hover:block">
-                <div className="px-4 py-2 border-b border-gray-100">
-                  <div className="font-semibold">{profile?.full_name || 'User'}</div>
-                  <div className="text-sm opacity-70">{user.email}</div>
+              {profileDropdownOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white text-chess-dark-maroon rounded shadow-lg py-2 z-50 border border-gray-200">
+                  <div className="px-4 py-2 border-b border-gray-100">
+                    <div className="font-semibold">{profile?.full_name || 'User'}</div>
+                    <div className="text-sm opacity-70">{user.email}</div>
+                  </div>
+                  <Link 
+                    to="/profile" 
+                    className="block px-4 py-2 hover:bg-chess-light-pink"
+                    onClick={() => setProfileDropdownOpen(false)}
+                  >
+                    Profile
+                  </Link>
+                  <button 
+                    onClick={() => {
+                      setProfileDropdownOpen(false);
+                      handleSignOut();
+                    }}
+                    className="block w-full text-left px-4 py-2 hover:bg-chess-light-pink"
+                  >
+                    Sign Out
+                  </button>
                 </div>
-                <Link to="/profile" className="block px-4 py-2 hover:bg-chess-light-pink">Profile</Link>
-                <button 
-                  onClick={handleSignOut}
-                  className="block w-full text-left px-4 py-2 hover:bg-chess-light-pink"
-                >
-                  Sign Out
-                </button>
-              </div>
+              )}
             </div>
           ) : (
             <Link to="/auth" className="chess-btn-outline bg-transparent border-white text-white hover:bg-white hover:text-chess-dark-maroon">
@@ -144,7 +188,10 @@ const Navbar = () => {
               <>
                 <div className="py-2 flex items-center space-x-3">
                   <Avatar className="h-8 w-8 border-2 border-chess-light-pink">
-                    <AvatarImage src={profile?.avatar_url} />
+                    <AvatarImage 
+                      src={profile?.avatar_url} 
+                      alt={profile?.full_name || 'User Avatar'}
+                    />
                     <AvatarFallback className="bg-chess-deep-red text-white">
                       {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
                     </AvatarFallback>
