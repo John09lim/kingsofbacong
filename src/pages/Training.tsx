@@ -45,7 +45,8 @@ const Training = () => {
         quizzes: 2,
         exercises: 3,
         imageUrl: chessBoardBasics,
-        level: "beginner"
+        level: "beginner",
+        url: "https://www.chess.com/learn"
       },
       {
         id: 2,
@@ -58,7 +59,8 @@ const Training = () => {
         quizzes: 2,
         exercises: 5,
         imageUrl: pawnPromotion,
-        level: "beginner"
+        level: "beginner",
+        url: "https://www.chess.com/learn/article/view/special-chess-rules"
       },
       {
         id: 3,
@@ -71,7 +73,8 @@ const Training = () => {
         quizzes: 1,
         exercises: 4,
         imageUrl: checkmatePosition,
-        level: "beginner"
+        level: "beginner",
+        url: "https://www.chess.com/learn/article/view/how-to-checkmate"
       },
       {
         id: 4,
@@ -84,7 +87,8 @@ const Training = () => {
         quizzes: 2,
         exercises: 4,
         imageUrl: openingPrinciples,
-        level: "beginner"
+        level: "beginner",
+        url: "https://www.chess.com/learn/article/view/chess-opening-principles"
       }
     ],
     intermediate: [
@@ -99,7 +103,8 @@ const Training = () => {
         quizzes: 3,
         exercises: 5,
         imageUrl: advancedOpening,
-        level: "intermediate"
+        level: "intermediate",
+        url: "https://lichess.org/study"
       },
       {
         id: 2,
@@ -112,7 +117,8 @@ const Training = () => {
         quizzes: 2,
         exercises: 8,
         imageUrl: tacticalPatterns,
-        level: "intermediate"
+        level: "intermediate",
+        url: "https://www.chess.com/puzzles/tactical"
       },
       {
         id: 3,
@@ -125,7 +131,8 @@ const Training = () => {
         quizzes: 3,
         exercises: 4,
         imageUrl: positionalPlay,
-        level: "intermediate"
+        level: "intermediate",
+        url: "https://lichess.org/study/topic/Strategy"
       },
       {
         id: 4,
@@ -138,7 +145,8 @@ const Training = () => {
         quizzes: 2,
         exercises: 6,
         imageUrl: middlegameTransition,
-        level: "intermediate"
+        level: "intermediate",
+        url: "https://www.chess.com/learn/article/view/middlegame-principles"
       }
     ],
     advanced: [
@@ -153,7 +161,8 @@ const Training = () => {
         quizzes: 3,
         exercises: 5,
         imageUrl: advancedOpening,
-        level: "advanced"
+        level: "advanced",
+        url: "https://lichess.org/study/topic/Opening"
       },
       {
         id: 2,
@@ -166,7 +175,8 @@ const Training = () => {
         quizzes: 3,
         exercises: 6,
         imageUrl: complexMiddlegame,
-        level: "advanced"
+        level: "advanced",
+        url: "https://www.chess.com/learn/article/view/middlegame-strategy"
       },
       {
         id: 3,
@@ -179,7 +189,8 @@ const Training = () => {
         quizzes: 4,
         exercises: 7,
         imageUrl: advancedEndgames,
-        level: "advanced"
+        level: "advanced",
+        url: "https://lichess.org/study/topic/Endgame"
       },
       {
         id: 4,
@@ -192,7 +203,8 @@ const Training = () => {
         quizzes: 2,
         exercises: 4,
         imageUrl: tournamentPreparation,
-        level: "advanced"
+        level: "advanced",
+        url: "https://www.chess.com/learn/article/view/tournament-preparation"
       }
     ]
   };
@@ -209,8 +221,7 @@ const Training = () => {
   // Handle module selection
   const handleModuleClick = (module) => {
     if (!module.locked) {
-      setSelectedModule(module);
-      setIsModalOpen(true);
+      window.open(module.url, '_blank');
     }
   };
 
