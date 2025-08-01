@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { useTrainingSession } from '@/hooks/useTrainingSession';
+import { TrainingTimeDisplay } from '@/components/TrainingTimeDisplay';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -123,6 +125,7 @@ const OpeningExplorer = () => (
 
 // Main component
 const OpeningStudies = () => {
+  const { sessionDuration, isTracking } = useTrainingSession('opening_studies');
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("popular");
 
@@ -453,11 +456,16 @@ const OpeningStudies = () => {
       <main className="flex-grow">
         <div className="bg-chess-dark-maroon py-10 px-4">
           <div className="container mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Opening Studies</h1>
-            <p className="text-chess-light-pink text-lg max-w-3xl">
-              Explore the world of chess openings with our comprehensive guide. Learn theory, watch video analyses, and 
-              master the early phase of the game.
-            </p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Opening Studies</h1>
+                <p className="text-chess-light-pink text-lg max-w-3xl">
+                  Explore the world of chess openings with our comprehensive guide. Learn theory, watch video analyses, and 
+                  master the early phase of the game.
+                </p>
+              </div>
+              <TrainingTimeDisplay sessionDuration={sessionDuration} isTracking={isTracking} />
+            </div>
           </div>
         </div>
 

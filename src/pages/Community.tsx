@@ -1,101 +1,79 @@
-
-import React, { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { supabase } from '@/integrations/supabase/client';
+import React, { useState, useEffect } from 'react';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { SkeletonCard } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
+import { supabase } from '@/integrations/supabase/client';
+import { Trophy, Clock, Target, Star } from 'lucide-react';
 
 interface Profile {
   id: string;
-  full_name: string;
+  full_name: string | null;
   avatar_url: string | null;
-  training_hours: number;
+  email: string;
+  total_training_minutes: number;
   level: number;
 }
+
+const calculateLevel = (minutes: number): number => {
+  return Math.floor(minutes / 60) + 1; // 1 level per hour
+};
+
+const getLevelTitle = (level: number): string => {
+  if (level >= 100) return "Grandmaster";
+  if (level >= 50) return "Master";
+  if (level >= 25) return "Expert";
+  if (level >= 10) return "Advanced";
+  if (level >= 5) return "Intermediate";
+  return "Beginner";
+};
+
+const getLevelProgress = (minutes: number, level: number): number => {
+  const minutesInCurrentLevel = minutes % 60;
+  return (minutesInCurrentLevel / 60) * 100;
+};
+
+const getDefaultAvatar = (name: string | null): string => {
+  const avatars = [
+    'photo-1582562124811-c09040d0a901',
+    'photo-1535268647677-300dbf3d78d1',
+    'photo-1501286353178-1ec881214838'
+  ];
+  const index = name ? name.length % avatars.length : 0;
+  return `https://images.unsplash.com/${avatars[index]}?w=100&h=100&fit=crop&crop=face`;
+};
 
 const Community = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [leadingPlayer, setLeadingPlayer] = useState<Profile | null>(null);
 
-  // Calculate user level based on training hours
-  const calculateLevel = (hours: number): number => {
-    if (hours < 10) return 1;
-    if (hours < 25) return 2;
-    if (hours < 50) return 3;
-    if (hours < 100) return 4;
-    if (hours < 200) return 5;
-    return 6; // Max level
-  };
-
-  // Get level title based on level number
-  const getLevelTitle = (level: number): string => {
-    switch(level) {
-      case 1: return "Beginner";
-      case 2: return "Novice";
-      case 3: return "Intermediate";
-      case 4: return "Advanced";
-      case 5: return "Expert";
-      case 6: return "Master";
-      default: return "Unknown";
-    }
-  };
-
-  // Calculate progress percentage to next level
-  const getLevelProgress = (hours: number, level: number): number => {
-    const levelThresholds = [0, 10, 25, 50, 100, 200, 999999];
-    const currentThreshold = levelThresholds[level - 1];
-    const nextThreshold = levelThresholds[level];
-    
-    if (level >= 6) return 100; // Max level reached
-    
-    const progress = ((hours - currentThreshold) / (nextThreshold - currentThreshold)) * 100;
-    return Math.min(Math.max(progress, 0), 100); // Clamp between 0-100
-  };
-
   useEffect(() => {
     const fetchProfiles = async () => {
-      setLoading(true);
       try {
-        // Fetch all profiles
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('profiles')
-          .select('*')
+          .select('id, full_name, avatar_url, email, total_training_minutes')
           .order('full_name');
 
         if (error) throw error;
 
-        // Add mock training hours for demo purposes
-        const profilesWithStats = data?.map((profile, index) => {
-          const randomBase = Math.floor(Math.random() * 220); // Random base hours
-          const trainHours = 150 - (index * 8) + randomBase;
-          const trainingHours = Math.max(trainHours, 5); // Ensure at least 5 hours
-          
-          // Calculate level based on hours and create properly typed profile object
-          const level = calculateLevel(trainingHours);
-          
-          return {
-            id: profile.id,
-            full_name: profile.full_name || 'Chess Player',
-            avatar_url: profile.avatar_url,
-            training_hours: trainingHours,
-            level: level
-          } as Profile;
-        }) || [];
-        
-        // Sort by training hours (descending)
-        profilesWithStats.sort((a, b) => b.training_hours - a.training_hours);
-        
-        setProfiles(profilesWithStats);
-        
-        // Set the leading player (first one with most hours)
-        if (profilesWithStats.length > 0) {
-          setLeadingPlayer(profilesWithStats[0]);
-        }
+        const profilesWithLevels = (data || []).map((profile: any) => ({
+          ...profile,
+          total_training_minutes: profile.total_training_minutes || 0,
+          level: calculateLevel(profile.total_training_minutes || 0)
+        }));
+
+        // Sort by training time for leaderboard
+        const sortedProfiles = [...profilesWithLevels].sort(
+          (a, b) => b.total_training_minutes - a.total_training_minutes
+        );
+
+        setProfiles(profilesWithLevels);
+        setLeadingPlayer(sortedProfiles[0] || null);
       } catch (error) {
         console.error('Error fetching profiles:', error);
       } finally {
@@ -106,158 +84,185 @@ const Community = () => {
     fetchProfiles();
   }, []);
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow bg-chess-light-pink">
-        <div className="container mx-auto px-4 py-12">
-          <h1 className="text-4xl font-bold text-chess-dark-maroon mb-8 text-center">
-            Chess Community
-          </h1>
-          
-          {loading ? (
-            <div className="space-y-8">
-              <SkeletonCard />
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <SkeletonCard key={i} />
-                ))}
-              </div>
-            </div>
-          ) : (
-            <>
-              {leadingPlayer && (
-                <div className="bg-white rounded-lg shadow-md p-6 mb-8 border-2 border-chess-deep-red">
-                  <h2 className="text-2xl font-semibold text-chess-dark-maroon mb-4 text-center">
-                    Leading in Training
-                  </h2>
-                  <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-                    <div className="relative">
-                      <Avatar className="h-32 w-32 border-4 border-chess-deep-red">
-                        <AvatarImage src={leadingPlayer.avatar_url || ''} />
-                        <AvatarFallback className="bg-chess-deep-red text-white text-4xl">
-                          {leadingPlayer.full_name ? leadingPlayer.full_name.charAt(0).toUpperCase() : 'K'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <Badge className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-chess-dark-blue px-3 py-1">
-                        {getLevelTitle(leadingPlayer.level || 1)}
-                      </Badge>
-                    </div>
-                    <div className="text-center md:text-left">
-                      <h3 className="text-2xl font-bold text-chess-dark-maroon">{leadingPlayer.full_name}</h3>
-                      <div className="mt-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-chess-dark-blue">Level {leadingPlayer.level}</span>
-                          <span className="text-sm text-chess-dark-blue">
-                            {leadingPlayer.training_hours} hours
-                          </span>
-                        </div>
-                        <Progress 
-                          value={getLevelProgress(
-                            leadingPlayer.training_hours || 0, 
-                            leadingPlayer.level || 1
-                          )} 
-                          className="h-2 mt-1"
-                        />
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8">
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-64" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <Card key={i}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <Skeleton className="h-12 w-12 rounded-full" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-24" />
                       </div>
-                      <p className="mt-4 italic text-chess-dark-blue">
-                        "A strong chess player isn't born overnight. It's built one consistent practice at a time."
-                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="container mx-auto px-4 py-8">
+        <div className="space-y-8">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-foreground mb-4">Chess Community</h1>
+            <p className="text-muted-foreground text-lg">
+              Connect with fellow chess enthusiasts and track your progress together
+            </p>
+          </div>
+
+          {/* Leading Player Spotlight */}
+          {leadingPlayer && (
+            <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-secondary/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Trophy className="h-6 w-6 text-primary" />
+                  Leading in Training
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center space-x-6">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage 
+                      src={leadingPlayer.avatar_url || getDefaultAvatar(leadingPlayer.full_name)} 
+                      alt={leadingPlayer.full_name || 'User'} 
+                    />
+                    <AvatarFallback>
+                      {(leadingPlayer.full_name || leadingPlayer.email)?.[0]?.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-semibold">
+                      {leadingPlayer.full_name || 'Anonymous Player'}
+                    </h3>
+                    <p className="text-muted-foreground">{leadingPlayer.email}</p>
+                    <div className="flex items-center gap-4 mt-2">
+                      <Badge variant="secondary" className="flex items-center gap-1">
+                        <Star className="h-3 w-3" />
+                        Level {leadingPlayer.level} - {getLevelTitle(leadingPlayer.level)}
+                      </Badge>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <Clock className="h-4 w-4" />
+                        {Math.floor(leadingPlayer.total_training_minutes / 60)}h {leadingPlayer.total_training_minutes % 60}m trained
+                      </div>
                     </div>
                   </div>
                 </div>
-              )}
-              
-              <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 className="text-2xl font-semibold text-chess-dark-maroon mb-6">
-                  Leaderboard
-                </h2>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-12">Rank</TableHead>
-                        <TableHead>Player</TableHead>
-                        <TableHead>Level</TableHead>
-                        <TableHead className="text-right">Training Hours</TableHead>
-                        <TableHead>Progress</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {profiles.slice(0, 10).map((profile, index) => (
-                        <TableRow key={profile.id}>
-                          <TableCell className="font-medium">{index + 1}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Avatar className="h-8 w-8">
-                                <AvatarImage src={profile.avatar_url || ''} />
-                                <AvatarFallback className="bg-chess-deep-red text-white">
-                                  {profile.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span>{profile.full_name}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge className="bg-chess-dark-blue">
-                              {getLevelTitle(profile.level || 1)}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">{profile.training_hours}</TableCell>
-                          <TableCell>
-                            <Progress 
-                              value={getLevelProgress(
-                                profile.training_hours || 0, 
-                                profile.level || 1
-                              )} 
-                              className="h-2"
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-semibold text-chess-dark-maroon mb-6">
-                  Community Members
-                </h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {profiles.map((profile) => (
-                    <div key={profile.id} className="bg-chess-light-pink bg-opacity-30 rounded-lg p-4 flex flex-col items-center">
-                      <Avatar className="h-20 w-20 mb-3">
-                        <AvatarImage src={profile.avatar_url || ''} />
-                        <AvatarFallback className="bg-chess-deep-red text-white text-xl">
-                          {profile.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Leaderboard */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Training Leaderboard
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {profiles
+                  .sort((a, b) => b.total_training_minutes - a.total_training_minutes)
+                  .slice(0, 10)
+                  .map((profile, index) => (
+                    <div key={profile.id} className="flex items-center space-x-4 p-3 rounded-lg bg-muted/50">
+                      <div className="w-8 text-center font-bold text-muted-foreground">
+                        #{index + 1}
+                      </div>
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage 
+                          src={profile.avatar_url || getDefaultAvatar(profile.full_name)} 
+                          alt={profile.full_name || 'User'} 
+                        />
+                        <AvatarFallback>
+                          {(profile.full_name || profile.email)?.[0]?.toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
-                      <h3 className="font-semibold text-chess-dark-maroon">{profile.full_name}</h3>
-                      <div className="mt-2 w-full">
-                        <div className="flex justify-between items-center text-sm mb-1">
-                          <Badge variant="outline" className="font-normal border-chess-dark-blue text-chess-dark-blue">
-                            Level {profile.level} ({getLevelTitle(profile.level || 1)})
-                          </Badge>
-                          <span>{profile.training_hours} hrs</span>
-                        </div>
-                        <Progress 
-                          value={getLevelProgress(
-                            profile.training_hours || 0, 
-                            profile.level || 1
-                          )} 
-                          className="h-2"
-                        />
+                      <div className="flex-1">
+                        <h4 className="font-medium">{profile.full_name || 'Anonymous Player'}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {Math.floor(profile.total_training_minutes / 60)}h {profile.total_training_minutes % 60}m
+                        </p>
                       </div>
+                      <Badge variant="outline">
+                        Level {profile.level}
+                      </Badge>
                     </div>
                   ))}
-                </div>
               </div>
-            </>
-          )}
+            </CardContent>
+          </Card>
+
+          {/* All Community Members */}
+          <div>
+            <h2 className="text-2xl font-semibold mb-6">Community Members</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {profiles.map((profile) => (
+                <Card key={profile.id} className="hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4 mb-4">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage 
+                          src={profile.avatar_url || getDefaultAvatar(profile.full_name)} 
+                          alt={profile.full_name || 'User'} 
+                        />
+                        <AvatarFallback>
+                          {(profile.full_name || profile.email)?.[0]?.toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold truncate">
+                          {profile.full_name || 'Anonymous Player'}
+                        </h3>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {profile.email}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">Level {profile.level}</span>
+                        <Badge variant="outline" className="text-xs">
+                          {getLevelTitle(profile.level)}
+                        </Badge>
+                      </div>
+                      
+                      <Progress 
+                        value={getLevelProgress(profile.total_training_minutes, profile.level)} 
+                        className="h-2"
+                      />
+                      
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {Math.floor(profile.total_training_minutes / 60)}h {profile.total_training_minutes % 60}m
+                        </div>
+                        <span>Next: Level {profile.level + 1}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
         </div>
-      </main>
+      </div>
       <Footer />
     </div>
   );

@@ -46,7 +46,7 @@ const Profile = () => {
     }
 
     setProfile(data);
-    setFullName(data?.full_name || '');
+    setFullName((data as any)?.full_name || '');
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +85,7 @@ const Profile = () => {
       }
 
       // Update profile in the database
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('profiles')
         .update({ 
           full_name: fullName,

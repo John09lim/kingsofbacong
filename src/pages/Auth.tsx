@@ -72,7 +72,7 @@ const Auth = () => {
 
           // Update the user's profile with the avatar URL
           if (publicUrlData) {
-            await supabase
+            await (supabase as any)
               .from('profiles')
               .update({ 
                 avatar_url: publicUrlData.publicUrl,

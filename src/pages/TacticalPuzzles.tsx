@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { useTrainingSession } from '@/hooks/useTrainingSession';
+import { TrainingTimeDisplay } from '@/components/TrainingTimeDisplay';
 import { useChessPuzzles } from "@/hooks/useChessPuzzles";
 import { toast } from "@/hooks/use-toast";
 import PuzzleViewTabs from '@/components/puzzle/PuzzleViewTabs';
 import PuzzleActivityTracking from '@/components/puzzle/PuzzleActivityTracking';
 
 const TacticalPuzzles = () => {
+  const { sessionDuration, isTracking } = useTrainingSession('tactical_puzzles');
   const [difficulty, setDifficulty] = useState(1200);
   const [solvedCount, setSolvedCount] = useState(42);
   const [activeTab, setActiveTab] = useState("daily");
@@ -299,11 +302,16 @@ const TacticalPuzzles = () => {
       <main className="flex-grow">
         <div className="bg-chess-dark-maroon py-10 px-4">
           <div className="container mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Puzzles</h1>
-            <p className="text-chess-light-pink text-lg max-w-3xl">
-              Train your tactical vision with thousands of puzzles. Play the attacker role and deliver 
-              devastating tactics against your opponent!
-            </p>
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Puzzles</h1>
+                <p className="text-chess-light-pink text-lg max-w-3xl">
+                  Train your tactical vision with thousands of puzzles. Play the attacker role and deliver 
+                  devastating tactics against your opponent!
+                </p>
+              </div>
+              <TrainingTimeDisplay sessionDuration={sessionDuration} isTracking={isTracking} />
+            </div>
           </div>
         </div>
         
