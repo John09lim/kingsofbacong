@@ -1,9 +1,10 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, UserCircle } from "lucide-react";
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,18 +12,20 @@ const Navbar = () => {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const navigate = useNavigate();
+  const dropdownRef = useRef<HTMLDivElement>(null);
   
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      // Don't close if clicking inside the dropdown or on the avatar
-      if (profileDropdownOpen && !target.closest('[data-dropdown="profile"]')) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setProfileDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    if (profileDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -95,8 +98,18 @@ const Navbar = () => {
   };
   
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
+    try {
+      setProfileDropdownOpen(false);
+      await supabase.auth.signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const handleProfileClick = () => {
+    setProfileDropdownOpen(false);
+    navigate('/profile');
   };
 
   return (
@@ -120,54 +133,53 @@ const Navbar = () => {
           <Link to="/community" className="hover:text-chess-light-pink transition-colors">Community</Link>
           
           {user ? (
-            <div className="relative" data-dropdown="profile">
-              <Avatar 
-                className="h-10 w-10 border-2 border-chess-light-pink cursor-pointer"
+            <div className="relative" ref={dropdownRef}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-0 h-auto hover:bg-transparent"
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
               >
-                <AvatarImage 
-                  src={profile?.avatar_url} 
-                  alt={profile?.full_name || 'User Avatar'}
-                  onError={(e) => console.log('Avatar load error:', e)}
-                />
-                <AvatarFallback className="bg-chess-deep-red text-white">
-                  {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
-                </AvatarFallback>
-              </Avatar>
+                <Avatar className="h-10 w-10 border-2 border-chess-light-pink">
+                  <AvatarImage 
+                    src={profile?.avatar_url} 
+                    alt={profile?.full_name || 'User Avatar'}
+                  />
+                  <AvatarFallback className="bg-chess-deep-red text-white">
+                    {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
               
               {profileDropdownOpen && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white text-chess-dark-maroon rounded shadow-lg py-2 z-50 border border-gray-200">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <div className="font-semibold">{profile?.full_name || 'User'}</div>
-                    <div className="text-sm opacity-70">{user.email}</div>
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white text-gray-900 rounded-lg shadow-xl border border-gray-200 z-[9999] overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
+                    <div className="font-semibold text-gray-900">{profile?.full_name || 'User'}</div>
+                    <div className="text-sm text-gray-600">{user.email}</div>
                   </div>
-                  <Link 
-                    to="/profile" 
-                    className="block px-4 py-2 hover:bg-chess-light-pink transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setProfileDropdownOpen(false);
-                    }}
-                  >
-                    Profile
-                  </Link>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setProfileDropdownOpen(false);
-                      handleSignOut();
-                    }}
-                    className="block w-full text-left px-4 py-2 hover:bg-chess-light-pink transition-colors"
-                  >
-                    Sign Out
-                  </button>
+                  <div className="py-1">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start px-4 py-2 text-left hover:bg-gray-100 rounded-none"
+                      onClick={handleProfileClick}
+                    >
+                      Profile
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start px-4 py-2 text-left hover:bg-gray-100 rounded-none text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={handleSignOut}
+                    >
+                      Sign Out
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
           ) : (
-            <Link to="/auth" className="chess-btn-outline bg-transparent border-white text-white hover:bg-white hover:text-chess-dark-maroon">
-              Sign In
-            </Link>
+            <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-chess-dark-maroon">
+              <Link to="/auth">Sign In</Link>
+            </Button>
           )}
         </div>
         
@@ -213,9 +225,9 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
-              <Link to="/auth" className="chess-btn-outline bg-transparent border-white text-white hover:bg-white hover:text-chess-dark-maroon w-full">
-                Sign In
-              </Link>
+              <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-chess-dark-maroon w-full">
+                <Link to="/auth">Sign In</Link>
+              </Button>
             )}
           </div>
         </div>
