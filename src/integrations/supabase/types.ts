@@ -184,21 +184,33 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
           email: string
+          full_name: string | null
           id: string
+          last_activity_at: string | null
+          total_training_minutes: number | null
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           email: string
+          full_name?: string | null
           id: string
+          last_activity_at?: string | null
+          total_training_minutes?: number | null
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           email?: string
+          full_name?: string | null
           id?: string
+          last_activity_at?: string | null
+          total_training_minutes?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -524,6 +536,44 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      training_sessions: {
+        Row: {
+          activity_type: string
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          session_end: string | null
+          session_start: string
+          user_id: string
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          session_end?: string | null
+          session_start?: string
+          user_id: string
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          session_end?: string | null
+          session_start?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "training_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_credits: {
         Row: {
