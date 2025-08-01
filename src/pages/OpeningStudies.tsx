@@ -12,6 +12,32 @@ import { Search, BookOpen, Video, ChevronRight } from "lucide-react";
 import OpeningLessonModal from '@/components/OpeningLessonModal';
 import OpeningVideos from '@/components/OpeningVideos';
 
+// Import chess opening images
+import ruyLopezImage from '@/assets/ruy-lopez-opening.jpg';
+import sicilianDefenseImage from '@/assets/sicilian-defense-opening.jpg';
+import queensGambitImage from '@/assets/queens-gambit-opening.jpg';
+import frenchDefenseImage from '@/assets/french-defense-opening.jpg';
+import caroKannDefenseImage from '@/assets/caro-kann-defense-opening.jpg';
+import englishOpeningImage from '@/assets/english-opening.jpg';
+import italianGameImage from '@/assets/italian-game-opening.jpg';
+import slavDefenseImage from '@/assets/slav-defense-opening.jpg';
+import londonSystemImage from '@/assets/london-system-opening.jpg';
+import kingsIndianDefenseImage from '@/assets/kings-indian-defense-opening.jpg';
+import nimzoIndianDefenseImage from '@/assets/nimzo-indian-defense-opening.jpg';
+import fourKnightsGameImage from '@/assets/four-knights-game-opening.jpg';
+import grunfeldDefenseImage from '@/assets/grunfeld-defense-opening.jpg';
+import queensPawnGameImage from '@/assets/queens-pawn-game-opening.jpg';
+import scandinavianDefenseImage from '@/assets/scandinavian-defense-opening.jpg';
+import viennaGameImage from '@/assets/vienna-game-opening.jpg';
+import benkoGambitImage from '@/assets/benko-gambit-opening.jpg';
+import alekhinesDefenseImage from '@/assets/alekhines-defense-opening.jpg';
+import modernDefenseImage from '@/assets/modern-defense-opening.jpg';
+import catalanOpeningImage from '@/assets/catalan-opening.jpg';
+import benoniDefenseImage from '@/assets/benoni-defense-opening.jpg';
+import najdorfSicilianImage from '@/assets/najdorf-sicilian-opening.jpg';
+import kingsGambitDeclinedImage from '@/assets/kings-gambit-declined-opening.jpg';
+import philidorDefenseImage from '@/assets/philidor-defense-opening.jpg';
+
 // Separate the opening card as it's used multiple times
 const OpeningCard = ({ opening }) => {
   const [showLessons, setShowLessons] = useState(false);
@@ -142,7 +168,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 24,
         lessonsCount: 18,
-        imageUrl: "https://images.unsplash.com/photo-1543092587-d8b8feaf362b?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: ruyLopezImage
       },
       {
         id: 2,
@@ -154,7 +180,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 32,
         lessonsCount: 25,
-        imageUrl: "https://images.unsplash.com/photo-1579267276051-231783a690de?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: sicilianDefenseImage
       },
       {
         id: 3,
@@ -166,7 +192,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 20,
         lessonsCount: 15,
-        imageUrl: "https://images.unsplash.com/photo-1536679545597-c2e5e1946495?q=80&w=3368&auto=format&fit=crop"
+        imageUrl: queensGambitImage
       },
       {
         id: 4,
@@ -178,7 +204,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 18,
         lessonsCount: 14,
-        imageUrl: "https://images.unsplash.com/photo-1613332954647-8720ce9d8b5d?q=80&w=3348&auto=format&fit=crop"
+        imageUrl: frenchDefenseImage
       },
       // Additional openings to add
       {
@@ -191,7 +217,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 16,
         lessonsCount: 12,
-        imageUrl: "https://images.unsplash.com/photo-1528819622765-d6bcf132f793?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: caroKannDefenseImage
       },
       {
         id: 10,
@@ -203,7 +229,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 14,
         lessonsCount: 10,
-        imageUrl: "https://images.unsplash.com/photo-1582692728113-83b15c45d241?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: englishOpeningImage
       },
       {
         id: 11,
@@ -215,7 +241,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 12,
         lessonsCount: 10,
-        imageUrl: "https://images.unsplash.com/photo-1605257455659-59af4e9c51db?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: italianGameImage
       },
       {
         id: 12,
@@ -227,7 +253,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 15,
         lessonsCount: 12,
-        imageUrl: "https://images.unsplash.com/photo-1611195973260-08bf9651e84c?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: slavDefenseImage
       }
     ],
     beginner: [
@@ -242,7 +268,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 15,
         lessonsCount: 12,
-        imageUrl: "https://images.unsplash.com/photo-1559480671-14661589e81c?q=80&w=3300&auto=format&fit=crop"
+        imageUrl: italianGameImage
       },
       {
         id: 6,
@@ -254,7 +280,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 12,
         lessonsCount: 10,
-        imageUrl: "https://images.unsplash.com/photo-1586165368502-1bad197a6461?q=80&w=3258&auto=format&fit=crop"
+        imageUrl: londonSystemImage
       },
       // Additional beginner openings to add
       {
@@ -267,7 +293,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 10,
         lessonsCount: 8,
-        imageUrl: "https://images.unsplash.com/photo-1513159446162-54eb8bdaa79b?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: fourKnightsGameImage
       },
       {
         id: 14,
@@ -279,7 +305,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 8,
         lessonsCount: 6,
-        imageUrl: "https://images.unsplash.com/photo-1565039320828-e90b61a7e80f?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: queensPawnGameImage
       },
       {
         id: 15,
@@ -291,7 +317,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 7,
         lessonsCount: 5,
-        imageUrl: "https://images.unsplash.com/photo-1580541631971-ab0fef2145c8?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: scandinavianDefenseImage
       },
       {
         id: 16,
@@ -303,7 +329,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 6,
         lessonsCount: 5,
-        imageUrl: "https://images.unsplash.com/photo-1586103114630-5b88528b6de4?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: viennaGameImage
       },
       {
         id: 17,
@@ -315,7 +341,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 5,
         lessonsCount: 4,
-        imageUrl: "https://images.unsplash.com/photo-1585995603666-5ab4f8079564?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: kingsGambitDeclinedImage
       },
       {
         id: 18,
@@ -327,7 +353,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 4,
         lessonsCount: 4,
-        imageUrl: "https://images.unsplash.com/photo-1580974852861-c381510bc98a?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: philidorDefenseImage
       }
     ],
     advanced: [
@@ -342,7 +368,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 28,
         lessonsCount: 22,
-        imageUrl: "https://images.unsplash.com/photo-1609903943122-f8f9613e93f3?q=80&w=3432&auto=format&fit=crop"
+        imageUrl: kingsIndianDefenseImage
       },
       {
         id: 8,
@@ -354,7 +380,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 24,
         lessonsCount: 20,
-        imageUrl: "https://images.unsplash.com/photo-1604948501466-4e9c339b9c24?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: nimzoIndianDefenseImage
       },
       // Additional advanced openings to add
       {
@@ -367,7 +393,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 25,
         lessonsCount: 20,
-        imageUrl: "https://images.unsplash.com/photo-1611483164359-0184a7f18061?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: grunfeldDefenseImage
       },
       {
         id: 20,
@@ -379,7 +405,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 18,
         lessonsCount: 15,
-        imageUrl: "https://images.unsplash.com/photo-1614889727750-9e79bb16b8bd?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: benkoGambitImage
       },
       {
         id: 21,
@@ -391,7 +417,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 16,
         lessonsCount: 14,
-        imageUrl: "https://images.unsplash.com/photo-1613487700156-67fd5ef1ea07?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: alekhinesDefenseImage
       },
       {
         id: 22,
@@ -403,7 +429,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 15,
         lessonsCount: 12,
-        imageUrl: "https://images.unsplash.com/photo-1581380397559-345639b4e3f5?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: modernDefenseImage
       },
       {
         id: 23,
@@ -415,7 +441,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 20,
         lessonsCount: 18,
-        imageUrl: "https://images.unsplash.com/photo-1637495741005-636834702af0?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: catalanOpeningImage
       },
       {
         id: 24,
@@ -427,7 +453,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 19,
         lessonsCount: 16,
-        imageUrl: "https://images.unsplash.com/photo-1580541631294-30a73a9ea64c?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: benoniDefenseImage
       },
       {
         id: 25,
@@ -439,7 +465,7 @@ const OpeningStudies = () => {
         complexity: "Very High",
         videoCount: 35,
         lessonsCount: 30,
-        imageUrl: "https://images.unsplash.com/photo-1543092587-d8b8feaf362b?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: najdorfSicilianImage
       }
     ]
   };
