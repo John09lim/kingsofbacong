@@ -15,7 +15,9 @@ const Navbar = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileDropdownOpen) {
+      const target = event.target as Element;
+      // Don't close if clicking inside the dropdown or on the avatar
+      if (profileDropdownOpen && !target.closest('[data-dropdown="profile"]')) {
         setProfileDropdownOpen(false);
       }
     };
@@ -118,7 +120,7 @@ const Navbar = () => {
           <Link to="/community" className="hover:text-chess-light-pink transition-colors">Community</Link>
           
           {user ? (
-            <div className="relative">
+            <div className="relative" data-dropdown="profile">
               <Avatar 
                 className="h-10 w-10 border-2 border-chess-light-pink cursor-pointer"
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
@@ -141,17 +143,21 @@ const Navbar = () => {
                   </div>
                   <Link 
                     to="/profile" 
-                    className="block px-4 py-2 hover:bg-chess-light-pink"
-                    onClick={() => setProfileDropdownOpen(false)}
+                    className="block px-4 py-2 hover:bg-chess-light-pink transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setProfileDropdownOpen(false);
+                    }}
                   >
                     Profile
                   </Link>
                   <button 
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setProfileDropdownOpen(false);
                       handleSignOut();
                     }}
-                    className="block w-full text-left px-4 py-2 hover:bg-chess-light-pink"
+                    className="block w-full text-left px-4 py-2 hover:bg-chess-light-pink transition-colors"
                   >
                     Sign Out
                   </button>
