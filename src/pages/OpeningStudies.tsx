@@ -12,31 +12,15 @@ import { Search, BookOpen, Video, ChevronRight } from "lucide-react";
 import OpeningLessonModal from '@/components/OpeningLessonModal';
 import OpeningVideos from '@/components/OpeningVideos';
 
-// Import chess opening images
-import ruyLopezImage from '@/assets/ruy-lopez-opening.jpg';
-import sicilianDefenseImage from '@/assets/sicilian-defense-opening.jpg';
-import queensGambitImage from '@/assets/queens-gambit-opening.jpg';
-import frenchDefenseImage from '@/assets/french-defense-opening.jpg';
-import caroKannDefenseImage from '@/assets/caro-kann-defense-opening.jpg';
-import englishOpeningImage from '@/assets/english-opening.jpg';
-import italianGameImage from '@/assets/italian-game-opening.jpg';
-import slavDefenseImage from '@/assets/slav-defense-opening.jpg';
-import londonSystemImage from '@/assets/london-system-opening.jpg';
-import kingsIndianDefenseImage from '@/assets/kings-indian-defense-opening.jpg';
-import nimzoIndianDefenseImage from '@/assets/nimzo-indian-defense-opening.jpg';
-import fourKnightsGameImage from '@/assets/four-knights-game-opening.jpg';
-import grunfeldDefenseImage from '@/assets/grunfeld-defense-opening.jpg';
-import queensPawnGameImage from '@/assets/queens-pawn-game-opening.jpg';
-import scandinavianDefenseImage from '@/assets/scandinavian-defense-opening.jpg';
-import viennaGameImage from '@/assets/vienna-game-opening.jpg';
-import benkoGambitImage from '@/assets/benko-gambit-opening.jpg';
-import alekhinesDefenseImage from '@/assets/alekhines-defense-opening.jpg';
-import modernDefenseImage from '@/assets/modern-defense-opening.jpg';
-import catalanOpeningImage from '@/assets/catalan-opening.jpg';
-import benoniDefenseImage from '@/assets/benoni-defense-opening.jpg';
-import najdorfSicilianImage from '@/assets/najdorf-sicilian-opening.jpg';
-import kingsGambitDeclinedImage from '@/assets/kings-gambit-declined-opening.jpg';
-import philidorDefenseImage from '@/assets/philidor-defense-opening.jpg';
+// Import chess opening images - using existing assets for testing
+import chessBasicsImage from '@/assets/chess-board-basics.jpg';
+import openingPrinciplesImage from '@/assets/opening-principles.jpg';
+import tacticalPatternsImage from '@/assets/tactical-patterns.jpg';
+import positionalPlayImage from '@/assets/positional-play.jpg';
+import endgamesImage from '@/assets/advanced-endgames.jpg';
+import middlegameImage from '@/assets/complex-middlegame.jpg';
+import advancedOpeningImage from '@/assets/advanced-opening.jpg';
+import tournamentPrepImage from '@/assets/tournament-preparation.jpg';
 
 // Separate the opening card as it's used multiple times
 const OpeningCard = ({ opening }) => {
@@ -172,7 +156,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 24,
         lessonsCount: 18,
-        imageUrl: ruyLopezImage
+        imageUrl: chessBasicsImage
       },
       {
         id: 2,
@@ -184,7 +168,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 32,
         lessonsCount: 25,
-        imageUrl: sicilianDefenseImage
+        imageUrl: tacticalPatternsImage
       },
       {
         id: 3,
@@ -196,7 +180,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 20,
         lessonsCount: 15,
-        imageUrl: queensGambitImage
+        imageUrl: openingPrinciplesImage
       },
       {
         id: 4,
@@ -208,7 +192,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 18,
         lessonsCount: 14,
-        imageUrl: frenchDefenseImage
+        imageUrl: positionalPlayImage
       },
       // Additional openings to add
       {
@@ -221,7 +205,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 16,
         lessonsCount: 12,
-        imageUrl: caroKannDefenseImage
+        imageUrl: middlegameImage
       },
       {
         id: 10,
@@ -233,7 +217,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 14,
         lessonsCount: 10,
-        imageUrl: englishOpeningImage
+        imageUrl: endgamesImage
       },
       {
         id: 11,
@@ -245,7 +229,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 12,
         lessonsCount: 10,
-        imageUrl: italianGameImage
+        imageUrl: advancedOpeningImage
       },
       {
         id: 12,
@@ -257,7 +241,7 @@ const OpeningStudies = () => {
         complexity: "Medium",
         videoCount: 15,
         lessonsCount: 12,
-        imageUrl: slavDefenseImage
+        imageUrl: tournamentPrepImage
       }
     ],
     beginner: [
@@ -272,7 +256,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 15,
         lessonsCount: 12,
-        imageUrl: italianGameImage
+        imageUrl: chessBasicsImage
       },
       {
         id: 6,
@@ -284,7 +268,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 12,
         lessonsCount: 10,
-        imageUrl: londonSystemImage
+        imageUrl: openingPrinciplesImage
       },
       // Additional beginner openings to add
       {
@@ -297,7 +281,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 10,
         lessonsCount: 8,
-        imageUrl: fourKnightsGameImage
+        imageUrl: tacticalPatternsImage
       },
       {
         id: 14,
@@ -309,7 +293,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 8,
         lessonsCount: 6,
-        imageUrl: queensPawnGameImage
+        imageUrl: positionalPlayImage
       },
       {
         id: 15,
@@ -321,7 +305,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 7,
         lessonsCount: 5,
-        imageUrl: scandinavianDefenseImage
+        imageUrl: middlegameImage
       },
       {
         id: 16,
@@ -333,7 +317,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 6,
         lessonsCount: 5,
-        imageUrl: viennaGameImage
+        imageUrl: endgamesImage
       },
       {
         id: 17,
@@ -345,7 +329,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 5,
         lessonsCount: 4,
-        imageUrl: kingsGambitDeclinedImage
+        imageUrl: advancedOpeningImage
       },
       {
         id: 18,
@@ -357,7 +341,7 @@ const OpeningStudies = () => {
         complexity: "Low",
         videoCount: 4,
         lessonsCount: 4,
-        imageUrl: philidorDefenseImage
+        imageUrl: tournamentPrepImage
       }
     ],
     advanced: [
@@ -372,7 +356,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 28,
         lessonsCount: 22,
-        imageUrl: kingsIndianDefenseImage
+        imageUrl: chessBasicsImage
       },
       {
         id: 8,
@@ -384,7 +368,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 24,
         lessonsCount: 20,
-        imageUrl: nimzoIndianDefenseImage
+        imageUrl: openingPrinciplesImage
       },
       // Additional advanced openings to add
       {
@@ -397,7 +381,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 25,
         lessonsCount: 20,
-        imageUrl: grunfeldDefenseImage
+        imageUrl: tacticalPatternsImage
       },
       {
         id: 20,
@@ -409,7 +393,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 18,
         lessonsCount: 15,
-        imageUrl: benkoGambitImage
+        imageUrl: positionalPlayImage
       },
       {
         id: 21,
@@ -421,7 +405,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 16,
         lessonsCount: 14,
-        imageUrl: alekhinesDefenseImage
+        imageUrl: middlegameImage
       },
       {
         id: 22,
@@ -433,7 +417,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 15,
         lessonsCount: 12,
-        imageUrl: modernDefenseImage
+        imageUrl: endgamesImage
       },
       {
         id: 23,
@@ -445,7 +429,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 20,
         lessonsCount: 18,
-        imageUrl: catalanOpeningImage
+        imageUrl: advancedOpeningImage
       },
       {
         id: 24,
@@ -457,7 +441,7 @@ const OpeningStudies = () => {
         complexity: "High",
         videoCount: 19,
         lessonsCount: 16,
-        imageUrl: benoniDefenseImage
+        imageUrl: tournamentPrepImage
       },
       {
         id: 25,
@@ -469,7 +453,7 @@ const OpeningStudies = () => {
         complexity: "Very High",
         videoCount: 35,
         lessonsCount: 30,
-        imageUrl: najdorfSicilianImage
+        imageUrl: chessBasicsImage
       }
     ]
   };
