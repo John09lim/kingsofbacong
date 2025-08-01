@@ -50,6 +50,10 @@ const OpeningCard = ({ opening }) => {
           src={opening.imageUrl} 
           alt={opening.name} 
           className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+          onError={(e) => {
+            console.error(`Failed to load image for ${opening.name}:`, opening.imageUrl);
+            e.currentTarget.src = "/placeholder.svg";
+          }}
         />
       </div>
       
