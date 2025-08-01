@@ -56,7 +56,7 @@ const Community = () => {
       try {
         const { data, error } = await (supabase as any)
           .from('profiles')
-          .select('id, full_name, avatar_url, email, total_training_minutes')
+          .select('id, full_name, avatar_url, email, total_training_minutes, created_at')
           .order('full_name');
 
         if (error) throw error;
@@ -82,6 +82,61 @@ const Community = () => {
     };
 
     fetchProfiles();
+
+    // Set up real-time subscription for new profiles
+    const channel = supabase
+      .channel('profiles-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'profiles'
+        },
+        (payload) => {
+          console.log('New profile created:', payload);
+          const newProfile: Profile = {
+            ...payload.new as any,
+            total_training_minutes: payload.new.total_training_minutes || 0,
+            level: calculateLevel(payload.new.total_training_minutes || 0)
+          };
+          setProfiles(prev => [...prev, newProfile]);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles'
+        },
+        (payload) => {
+          console.log('Profile updated:', payload);
+          const updatedProfile: Profile = {
+            ...payload.new as any,
+            total_training_minutes: payload.new.total_training_minutes || 0,
+            level: calculateLevel(payload.new.total_training_minutes || 0)
+          };
+          setProfiles(prev => {
+            const updated = prev.map(p => 
+              p.id === updatedProfile.id ? updatedProfile : p
+            );
+            
+            // Update leading player if necessary
+            const sortedProfiles = [...updated].sort(
+              (a, b) => b.total_training_minutes - a.total_training_minutes
+            );
+            setLeadingPlayer(sortedProfiles[0] || null);
+            
+            return updated;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   if (loading) {
@@ -204,6 +259,40 @@ const Community = () => {
                       </Badge>
                     </div>
                   ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Welcome Section */}
+          <Card className="border-secondary/20 bg-gradient-to-r from-secondary/5 to-primary/5">
+            <CardHeader>
+              <CardTitle className="text-center">
+                Welcome to Kings of Bacong Chess Club!
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center space-y-4">
+                <p className="text-muted-foreground">
+                  Join our community of {profiles.length} chess enthusiasts and start your journey to mastery.
+                </p>
+                <div className="flex justify-center gap-6 text-sm">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-primary">{profiles.length}</div>
+                    <div className="text-muted-foreground">Members</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-primary">
+                      {profiles.reduce((total, p) => total + p.total_training_minutes, 0)}
+                    </div>
+                    <div className="text-muted-foreground">Minutes Trained</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-primary">
+                      {profiles.filter(p => p.total_training_minutes > 0).length}
+                    </div>
+                    <div className="text-muted-foreground">Active Trainers</div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
