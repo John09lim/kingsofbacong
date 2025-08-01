@@ -7,10 +7,29 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Lock, Play } from "lucide-react";
+import { CheckCircle, Lock, Play, Clock, Trophy, Target } from "lucide-react";
+import { TrainingLessonModal } from "@/components/TrainingLessonModal";
+import { TrainingTimeDisplay } from "@/components/TrainingTimeDisplay";
+import { useTrainingSession } from "@/hooks/useTrainingSession";
+
+// Import chess-related images
+import chessBoardBasics from "@/assets/chess-board-basics.jpg";
+import pawnPromotion from "@/assets/pawn-promotion.jpg";
+import checkmatePosition from "@/assets/checkmate-position.jpg";
+import openingPrinciples from "@/assets/opening-principles.jpg";
+import advancedOpening from "@/assets/advanced-opening.jpg";
+import tacticalPatterns from "@/assets/tactical-patterns.jpg";
+import positionalPlay from "@/assets/positional-play.jpg";
+import middlegameTransition from "@/assets/middlegame-transition.jpg";
+import complexMiddlegame from "@/assets/complex-middlegame.jpg";
+import advancedEndgames from "@/assets/advanced-endgames.jpg";
+import tournamentPreparation from "@/assets/tournament-preparation.jpg";
 
 const Training = () => {
   const [activeLevel, setActiveLevel] = useState("beginner");
+  const [selectedModule, setSelectedModule] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isTracking, sessionDuration } = useTrainingSession('general_training');
 
   // Define training modules for each level
   const modules = {
@@ -25,7 +44,8 @@ const Training = () => {
         lessons: 5,
         quizzes: 2,
         exercises: 3,
-        imageUrl: "https://images.unsplash.com/photo-1586165368502-1bad197a6461?q=80&w=3258&auto=format&fit=crop"
+        imageUrl: chessBoardBasics,
+        level: "beginner"
       },
       {
         id: 2,
@@ -37,7 +57,8 @@ const Training = () => {
         lessons: 4,
         quizzes: 2,
         exercises: 5,
-        imageUrl: "https://images.unsplash.com/photo-1582294395039-a44ade722a26?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: pawnPromotion,
+        level: "beginner"
       },
       {
         id: 3,
@@ -49,7 +70,8 @@ const Training = () => {
         lessons: 3,
         quizzes: 1,
         exercises: 4,
-        imageUrl: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?q=80&w=3271&auto=format&fit=crop"
+        imageUrl: checkmatePosition,
+        level: "beginner"
       },
       {
         id: 4,
@@ -61,7 +83,8 @@ const Training = () => {
         lessons: 6,
         quizzes: 2,
         exercises: 4,
-        imageUrl: "https://images.unsplash.com/photo-1567357502214-dd13f3512e71?q=80&w=3348&auto=format&fit=crop"
+        imageUrl: openingPrinciples,
+        level: "beginner"
       }
     ],
     intermediate: [
@@ -75,7 +98,8 @@ const Training = () => {
         lessons: 7,
         quizzes: 3,
         exercises: 5,
-        imageUrl: "https://images.unsplash.com/photo-1560174038-da43ac74f01b?q=80&w=3348&auto=format&fit=crop"
+        imageUrl: advancedOpening,
+        level: "intermediate"
       },
       {
         id: 2,
@@ -87,7 +111,8 @@ const Training = () => {
         lessons: 5,
         quizzes: 2,
         exercises: 8,
-        imageUrl: "https://images.unsplash.com/photo-1576245482660-6fcf7492b4d2?q=80&w=3347&auto=format&fit=crop"
+        imageUrl: tacticalPatterns,
+        level: "intermediate"
       },
       {
         id: 3,
@@ -99,7 +124,8 @@ const Training = () => {
         lessons: 6,
         quizzes: 3,
         exercises: 4,
-        imageUrl: "https://images.unsplash.com/photo-1522836924445-4478bdeb860c?q=80&w=3344&auto=format&fit=crop"
+        imageUrl: positionalPlay,
+        level: "intermediate"
       },
       {
         id: 4,
@@ -111,7 +137,8 @@ const Training = () => {
         lessons: 5,
         quizzes: 2,
         exercises: 6,
-        imageUrl: "https://images.unsplash.com/photo-1604948501466-4e9c339b9c24?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: middlegameTransition,
+        level: "intermediate"
       }
     ],
     advanced: [
@@ -125,7 +152,8 @@ const Training = () => {
         lessons: 8,
         quizzes: 3,
         exercises: 5,
-        imageUrl: "https://images.unsplash.com/photo-1615812214207-34a6d4247515?q=80&w=3338&auto=format&fit=crop"
+        imageUrl: advancedOpening,
+        level: "advanced"
       },
       {
         id: 2,
@@ -137,7 +165,8 @@ const Training = () => {
         lessons: 7,
         quizzes: 3,
         exercises: 6,
-        imageUrl: "https://images.unsplash.com/photo-1604948501466-4e9c339b9c24?q=80&w=3270&auto=format&fit=crop"
+        imageUrl: complexMiddlegame,
+        level: "advanced"
       },
       {
         id: 3,
@@ -149,7 +178,8 @@ const Training = () => {
         lessons: 6,
         quizzes: 4,
         exercises: 7,
-        imageUrl: "https://images.unsplash.com/photo-1559480671-14661589e81c?q=80&w=3300&auto=format&fit=crop"
+        imageUrl: advancedEndgames,
+        level: "advanced"
       },
       {
         id: 4,
@@ -161,7 +191,8 @@ const Training = () => {
         lessons: 5,
         quizzes: 2,
         exercises: 4,
-        imageUrl: "https://images.unsplash.com/photo-1611195974226-a6a9be9dd763?q=80&w=3387&auto=format&fit=crop"
+        imageUrl: tournamentPreparation,
+        level: "advanced"
       }
     ]
   };
@@ -175,17 +206,48 @@ const Training = () => {
     return Math.round(totalProgress / levelModules.length);
   };
 
+  // Handle module selection
+  const handleModuleClick = (module) => {
+    if (!module.locked) {
+      setSelectedModule(module);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedModule(null);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
         <div className="bg-chess-dark-maroon py-10 px-4">
           <div className="container mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Chess Training</h1>
-            <p className="text-chess-light-pink text-lg max-w-3xl">
-              Structured learning paths for players of all levels. Track your progress, 
-              take quizzes, and solve interactive puzzles to improve your chess skills.
-            </p>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+              <div>
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">Chess Training</h1>
+                <p className="text-chess-light-pink text-lg max-w-3xl">
+                  Structured learning paths for players of all levels. Track your progress, 
+                  take quizzes, and solve interactive puzzles to improve your chess skills.
+                </p>
+              </div>
+              {(isTracking || sessionDuration > 0) && (
+                <div className="flex items-center gap-4">
+                  <TrainingTimeDisplay 
+                    sessionDuration={sessionDuration} 
+                    isTracking={isTracking} 
+                  />
+                  {isTracking && (
+                    <div className="flex items-center gap-2 text-white">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                      <span className="text-sm">Active Session</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -257,6 +319,7 @@ const Training = () => {
                         <Button 
                           className="w-full bg-chess-deep-red hover:bg-chess-dark-maroon" 
                           disabled={module.locked}
+                          onClick={() => handleModuleClick(module)}
                         >
                           <Play size={16} className="mr-2" />
                           {module.progress > 0 && module.progress < 100 ? 'Continue' : 'Start'}
@@ -271,6 +334,13 @@ const Training = () => {
         </div>
       </main>
       <Footer />
+      
+      {/* Training Lesson Modal */}
+      <TrainingLessonModal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        module={selectedModule}
+      />
     </div>
   );
 };
