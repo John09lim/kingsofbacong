@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { CheckCircle, Lock, Play, Clock, Trophy, Target } from "lucide-react";
 import { TrainingLessonModal } from "@/components/TrainingLessonModal";
 import { TrainingTimeDisplay } from "@/components/TrainingTimeDisplay";
@@ -327,14 +327,15 @@ const Training = () => {
                       </CardContent>
                       
                       <CardFooter className="mt-auto">
-                        <Button 
-                          className="w-full bg-chess-deep-red hover:bg-chess-dark-maroon" 
+                        <AnimatedButton 
+                          className="w-full bg-chess-deep-red hover:bg-chess-dark-maroon text-white font-medium transition-all duration-200" 
                           disabled={module.locked}
                           onClick={() => handleModuleClick(module)}
+                          showRipple={!module.locked}
                         >
                           <Play size={16} className="mr-2" />
                           {module.progress > 0 && module.progress < 100 ? 'Continue' : 'Start'}
-                        </Button>
+                        </AnimatedButton>
                       </CardFooter>
                     </Card>
                   ))}

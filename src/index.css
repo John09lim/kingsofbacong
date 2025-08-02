@@ -110,6 +110,36 @@
     @apply border-2 border-chess-deep-red text-chess-deep-red font-medium px-6 py-2 rounded-md hover:bg-chess-deep-red hover:text-white transition-all;
   }
 
+  /* Enhanced button animations */
+  .animated-button {
+    @apply relative overflow-hidden transition-all duration-200 ease-out;
+    will-change: transform, box-shadow;
+  }
+
+  .animated-button:hover {
+    @apply scale-[1.02] shadow-lg;
+  }
+
+  .animated-button:focus {
+    @apply scale-[1.02] shadow-lg;
+  }
+
+  .animated-button:active {
+    @apply scale-[0.98];
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animated-button {
+      @apply transform-none;
+    }
+    
+    .animated-button:hover,
+    .animated-button:focus,
+    .animated-button:active {
+      @apply scale-100;
+    }
+  }
+
   .section {
     @apply py-16 px-4 md:px-6 lg:px-8;
   }
