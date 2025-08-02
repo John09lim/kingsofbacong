@@ -55,11 +55,11 @@ const TacticalPuzzles = () => {
       ]
     },
     {
-      title: "Basic Motifs",
+      title: "Motifs",
       themes: [
         { slug: "advancedPawn", title: "Advanced pawn" },
         { slug: "attackingF2F7", title: "Attacking f2 or f7" },
-        { slug: "capturingDefender", title: "Capturing defender" },
+        { slug: "capturingDefender", title: "Capture the defender" },
         { slug: "discoveredAttack", title: "Discovered attack" },
         { slug: "doubleCheck", title: "Double check" },
         { slug: "exposedKing", title: "Exposed king" },
@@ -88,14 +88,14 @@ const TacticalPuzzles = () => {
       ]
     },
     {
-      title: "Checkmates",
+      title: "Mates & Checkmates",
       themes: [
         { slug: "mate", title: "Checkmate" },
         { slug: "mateIn1", title: "Mate in 1" },
         { slug: "mateIn2", title: "Mate in 2" },
         { slug: "mateIn3", title: "Mate in 3" },
         { slug: "mateIn4", title: "Mate in 4" },
-        { slug: "mateIn5", title: "Mate in 5" },
+        { slug: "mateIn5", title: "Mate in 5 or more" },
         { slug: "anastasiaMate", title: "Anastasia's mate" },
         { slug: "arabianMate", title: "Arabian mate" },
         { slug: "backRankMate", title: "Back rank mate" },
@@ -103,6 +103,8 @@ const TacticalPuzzles = () => {
         { slug: "doubleBishopMate", title: "Double bishop mate" },
         { slug: "dovetailMate", title: "Dovetail mate" },
         { slug: "hookMate", title: "Hook mate" },
+        { slug: "killBoxMate", title: "Kill box mate" },
+        { slug: "vukovicMate", title: "Vuković mate" },
         { slug: "smotheredMate", title: "Smothered mate" }
       ]
     },
@@ -112,7 +114,7 @@ const TacticalPuzzles = () => {
         { slug: "castling", title: "Castling" },
         { slug: "enPassant", title: "En passant" },
         { slug: "promotion", title: "Promotion" },
-        { slug: "underPromotion", title: "Under promotion" }
+        { slug: "underPromotion", title: "Underpromotion" }
       ]
     },
     {
