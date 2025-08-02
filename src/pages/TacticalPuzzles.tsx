@@ -175,8 +175,8 @@ const TacticalPuzzles = () => {
                     <AnimatedButton
                       key={theme.slug}
                       onClick={() => handleThemeClick(theme.slug)}
-                      variant="outline"
-                      className="group relative h-auto p-4 text-left border-2 border-chess-deep-red/20 bg-card hover:bg-chess-deep-red hover:border-chess-deep-red text-card-foreground hover:text-white transition-all duration-200 focus:ring-2 focus:ring-chess-deep-red focus:ring-offset-2"
+                      variant="chess"
+                      className="h-auto p-4 text-left focus:ring-2 focus:ring-chess-deep-red focus:ring-offset-2"
                       aria-label={`${theme.title} puzzles on Lichess`}
                       showRipple={true}
                     >
