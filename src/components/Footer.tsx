@@ -21,16 +21,40 @@ const Footer = () => {
               Elevating chess skills through structured learning and community support since 2020.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="hover:text-chess-light-pink transition-colors">
+              <a 
+                href="https://lichess.org/forum" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-chess-light-pink transition-colors"
+                aria-label="Lichess Forum"
+              >
                 <Facebook size={20} />
               </a>
-              <a href="#" className="hover:text-chess-light-pink transition-colors">
+              <a 
+                href="https://lichess.org/tv" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-chess-light-pink transition-colors"
+                aria-label="Lichess TV"
+              >
                 <Twitter size={20} />
               </a>
-              <a href="#" className="hover:text-chess-light-pink transition-colors">
+              <a 
+                href="https://lichess.org/tournament" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-chess-light-pink transition-colors"
+                aria-label="Lichess Tournaments"
+              >
                 <Instagram size={20} />
               </a>
-              <a href="#" className="hover:text-chess-light-pink transition-colors">
+              <a 
+                href="https://lichess.org/broadcast" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-chess-light-pink transition-colors"
+                aria-label="Lichess Broadcasts"
+              >
                 <Youtube size={20} />
               </a>
             </div>
@@ -40,24 +64,44 @@ const Footer = () => {
             <h3 className="font-bold text-lg mb-4">Training</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/training/openings" className="text-chess-light-pink hover:text-white transition-colors">
+                <a 
+                  href="https://lichess.org/study/qVA8CAKj/wt37Zl80" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-chess-light-pink hover:text-white transition-colors"
+                >
                   Opening Studies
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/training/middlegame" className="text-chess-light-pink hover:text-white transition-colors">
+                <a 
+                  href="https://lichess.org/training/middlegame" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-chess-light-pink hover:text-white transition-colors"
+                >
                   Middlegame Strategies
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/training/endgame" className="text-chess-light-pink hover:text-white transition-colors">
+                <a 
+                  href="https://lichess.org/training/endgame" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-chess-light-pink hover:text-white transition-colors"
+                >
                   Endgame Techniques
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/training/tactics" className="text-chess-light-pink hover:text-white transition-colors">
+                <a 
+                  href="https://lichess.org/training" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-chess-light-pink hover:text-white transition-colors"
+                >
                   Tactical Puzzles
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -66,24 +110,44 @@ const Footer = () => {
             <h3 className="font-bold text-lg mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/resources/videos" className="text-chess-light-pink hover:text-white transition-colors">
+                <a 
+                  href="https://lichess.org/video" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-chess-light-pink hover:text-white transition-colors"
+                >
                   Video Lessons
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/resources/articles" className="text-chess-light-pink hover:text-white transition-colors">
+                <a 
+                  href="https://lichess.org/blog" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-chess-light-pink hover:text-white transition-colors"
+                >
                   Articles
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/resources/downloads" className="text-chess-light-pink hover:text-white transition-colors">
-                  Downloads
-                </Link>
+                <a 
+                  href="https://lichess.org/practice" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-chess-light-pink hover:text-white transition-colors"
+                >
+                  Practice Lessons
+                </a>
               </li>
               <li>
-                <Link to="/grandmasters" className="text-chess-light-pink hover:text-white transition-colors">
+                <a 
+                  href="https://lichess.org/forum/general-chess-discussion/how-do-i-become-a-grandmaster" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-chess-light-pink hover:text-white transition-colors"
+                >
                   Grandmaster Insights
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
