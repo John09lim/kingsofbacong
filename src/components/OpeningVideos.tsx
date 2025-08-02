@@ -21,7 +21,7 @@ interface OpeningVideosProps {
 
 // Helper function to extract video ID from YouTube URL
 const extractVideoId = (url: string): string => {
-  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|m\.youtube\.com\/watch\?v=)([^&\n?#]+)/);
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|m\.youtube\.com\/watch\?v=|youtube\.com\/playlist\?list=)([^&\n?#]+)/);
   return match ? match[1] : '';
 };
 
@@ -208,6 +208,96 @@ const getVideosForOpening = (openingName: string, count: number): OpeningVideo[]
       { id: "13", title: "Slav Defense Soultanbeieff Variation", url: "https://www.youtube.com/watch?v=0O9CAn0lt6Y", difficulty: "Intermediate" },
       { id: "14", title: "Slav Defense Modern Theory", url: "https://www.youtube.com/watch?v=8dLAbE2joL4", difficulty: "Advanced" },
       { id: "15", title: "Slav Defense Strategic Plans", url: "https://www.youtube.com/watch?v=wM2HHfV1KXE", difficulty: "Advanced" }
+    ],
+    // Advanced openings with new YouTube links
+    "King's Indian Defense": [
+      { id: "1", title: "King's Indian Defense Fundamentals", url: "https://www.youtube.com/playlist?list=PL9VW7cVkVYCOm6IumZn_cFutpaA8hHmY2", difficulty: "Beginner" },
+      { id: "2", title: "King's Indian Defense Theory", url: "https://www.youtube.com/playlist?list=PLssNbVBYrGcDZufGfkN4vWvVW5OTF4Kky", difficulty: "Intermediate" },
+      { id: "3", title: "King's Indian Defense Masterclass", url: "https://www.youtube.com/playlist?list=PLOaFVRf_8WkQv_RtBn59zda2ZEBAy1RG7", difficulty: "Advanced" },
+      { id: "4", title: "King's Indian Defense Step by Step", url: "https://www.youtube.com/playlist?list=PLQKBpQZcRycoAiI5p-YWg60mt1jlUjCdQ", difficulty: "Intermediate" },
+      { id: "5", title: "King's Indian Defense Mixed Collection", url: "https://www.youtube.com/playlist?list=PL9AQY9ofznmh0mslrvSUsy51kN8l963p1", difficulty: "Intermediate" },
+      { id: "6", title: "King's Indian Defense Masters", url: "https://www.youtube.com/playlist?list=PLDnx7w_xuguFcu3bsVb2JPElVHRMxhXaj", difficulty: "Advanced" },
+      { id: "7", title: "King's Indian Defense Rating Climb", url: "https://www.youtube.com/playlist?list=PLy7vABK_JsyMwuY5Oo9BK1xl4Ken3f8ob", difficulty: "Advanced" },
+      { id: "8", title: "King's Indian Defense Assorted", url: "https://www.youtube.com/playlist?list=PL8gqV9r--YyBj4UI7Q5Q8bUWPSPwRizoN", difficulty: "Intermediate" }
+    ],
+    "Nimzo-Indian Defense": [
+      { id: "1", title: "Nimzo-Indian Defense Theory", url: "https://www.youtube.com/playlist?list=PLssNbVBYrGcAIp1mz9MWi04VJsLVVWjYX", difficulty: "Intermediate" },
+      { id: "2", title: "Nimzo-Indian Defense Masterclass", url: "https://www.youtube.com/playlist?list=PLOaFVRf_8WkQIT8DltZVPhQGs8k2vMN9k", difficulty: "Advanced" },
+      { id: "3", title: "Nimzo-Indian Defense Mobile Series", url: "https://m.youtube.com/playlist?list=PL79wC55xUgX-6YZRDqfV9jNXNrWRyfvRZ", difficulty: "Intermediate" },
+      { id: "4", title: "Learn to Play Nimzo-Indian", url: "https://www.youtube.com/playlist?list=PLLMIfCVLsv1h67cduxxUP8N33Xv6FGdZA", difficulty: "Beginner" },
+      { id: "5", title: "Nimzo-Indian Defense - ChessGoals", url: "https://www.youtube.com/playlist?list=PLKY1N5we6Q0BXs1IRoDATwMyafa_PEnZ8", difficulty: "Intermediate" },
+      { id: "6", title: "Nimzo-Indian Defense Assorted", url: "https://www.youtube.com/playlist?list=PLDnx7w_xuguHcnXXJ5stWBAJQu6JttUKW", difficulty: "Advanced" },
+      { id: "7", title: "Nimzo-Indian Defense Mobile Collection", url: "https://m.youtube.com/playlist?list=PLqBYo5isgO39oXKbiVzX1TfyAGSzJdPKU", difficulty: "Intermediate" },
+      { id: "8", title: "Nimzo-Indian Defense - Jozarov", url: "https://www.youtube.com/playlist?list=PLORhN_vW0H0gg199Xcc_0v03t4bltwoHh", difficulty: "Advanced" }
+    ],
+    "Grünfeld Defense": [
+      { id: "1", title: "Grünfeld Defense Theory", url: "https://www.youtube.com/playlist?list=PLssNbVBYrGcAlRd-LHbv9zy9wZ9_RszNy", difficulty: "Intermediate" },
+      { id: "2", title: "Grünfeld Defense - Kingscrusher", url: "https://www.youtube.com/playlist?list=PL821A6D839F1B1ADD", difficulty: "Advanced" },
+      { id: "3", title: "Grünfeld Defense - Jozarov", url: "https://www.youtube.com/playlist?list=PLORhN_vW0H0hOwACJXo25MhFfks7coh4H", difficulty: "Advanced" },
+      { id: "4", title: "Grünfeld Defense Assorted", url: "https://www.youtube.com/playlist?list=PL8gqV9r--YyAaoPEeCc7aOEoymuiyEYLU", difficulty: "Intermediate" },
+      { id: "5", title: "Grünfeld Defense ECO", url: "https://www.youtube.com/playlist?list=PLcBtKX9yfyN9Zt2CgexA694ipKvXUMyzZ", difficulty: "Advanced" },
+      { id: "6", title: "Grünfeld Defense Shorts Series", url: "https://www.youtube.com/playlist?list=PLxgIRTk1eUDRx0XpdPWzdl_glIbvuQXWr", difficulty: "Intermediate" }
+    ],
+    "Benko Gambit": [
+      { id: "1", title: "Benko Gambit - ChessBase India", url: "https://www.youtube.com/playlist?list=PL9WYcwsWaJ7o1NGlfy0V9C5LKTtJ8TyGZ", difficulty: "Intermediate" },
+      { id: "2", title: "Benko Gambit General", url: "https://www.youtube.com/playlist?list=PL9VW7cVkVYCOxgsvKkD3d6KzpZD0aEETg", difficulty: "Beginner" },
+      { id: "3", title: "Benko Gambit Series", url: "https://m.youtube.com/playlist?list=PLSMpDnrNJi8SpBp10aVcY3MTRaoVgCKkb", difficulty: "Intermediate" },
+      { id: "4", title: "Benko Gambit - Graif", url: "https://www.youtube.com/playlist?list=PLOm4tWEsA0wbPU_Q_uGcDaUyeS5Xqz2be", difficulty: "Advanced" },
+      { id: "5", title: "Learn to Play Benko", url: "https://www.youtube.com/playlist?list=PLLMIfCVLsv1jOZ0cN5blERYLkgmkJXn1C", difficulty: "Beginner" },
+      { id: "6", title: "Benko Gambit - Kingscrusher", url: "https://www.youtube.com/playlist?list=PLF6A3187B7A13D8CF", difficulty: "Advanced" },
+      { id: "7", title: "Benko Gambit - ChessGoals", url: "https://www.youtube.com/playlist?list=PLKY1N5we6Q0DiM7kdsq-kuY-gqkbLg0e8", difficulty: "Intermediate" },
+      { id: "8", title: "Benko Gambit - Chess School", url: "https://www.youtube.com/playlist?list=PL8gqV9r--YyA8_tAw0wsarpcULl_CVuCN", difficulty: "Advanced" },
+      { id: "9", title: "Benoni/Benko/Budapest", url: "https://www.youtube.com/playlist?list=PLKY1N5we6Q0AdRUEEFdaXHDJ4Cd44DCBq", difficulty: "Advanced" }
+    ],
+    "Alekhine's Defense": [
+      { id: "1", title: "Alekhine's Defense Theory", url: "https://www.youtube.com/playlist?list=PLssNbVBYrGcA1_4uP2KguvKBcsKw5eSgg", difficulty: "Intermediate" },
+      { id: "2", title: "Alekhine's Defense Series", url: "https://www.youtube.com/playlist?list=PLxgIRTk1eUDRmnvOqalBGAzqbWDnjGp3i", difficulty: "Advanced" },
+      { id: "3", title: "Alekhine's Defense Mini-Lessons", url: "https://www.youtube.com/playlist?list=PLyhJ_dahsw5gW43tIEt2IHdHFY-gg4Nmm", difficulty: "Beginner" },
+      { id: "4", title: "Alekhine's Defense - Agadmator", url: "https://www.youtube.com/playlist?list=PLDnx7w_xuguHRVUqOarJzszvxCcuzS4V_", difficulty: "Intermediate" },
+      { id: "5", title: "Alekhine's Defense - Kingscrusher", url: "https://www.youtube.com/playlist?list=PL9JCz2Gsbqe7xdhH151QMn1Ep3Gcy-Vgi", difficulty: "Advanced" },
+      { id: "6", title: "Alekhine's Defense GM-Level", url: "https://www.youtube.com/playlist?list=PLuwOD40I3Bx403bZUy29OO7Zxcmh4OwOy", difficulty: "Advanced" },
+      { id: "7", title: "Best of Alekhine", url: "https://www.youtube.com/playlist?list=PL3VQJmPdtbm37JMnXCKBYi3yVomsm3KjG", difficulty: "Advanced" }
+    ],
+    "Modern Defense": [
+      { id: "1", title: "Modern Defense Theory", url: "https://www.youtube.com/playlist?list=PLssNbVBYrGcABZfxq3XCETF0XBpABDesS", difficulty: "Intermediate" },
+      { id: "2", title: "Modern Defense Series", url: "https://www.youtube.com/playlist?list=PLKx6s-gbAEVGQ26qtuseq9Svt7hLpcDpb", difficulty: "Advanced" },
+      { id: "3", title: "Modern Defense Assorted", url: "https://m.youtube.com/playlist?list=PLH6EhG7LMA4IOFLDGsOmmyO73HqD5ziRP", difficulty: "Intermediate" },
+      { id: "4", title: "Modern Defense General", url: "https://www.youtube.com/playlist?list=PL5X_LrdT7hCVA-sbopy7YIh9X8VmOdh7N", difficulty: "Beginner" },
+      { id: "5", title: "Modern Defense Collection", url: "https://www.youtube.com/playlist?list=PLeico9IFGPsNBzpAURT4wD45z2kR_8Ri2", difficulty: "Intermediate" },
+      { id: "6", title: "Modern Defense Games", url: "https://www.youtube.com/playlist?list=PL9aCam7Se4tBDKX-ewy2pVl5fbVGvVkd5", difficulty: "Advanced" },
+      { id: "7", title: "Pirc & Modern", url: "https://www.youtube.com/playlist?list=PLE6293A02FDE41AE9", difficulty: "Intermediate" },
+      { id: "8", title: "Modern Defense Shorts", url: "https://www.youtube.com/playlist?list=PLobkpLLaxwahXiQDn2KmYkzg7ssdtR3kP", difficulty: "Beginner" }
+    ],
+    "Catalan Opening": [
+      { id: "1", title: "Catalan Opening Theory", url: "https://www.youtube.com/playlist?list=PLssNbVBYrGcBwWsSqwig0dAymsPQd0dzy", difficulty: "Intermediate" },
+      { id: "2", title: "Catalan Opening Curated", url: "https://www.youtube.com/playlist?list=PLjjYfV8Gz4xtnNfLp2-bhDci9PVwm9tNP", difficulty: "Advanced" },
+      { id: "3", title: "Catalan Opening Assorted", url: "https://www.youtube.com/playlist?list=PL8gqV9r--YyD_nZF_H_ldvwXRGc3Q8EVr", difficulty: "Intermediate" },
+      { id: "4", title: "Catalan Opening Collection", url: "https://www.youtube.com/playlist?list=PLDnx7w_xuguGEvOMthw0KThGM_-90CzA2", difficulty: "Advanced" },
+      { id: "5", title: "Catalan Opening - ChessGoals", url: "https://www.youtube.com/playlist?list=PLKY1N5we6Q0BVD9NUAiP1lKveKNUcQfXU", difficulty: "Intermediate" },
+      { id: "6", title: "Catalan Opening - Jozarov", url: "https://www.youtube.com/playlist?list=PLORhN_vW0H0iMbDKTgPJHV6OV6y_lzmGu", difficulty: "Advanced" },
+      { id: "7", title: "Catalan Opening - Kingscrusher", url: "https://www.youtube.com/playlist?list=PL9JCz2Gsbqe7rd3enQgPtaHMs63VmFPol", difficulty: "Advanced" },
+      { id: "8", title: "Catalan Opening Curated Collection", url: "https://www.youtube.com/playlist?list=PL1O0jlNSD-394tXrBsDTyEdSCC-2mIqSv", difficulty: "Intermediate" },
+      { id: "9", title: "Catalan Opening - Ostrovskiy", url: "https://www.youtube.com/playlist?list=PL9RQPxG_e-LknXaRUkDzgqHQmUmHbVuxl", difficulty: "Advanced" }
+    ],
+    "Benoni Defense": [
+      { id: "1", title: "Benoni Defense Theory", url: "https://www.youtube.com/playlist?list=PLssNbVBYrGcB9CsVX8pErxKpIRPc79FVT", difficulty: "Intermediate" },
+      { id: "2", title: "Modern Benoni Series", url: "https://www.youtube.com/playlist?list=PL3jRQNcZ6qoyRBwB7g_HeoZpE67ipeft_", difficulty: "Advanced" },
+      { id: "3", title: "Benoni Defense Assorted", url: "https://www.youtube.com/playlist?list=PLDnx7w_xuguEC3JnDBDKv-eFpx5efWpWk", difficulty: "Intermediate" },
+      { id: "4", title: "Benoni Defense - Kingscrusher", url: "https://www.youtube.com/playlist?list=PL9JCz2Gsbqe59HZOTU6xSgoPFHeKxmJk-", difficulty: "Advanced" },
+      { id: "5", title: "Benoni Defense Collection", url: "https://www.youtube.com/playlist?list=PLxpEktlns9TuLJbOjiw3DQgR0lqHI5Rq-", difficulty: "Intermediate" },
+      { id: "6", title: "Benoni Defense Games", url: "https://m.youtube.com/playlist?list=PLOBOd3sesuLgn2oeudFChj39rbmINb_cz", difficulty: "Advanced" },
+      { id: "7", title: "Old Benoni", url: "https://m.youtube.com/playlist?list=PLHnqML29wIYFBqtFSOvmh_TaHFPMU394w", difficulty: "Intermediate" },
+      { id: "8", title: "Benoni Taimanov Variation", url: "https://www.youtube.com/playlist?list=PLORhN_vW0H0ji1A-FUa93_iLSYWk3Tntw", difficulty: "Advanced" },
+      { id: "9", title: "Benoni/Benko/Budapest", url: "https://www.youtube.com/playlist?list=PLKY1N5we6Q0AdRUEEFdaXHDJ4Cd44DCBq", difficulty: "Advanced" }
+    ],
+    "Najdorf Sicilian": [
+      { id: "1", title: "Najdorf Sicilian - ChessBase India", url: "https://www.youtube.com/playlist?list=PL9WYcwsWaJ7queNFnHMcxJEqzPSKUrQz7", difficulty: "Intermediate" },
+      { id: "2", title: "Najdorf Sicilian - Kingscrusher", url: "https://www.youtube.com/playlist?list=PL1687DFC57CABC540", difficulty: "Advanced" },
+      { id: "3", title: "Najdorf Sicilian - James Canty", url: "https://www.youtube.com/playlist?list=PL9VW7cVkVYCN9a2lGPp4X4vcp7x8R0O-w", difficulty: "Advanced" },
+      { id: "4", title: "Najdorf Sicilian Series", url: "https://m.youtube.com/playlist?list=PLrTLUmPNfTCJYRU6sZ2J6wL7ckQMxurv-", difficulty: "Intermediate" },
+      { id: "5", title: "Najdorf SLCC Episode", url: "https://www.youtube.com/watch?v=dsvvD2eM1-k", difficulty: "Advanced" },
+      { id: "6", title: "Najdorf SLCC Lectures", url: "https://www.youtube.com/playlist?list=PLVWaFpMwtaGjo-YcMH8ghDX-OQdDYz2OU", difficulty: "Advanced" },
+      { id: "7", title: "Najdorf Tutorial", url: "https://www.youtube.com/watch?v=vxeB4ZI8osA", difficulty: "Beginner" }
     ]
   };
 
