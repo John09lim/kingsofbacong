@@ -1,350 +1,194 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { useTrainingSession } from '@/hooks/useTrainingSession';
-import { TrainingTimeDisplay } from '@/components/TrainingTimeDisplay';
-import { useChessPuzzles } from "@/hooks/useChessPuzzles";
-import { toast } from "@/hooks/use-toast";
-import PuzzleViewTabs from '@/components/puzzle/PuzzleViewTabs';
-import PuzzleActivityTracking from '@/components/puzzle/PuzzleActivityTracking';
+import { ExternalLink } from 'lucide-react';
+
+interface PuzzleTheme {
+  slug: string;
+  title: string;
+}
+
+interface ThemeCategory {
+  title: string;
+  themes: PuzzleTheme[];
+}
 
 const TacticalPuzzles = () => {
-  const { sessionDuration, isTracking } = useTrainingSession('tactical_puzzles');
-  const [difficulty, setDifficulty] = useState(1200);
-  const [solvedCount, setSolvedCount] = useState(42);
-  const [activeTab, setActiveTab] = useState("daily");
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [solvedCountByTheme, setSolvedCountByTheme] = useState<Record<string, number>>({});
-  const [puzzleHistory, setPuzzleHistory] = useState<any[]>([]);
-  const [puzzleStats, setPuzzleStats] = useState({
-    accuracy: 72,
-    solved: 42,
-    attempts: 58,
-    streak: 5,
-    bestTime: "4.2s",
-    rating: 1200,
-    ratingDelta: 24
-  });
-  const [userRating, setUserRating] = useState(1200);
-  const [isDashboardLoading, setIsDashboardLoading] = useState(false);
-  const [isReversed, setIsReversed] = useState(true); // Default to reversed (attack) mode
-  const [puzzleActivity, setPuzzleActivity] = useState<Record<string, { count: number, solved: number, failed: number, time: number }>>({});
-  const [ratingHistoryData, setRatingHistoryData] = useState([
-    { date: 'Apr 10', rating: 1150 },
-    { date: 'Apr 11', rating: 1175 },
-    { date: 'Apr 12', rating: 1160 },
-    { date: 'Apr 13', rating: 1185 },
-    { date: 'Apr 14', rating: 1170 },
-    { date: 'Apr 15', rating: 1200 }
-  ]);
-
-  // Sample difficulty distribution data
-  const difficultyDistributionData = [
-    { range: "800-1000", count: 5, color: "#4ade80" },
-    { range: "1000-1200", count: 12, color: "#a3e635" }, 
-    { range: "1200-1400", count: 15, color: "#facc15" },
-    { range: "1400-1600", count: 7, color: "#fb923c" },
-    { range: "1600-1800", count: 2, color: "#f87171" },
-    { range: "1800+", count: 1, color: "#f43f5e" }
-  ];
-
-  const { 
-    puzzleData,
-    isPuzzleLoading,
-    themesData,
-    isThemesLoading,
-    fetchNextPuzzle,
-    fetchPuzzlesByTheme,
-    generatePuzzleByDifficulty,
-  } = useChessPuzzles({ enabled: true });
-
-  // Mock dashboard data for compatibility
-  const dashboardData = {
-    global: {
-      firstWins: 31,
-      nb: 43,
-      wins: 36,
-      streak: 5,
-      fastest: { seconds: 4.2 }
-    }
-  };
-
-  // Initialize states from localStorage
-  useEffect(() => {
-    // Initialize puzzle activity tracking
-    const {
-      solvedCount: initialSolvedCount,
-      solvedCountByTheme: initialThemeCounts,
-      puzzleHistory: initialHistory,
-      puzzleActivity: initialActivity,
-    } = PuzzleActivityTracking.initializeFromLocalStorage();
-
-    // Set state with retrieved or default values
-    setSolvedCount(initialSolvedCount);
-    setSolvedCountByTheme(initialThemeCounts);
-    setPuzzleHistory(initialHistory);
-    setPuzzleActivity(initialActivity);
-    
-    // Load puzzle stats
-    if (dashboardData?.global) {
-      const { global } = dashboardData;
-      
-      setPuzzleStats({
-        accuracy: Math.round((global.firstWins / global.nb) * 100) || 72,
-        solved: global.wins || solvedCount,
-        attempts: global.nb || 58,
-        streak: global.streak || 5,
-        bestTime: `${global.fastest?.seconds || 4.2}s`,
-        rating: userRating || 1200,
-        ratingDelta: 24
-      });
-    }
-  }, [dashboardData, userRating]);
-
-  // Handle puzzle solved - update to track daily activity
-  const handlePuzzleSolved = () => {
-    if (puzzleData?.puzzle) {
-      markPuzzleSolved(puzzleData.puzzle.id);
-      
-      // Update tracking with the new solved puzzle
-      const {
-        newSolvedCount,
-        newThemeCounts,
-        updatedHistory,
-        updatedActivity,
-        updatedStats
-      } = PuzzleActivityTracking.trackPuzzleSolved(
-        puzzleData,
-        solvedCount,
-        solvedCountByTheme,
-        puzzleHistory,
-        puzzleActivity,
-        puzzleStats
-      );
-      
-      // Update all states
-      setSolvedCount(newSolvedCount);
-      setSolvedCountByTheme(newThemeCounts);
-      setPuzzleHistory(updatedHistory);
-      setPuzzleActivity(updatedActivity);
-      setPuzzleStats(updatedStats);
-    }
-  };
-
-  // Handle puzzle failed - update activity tracking
-  const handlePuzzleFailed = () => {
-    if (puzzleData?.puzzle) {
-      const { updatedActivity } = PuzzleActivityTracking.trackPuzzleFailed(puzzleActivity);
-      setPuzzleActivity(updatedActivity);
-      
-      toast({
-        title: "Puzzle Failed",
-        description: "Don't worry, keep practicing!",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Function to mark a puzzle as solved (helper for handlePuzzleSolved)
-  const markPuzzleSolved = (puzzleId: string) => {
-    // Calculate ELO points based on difficulty
-    const puzzleRating = puzzleData?.puzzle.rating || 1200;
-    let eloPoints = 1; // Default for easy puzzles
-    
-    if (puzzleRating >= 1600 && puzzleRating < 2000) {
-      eloPoints = 2; // Intermediate puzzles
-    } else if (puzzleRating >= 2000) {
-      eloPoints = 3; // Hard puzzles
-    }
-    
-    // Update user rating
-    const newRating = userRating + eloPoints;
-    setUserRating(newRating);
-    localStorage.setItem('puzzleRating', newRating.toString());
-    
-    toast({
-      title: "Puzzle Solved!",
-      description: `Rating: +${eloPoints} ELO (${newRating})`,
-    });
-  };
-
-  // Handle get next puzzle
-  const handleGetNextPuzzle = async () => {
-    try {
-      setIsRefreshing(true);
-      const nextPuzzle = await fetchNextPuzzle();
-      if (nextPuzzle) {
-        toast({
-          title: "New puzzle loaded",
-          description: "A new tactical puzzle is ready for you to solve."
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching next puzzle:", error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-  
-  // Handle selecting a theme
-  const handleSelectTheme = async (themeKey: string) => {
-    try {
-      setIsRefreshing(true);
-      setActiveTab("daily"); // Switch to the daily tab where the puzzle viewer is
-      const themePuzzle = await fetchPuzzlesByTheme(themeKey);
-      if (themePuzzle) {
-        toast({
-          title: `${themeKey.charAt(0).toUpperCase() + themeKey.slice(1)} Puzzle`,
-          description: `A new ${themeKey} puzzle is ready for you to solve.`,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching puzzle by theme:", error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-  
-  // Handle starting a puzzle at the selected difficulty
-  const handleStartPuzzleByDifficulty = async () => {
-    try {
-      setIsRefreshing(true);
-      setActiveTab("daily"); // Switch to the daily tab where the puzzle viewer is
-      const difficultyPuzzle = await generatePuzzleByDifficulty(difficulty);
-      if (difficultyPuzzle) {
-        toast({
-          title: "Puzzle Generated",
-          description: `A new puzzle rated ${difficulty} is ready for you to solve.`,
-        });
-      }
-    } catch (error) {
-      console.error("Error generating puzzle by difficulty:", error);
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
-  // Data for the page
-  const leaderboard = [
-    { rank: 1, name: "MagnusCarlsen", rating: 2850, solved: 1254, streak: 42, country: "Norway" },
-    { rank: 2, name: "HikaNak", rating: 2736, solved: 1187, streak: 28, country: "USA" },
-    { rank: 3, name: "Firouzja2003", rating: 2720, solved: 1098, streak: 19, country: "France" },
-    { rank: 4, name: "DingLiren", rating: 2705, solved: 987, streak: 21, country: "China" },
-    { rank: 5, name: "Nepo2022", rating: 2688, solved: 945, streak: 14, country: "Russia" },
-    { rank: 6, name: "Caruana_Fabiano", rating: 2677, solved: 908, streak: 12, country: "USA" },
-    { rank: 7, name: "Wesley_So", rating: 2654, solved: 879, streak: 9, country: "USA" },
-    { rank: 8, name: "Anish_Giri", rating: 2642, solved: 834, streak: 7, country: "Netherlands" },
-    { rank: 9, name: "MVL_Chess", rating: 2630, solved: 801, streak: 5, country: "France" },
-    { rank: 10, name: "Radjabov_T", rating: 2608, solved: 765, streak: 3, country: "Azerbaijan" }
-  ];
-
-  const dailyPuzzles = [
+  // Comprehensive list of Lichess puzzle themes organized by categories
+  const themeCategories: ThemeCategory[] = [
     {
-      id: 1,
-      difficulty: "Easy",
-      rating: 1150,
-      theme: "Fork",
-      solvedCount: 458,
-      solvedPercentage: 78
+      title: "Recommended",
+      themes: [
+        { slug: "mix", title: "Healthy mix" }
+      ]
     },
     {
-      id: 2,
-      difficulty: "Medium",
-      rating: 1550,
-      theme: "Pin & Skewer",
-      solvedCount: 342,
-      solvedPercentage: 62
+      title: "Phases",
+      themes: [
+        { slug: "opening", title: "Opening" },
+        { slug: "middlegame", title: "Middlegame" },
+        { slug: "endgame", title: "Endgame" },
+        { slug: "rookEndgame", title: "Rook endgame" },
+        { slug: "bishopEndgame", title: "Bishop endgame" },
+        { slug: "pawnEndgame", title: "Pawn endgame" },
+        { slug: "knightEndgame", title: "Knight endgame" },
+        { slug: "queenEndgame", title: "Queen endgame" },
+        { slug: "queenRookEndgame", title: "Queen and Rook endgame" }
+      ]
     },
     {
-      id: 3,
-      difficulty: "Hard",
-      rating: 1950,
-      theme: "Sacrifice & Mate",
-      solvedCount: 187,
-      solvedPercentage: 41
+      title: "Openings",
+      themes: [
+        { slug: "sicilianDefense", title: "Sicilian Defense" },
+        { slug: "frenchDefense", title: "French Defense" },
+        { slug: "queensPawnGame", title: "Queen's Pawn Game" },
+        { slug: "italianGame", title: "Italian Game" },
+        { slug: "caroKannDefense", title: "Caro-Kann Defense" },
+        { slug: "scandinavianDefense", title: "Scandinavian Defense" },
+        { slug: "queensGambitDeclined", title: "Queen's Gambit Declined" },
+        { slug: "englishOpening", title: "English Opening" },
+        { slug: "ruyLopez", title: "Ruy Lopez" },
+        { slug: "scotchGame", title: "Scotch Game" },
+        { slug: "indianDefense", title: "Indian Defense" },
+        { slug: "philidorDefense", title: "Philidor Defense" }
+      ]
+    },
+    {
+      title: "Basic Motifs",
+      themes: [
+        { slug: "advancedPawn", title: "Advanced pawn" },
+        { slug: "attackingF2F7", title: "Attacking f2 or f7" },
+        { slug: "capturingDefender", title: "Capturing defender" },
+        { slug: "discoveredAttack", title: "Discovered attack" },
+        { slug: "doubleCheck", title: "Double check" },
+        { slug: "exposedKing", title: "Exposed king" },
+        { slug: "fork", title: "Fork" },
+        { slug: "hangingPiece", title: "Hanging piece" },
+        { slug: "kingsideAttack", title: "Kingside attack" },
+        { slug: "pin", title: "Pin" },
+        { slug: "queensideAttack", title: "Queenside attack" },
+        { slug: "sacrifice", title: "Sacrifice" },
+        { slug: "skewer", title: "Skewer" },
+        { slug: "trappedPiece", title: "Trapped piece" }
+      ]
+    },
+    {
+      title: "Advanced Motifs",
+      themes: [
+        { slug: "attraction", title: "Attraction" },
+        { slug: "clearance", title: "Clearance" },
+        { slug: "defensiveMove", title: "Defensive move" },
+        { slug: "deflection", title: "Deflection" },
+        { slug: "interference", title: "Interference" },
+        { slug: "intermezzo", title: "Intermezzo" },
+        { slug: "quietMove", title: "Quiet move" },
+        { slug: "xRayAttack", title: "X-Ray attack" },
+        { slug: "zugzwang", title: "Zugzwang" }
+      ]
+    },
+    {
+      title: "Checkmates",
+      themes: [
+        { slug: "mate", title: "Checkmate" },
+        { slug: "mateIn1", title: "Mate in 1" },
+        { slug: "mateIn2", title: "Mate in 2" },
+        { slug: "mateIn3", title: "Mate in 3" },
+        { slug: "mateIn4", title: "Mate in 4" },
+        { slug: "mateIn5", title: "Mate in 5" },
+        { slug: "anastasiaMate", title: "Anastasia's mate" },
+        { slug: "arabianMate", title: "Arabian mate" },
+        { slug: "backRankMate", title: "Back rank mate" },
+        { slug: "bodenMate", title: "Boden's mate" },
+        { slug: "doubleBishopMate", title: "Double bishop mate" },
+        { slug: "dovetailMate", title: "Dovetail mate" },
+        { slug: "hookMate", title: "Hook mate" },
+        { slug: "smotheredMate", title: "Smothered mate" }
+      ]
+    },
+    {
+      title: "Special Moves",
+      themes: [
+        { slug: "castling", title: "Castling" },
+        { slug: "enPassant", title: "En passant" },
+        { slug: "promotion", title: "Promotion" },
+        { slug: "underPromotion", title: "Under promotion" }
+      ]
+    },
+    {
+      title: "Goals",
+      themes: [
+        { slug: "equality", title: "Equality" },
+        { slug: "advantage", title: "Advantage" },
+        { slug: "crushing", title: "Crushing" }
+      ]
+    },
+    {
+      title: "Lengths",
+      themes: [
+        { slug: "oneMove", title: "One-move puzzle" },
+        { slug: "short", title: "Short puzzle" },
+        { slug: "long", title: "Long puzzle" },
+        { slug: "veryLong", title: "Very long puzzle" }
+      ]
+    },
+    {
+      title: "Origin",
+      themes: [
+        { slug: "master", title: "Master games" },
+        { slug: "masterVsMaster", title: "Master vs Master games" },
+        { slug: "superGM", title: "Super GM games" },
+        { slug: "playerGames", title: "Player games" }
+      ]
     }
   ];
 
-  // Fix the structure of mockPuzzleData to match LichessPuzzleData interface
-  const mockPuzzleData = {
-    puzzle: {
-      id: "V6iSv",
-      fen: "r1bq1rk1/pp2bppp/2n2n2/2pp4/3P4/2N2NP1/PP2PPBP/R1BQ1RK1 w - - 4 9",
-      rating: 1500,
-      themes: ["advantage", "middlegame", "short"],
-      solution: ["d4c5", "f6e4", "g2e4", "e7c5"],
-      plays: 1256,
-      initialPly: 16,
-      playerTurn: "w"
-    },
-    game: {
-      id: "X7txx",
-      perf: { key: "rapid", name: "Rapid" },
-      players: {
-        white: { 
-          name: "DrNykterstein", 
-          rating: 2861 
-        },
-        black: { 
-          name: "LiquidDream", 
-          rating: 2650 
-        }
-      },
-      clock: "10+0",
-      rated: true,
-      pgn: "1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3"
-    }
+  const handleThemeClick = (slug: string) => {
+    window.open(`https://lichess.org/training/${slug}`, '_blank', 'noopener,noreferrer');
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
-        <div className="bg-chess-dark-maroon py-10 px-4">
-          <div className="container mx-auto">
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Puzzles</h1>
-                <p className="text-chess-light-pink text-lg max-w-3xl">
-                  Train your tactical vision with thousands of puzzles. Play the attacker role and deliver 
-                  devastating tactics against your opponent!
-                </p>
-              </div>
-              <TrainingTimeDisplay sessionDuration={sessionDuration} isTracking={isTracking} />
-            </div>
+        {/* Hero Section */}
+        <div className="bg-chess-dark-maroon py-12 px-4">
+          <div className="container mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Training</h1>
+            <p className="text-chess-light-pink text-lg max-w-3xl mx-auto">
+              Choose from a variety of puzzle themes to sharpen your tactical skills. 
+              Click any theme to start training on Lichess.
+            </p>
           </div>
         </div>
-        
-        <div className="container mx-auto px-4 py-8">
-          <PuzzleViewTabs
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            difficulty={difficulty}
-            setDifficulty={setDifficulty}
-            solvedCount={solvedCount}
-            puzzleStats={puzzleStats}
-            isRefreshing={isRefreshing}
-            puzzleData={puzzleData}
-            isPuzzleLoading={isPuzzleLoading}
-            themesData={themesData}
-            isThemesLoading={isThemesLoading}
-            solvedCountByTheme={solvedCountByTheme}
-            puzzleHistory={puzzleHistory}
-            isDashboardLoading={isDashboardLoading}
-            difficultyDistributionData={difficultyDistributionData}
-            ratingHistoryData={ratingHistoryData}
-            dailyPuzzles={dailyPuzzles}
-            isReversed={isReversed}
-            userRating={userRating}
-            puzzleActivity={puzzleActivity}
-            dashboardData={dashboardData}
-            leaderboard={leaderboard}
-            onSelectTheme={handleSelectTheme}
-            onStartPuzzleByDifficulty={handleStartPuzzleByDifficulty}
-            onGetNextPuzzle={handleGetNextPuzzle}
-            onPuzzleSolved={handlePuzzleSolved}
-            onPuzzleFailed={handlePuzzleFailed}
-          />
+
+        {/* Themes Grid */}
+        <div className="container mx-auto px-4 py-12">
+          <div className="space-y-12">
+            {themeCategories.map((category) => (
+              <section key={category.title} className="space-y-6">
+                <h2 className="text-2xl font-bold text-foreground border-b border-border pb-2">
+                  {category.title}
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {category.themes.map((theme) => (
+                    <button
+                      key={theme.slug}
+                      onClick={() => handleThemeClick(theme.slug)}
+                      aria-label={`${theme.title} puzzles on Lichess`}
+                      className="group relative bg-card hover:bg-accent border border-border rounded-lg p-4 text-left transition-all duration-200 hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-card-foreground group-hover:text-accent-foreground">
+                          {theme.title}
+                        </span>
+                        <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground transition-colors" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
         </div>
       </main>
       <Footer />
