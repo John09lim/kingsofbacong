@@ -1,7 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { ExternalLink } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { AnimatedButton } from '@/components/ui/animated-button';
 
 interface PuzzleTheme {
@@ -15,6 +16,8 @@ interface ThemeCategory {
 }
 
 const TacticalPuzzles = () => {
+  const navigate = useNavigate();
+  
   // Comprehensive list of Lichess puzzle themes organized by categories
   const themeCategories: ThemeCategory[] = [
     {
@@ -146,7 +149,7 @@ const TacticalPuzzles = () => {
   ];
 
   const handleThemeClick = (slug: string) => {
-    window.open(`https://lichess.org/training/${slug}`, '_blank', 'noopener,noreferrer');
+    navigate(`/tactics/${slug}`);
   };
 
   return (
@@ -159,7 +162,7 @@ const TacticalPuzzles = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Training</h1>
             <p className="text-chess-light-pink text-lg max-w-3xl mx-auto">
               Choose from a variety of puzzle themes to sharpen your tactical skills. 
-              Click any theme to start training on Lichess.
+              Click any theme to start training with interactive puzzles.
             </p>
           </div>
         </div>
@@ -179,14 +182,14 @@ const TacticalPuzzles = () => {
                       onClick={() => handleThemeClick(theme.slug)}
                       variant="chess"
                       className="h-auto p-4 text-left focus:ring-2 focus:ring-chess-deep-red focus:ring-offset-2"
-                      aria-label={`${theme.title} puzzles on Lichess`}
+                      aria-label={`Start ${theme.title} puzzles`}
                       showRipple={true}
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-medium">
                           {theme.title}
                         </span>
-                        <ExternalLink className="h-4 w-4 transition-colors" />
+                        <ChevronRight className="h-4 w-4 transition-colors" />
                       </div>
                     </AnimatedButton>
                   ))}

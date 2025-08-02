@@ -8,6 +8,7 @@ import OpeningStudies from './pages/OpeningStudies';
 import MiddlegameStrategies from './pages/MiddlegameStrategies';
 import EndgameTechniques from './pages/EndgameTechniques';
 import TacticalPuzzles from './pages/TacticalPuzzles';
+import ThemePuzzlePage from './pages/ThemePuzzlePage';
 import Auth from './pages/Auth';
 import Training from './pages/Training';
 import Resources from './pages/Resources';
@@ -29,6 +30,7 @@ function App() {
           <Route path="/middlegame" element={<MiddlegameStrategies />} />
           <Route path="/endgame" element={<EndgameTechniques />} />
           <Route path="/tactics" element={<TacticalPuzzles />} />
+          <Route path="/tactics/:theme" element={<ThemePuzzlePage />} />
           <Route path="/training" element={<Training />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/community" element={<Community />} />
