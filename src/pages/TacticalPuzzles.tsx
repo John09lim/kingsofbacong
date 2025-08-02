@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { ExternalLink } from 'lucide-react';
+import { AnimatedButton } from '@/components/ui/animated-button';
 
 interface PuzzleTheme {
   slug: string;
@@ -171,19 +172,21 @@ const TacticalPuzzles = () => {
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {category.themes.map((theme) => (
-                    <button
+                    <AnimatedButton
                       key={theme.slug}
                       onClick={() => handleThemeClick(theme.slug)}
+                      variant="outline"
+                      className="group relative h-auto p-4 text-left border-2 border-chess-deep-red/20 bg-card hover:bg-chess-deep-red hover:border-chess-deep-red text-card-foreground hover:text-white transition-all duration-200 focus:ring-2 focus:ring-chess-deep-red focus:ring-offset-2"
                       aria-label={`${theme.title} puzzles on Lichess`}
-                      className="group relative bg-card hover:bg-accent border border-border rounded-lg p-4 text-left transition-all duration-200 hover:shadow-md hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                      showRipple={true}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-card-foreground group-hover:text-accent-foreground">
+                        <span className="font-medium">
                           {theme.title}
                         </span>
-                        <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-accent-foreground transition-colors" />
+                        <ExternalLink className="h-4 w-4 transition-colors" />
                       </div>
-                    </button>
+                    </AnimatedButton>
                   ))}
                 </div>
               </section>
