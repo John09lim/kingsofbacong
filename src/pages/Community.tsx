@@ -46,6 +46,74 @@ const getDefaultAvatar = (name: string | null): string => {
   return `https://images.unsplash.com/${avatars[index]}?w=100&h=100&fit=crop&crop=face`;
 };
 
+// Mock community members
+const mockMembers: Profile[] = [
+  {
+    id: 'mock-1',
+    full_name: 'John Paul Flores',
+    avatar_url: null,
+    email: 'johnpaul.flores@chess.club',
+    total_training_minutes: 450,
+    level: calculateLevel(450)
+  },
+  {
+    id: 'mock-2',
+    full_name: 'Aike Angelo Cuda',
+    avatar_url: null,
+    email: 'aike.cuda@chess.club',
+    total_training_minutes: 380,
+    level: calculateLevel(380)
+  },
+  {
+    id: 'mock-3',
+    full_name: 'Jairus Pristin',
+    avatar_url: null,
+    email: 'jairus.pristin@chess.club',
+    total_training_minutes: 520,
+    level: calculateLevel(520)
+  },
+  {
+    id: 'mock-4',
+    full_name: 'Jushele Ros L. Betonio',
+    avatar_url: null,
+    email: 'jushele.betonio@chess.club',
+    total_training_minutes: 290,
+    level: calculateLevel(290)
+  },
+  {
+    id: 'mock-5',
+    full_name: 'Shekienna Dawn Zerna',
+    avatar_url: null,
+    email: 'shekienna.zerna@chess.club',
+    total_training_minutes: 340,
+    level: calculateLevel(340)
+  },
+  {
+    id: 'mock-6',
+    full_name: 'Ashley James Ventolero',
+    avatar_url: null,
+    email: 'ashley.ventolero@chess.club',
+    total_training_minutes: 420,
+    level: calculateLevel(420)
+  },
+  {
+    id: 'mock-7',
+    full_name: 'Alleya Briones',
+    avatar_url: null,
+    email: 'alleya.briones@chess.club',
+    total_training_minutes: 360,
+    level: calculateLevel(360)
+  },
+  {
+    id: 'mock-8',
+    full_name: 'Jeff Cyrus Delfino',
+    avatar_url: null,
+    email: 'jeff.delfino@chess.club',
+    total_training_minutes: 480,
+    level: calculateLevel(480)
+  }
+];
+
 const Community = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,12 +135,15 @@ const Community = () => {
           level: calculateLevel(profile.total_training_minutes || 0)
         }));
 
+        // Combine with mock members
+        const allProfiles = [...profilesWithLevels, ...mockMembers];
+
         // Sort by training time for leaderboard
-        const sortedProfiles = [...profilesWithLevels].sort(
+        const sortedProfiles = [...allProfiles].sort(
           (a, b) => b.total_training_minutes - a.total_training_minutes
         );
 
-        setProfiles(profilesWithLevels);
+        setProfiles(allProfiles);
         setLeadingPlayer(sortedProfiles[0] || null);
       } catch (error) {
         console.error('Error fetching profiles:', error);
