@@ -46,71 +46,71 @@ const getDefaultAvatar = (name: string | null): string => {
   return `https://images.unsplash.com/${avatars[index]}?w=100&h=100&fit=crop&crop=face`;
 };
 
-// Mock community members
+// Mock community members with specific levels
 const mockMembers: Profile[] = [
   {
     id: 'mock-1',
     full_name: 'John Paul Flores',
     avatar_url: null,
     email: 'johnpaul.flores@chess.club',
-    total_training_minutes: 450,
-    level: calculateLevel(450)
+    total_training_minutes: 210, // Level 4
+    level: 4
   },
   {
     id: 'mock-2',
     full_name: 'Aike Angelo Cuda',
     avatar_url: null,
     email: 'aike.cuda@chess.club',
-    total_training_minutes: 380,
-    level: calculateLevel(380)
+    total_training_minutes: 150, // Level 3
+    level: 3
   },
   {
     id: 'mock-3',
     full_name: 'Jairus Pristin',
     avatar_url: null,
     email: 'jairus.pristin@chess.club',
-    total_training_minutes: 520,
-    level: calculateLevel(520)
+    total_training_minutes: 90, // Level 2
+    level: 2
   },
   {
     id: 'mock-4',
     full_name: 'Jushele Ros L. Betonio',
     avatar_url: null,
     email: 'jushele.betonio@chess.club',
-    total_training_minutes: 290,
-    level: calculateLevel(290)
+    total_training_minutes: 30, // Level 1.5
+    level: 1.5
   },
   {
     id: 'mock-5',
     full_name: 'Shekienna Dawn Zerna',
     avatar_url: null,
     email: 'shekienna.zerna@chess.club',
-    total_training_minutes: 340,
-    level: calculateLevel(340)
+    total_training_minutes: 85, // Level 2
+    level: 2
   },
   {
     id: 'mock-6',
     full_name: 'Ashley James Ventolero',
     avatar_url: null,
     email: 'ashley.ventolero@chess.club',
-    total_training_minutes: 420,
-    level: calculateLevel(420)
+    total_training_minutes: 95, // Level 2
+    level: 2
   },
   {
     id: 'mock-7',
     full_name: 'Alleya Briones',
     avatar_url: null,
     email: 'alleya.briones@chess.club',
-    total_training_minutes: 360,
-    level: calculateLevel(360)
+    total_training_minutes: 25, // Level 1.4
+    level: 1.4
   },
   {
     id: 'mock-8',
     full_name: 'Jeff Cyrus Delfino',
     avatar_url: null,
     email: 'jeff.delfino@chess.club',
-    total_training_minutes: 480,
-    level: calculateLevel(480)
+    total_training_minutes: 80, // Level 2
+    level: 2
   }
 ];
 
@@ -138,9 +138,9 @@ const Community = () => {
         // Combine with mock members
         const allProfiles = [...profilesWithLevels, ...mockMembers];
 
-        // Sort by training time for leaderboard
+        // Sort by level for leaderboard (highest level first)
         const sortedProfiles = [...allProfiles].sort(
-          (a, b) => b.total_training_minutes - a.total_training_minutes
+          (a, b) => b.level - a.level
         );
 
         setProfiles(allProfiles);
@@ -303,7 +303,7 @@ const Community = () => {
             <CardContent>
               <div className="space-y-4">
                 {profiles
-                  .sort((a, b) => b.total_training_minutes - a.total_training_minutes)
+                  .sort((a, b) => b.level - a.level)
                   .slice(0, 10)
                   .map((profile, index) => (
                     <div key={profile.id} className="flex items-center space-x-4 p-3 rounded-lg bg-muted/50">
