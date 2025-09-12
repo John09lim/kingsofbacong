@@ -250,7 +250,20 @@ const TacticalPuzzles = () => {
   const handleThemeClick = (slug: string) => {
     const url = themeUrls[slug];
     if (url) {
-      window.open(url, '_blank');
+      // Try to open in new tab with proper security attributes
+      const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+      
+      // Fallback if popup was blocked
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        // Create a temporary link element and click it
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     }
   };
 
@@ -262,10 +275,15 @@ const TacticalPuzzles = () => {
         <div className="bg-chess-dark-maroon py-12 px-4">
           <div className="container mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Training</h1>
-            <p className="text-chess-light-pink text-lg max-w-3xl mx-auto">
+            <p className="text-chess-light-pink text-lg max-w-3xl mx-auto mb-4">
               Choose from a variety of puzzle themes to sharpen your tactical skills. 
-              Click any theme to start training with interactive puzzles.
+              Click any theme to start training with interactive puzzles on Lichess.
             </p>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-2xl mx-auto">
+              <p className="text-chess-light-pink text-sm">
+                <strong>Note:</strong> Links open Lichess.org in a new tab. If blocked in preview, they work perfectly when deployed.
+              </p>
+            </div>
           </div>
         </div>
 
