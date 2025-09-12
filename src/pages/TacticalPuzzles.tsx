@@ -148,8 +148,110 @@ const TacticalPuzzles = () => {
     }
   ];
 
+  // Mapping of theme slugs to Lichess training URLs
+  const themeUrls: Record<string, string> = {
+    // Recommended
+    mix: "https://lichess.org/training/mix",
+    
+    // Phases
+    opening: "https://lichess.org/training/opening",
+    middlegame: "https://lichess.org/training/middlegame",
+    endgame: "https://lichess.org/training/endgame",
+    rookEndgame: "https://lichess.org/training/rookEndgame",
+    bishopEndgame: "https://lichess.org/training/bishopEndgame",
+    pawnEndgame: "https://lichess.org/training/pawnEndgame",
+    knightEndgame: "https://lichess.org/training/knightEndgame",
+    queenEndgame: "https://lichess.org/training/queenEndgame",
+    queenRookEndgame: "https://lichess.org/training/queenRookEndgame",
+    
+    // Openings
+    sicilianDefense: "https://lichess.org/training/sicilianDefense",
+    frenchDefense: "https://lichess.org/training/frenchDefense",
+    queensPawnGame: "https://lichess.org/training/queensPawnGame",
+    italianGame: "https://lichess.org/training/italianGame",
+    caroKannDefense: "https://lichess.org/training/caroKannDefense",
+    scandinavianDefense: "https://lichess.org/training/scandinavianDefense",
+    queensGambitDeclined: "https://lichess.org/training/queensGambitDeclined",
+    englishOpening: "https://lichess.org/training/englishOpening",
+    ruyLopez: "https://lichess.org/training/ruyLopez",
+    scotchGame: "https://lichess.org/training/scotchGame",
+    indianDefense: "https://lichess.org/training/indianDefense",
+    philidorDefense: "https://lichess.org/training/philidorDefense",
+    
+    // Motifs
+    advancedPawn: "https://lichess.org/training/advancedPawn",
+    attackingF2F7: "https://lichess.org/training/attackingF2F7",
+    capturingDefender: "https://lichess.org/training/capturingDefender",
+    discoveredAttack: "https://lichess.org/training/discoveredAttack",
+    doubleCheck: "https://lichess.org/training/doubleCheck",
+    exposedKing: "https://lichess.org/training/exposedKing",
+    fork: "https://lichess.org/training/fork",
+    hangingPiece: "https://lichess.org/training/hangingPiece",
+    kingsideAttack: "https://lichess.org/training/kingsideAttack",
+    pin: "https://lichess.org/training/pin",
+    queensideAttack: "https://lichess.org/training/queensideAttack",
+    sacrifice: "https://lichess.org/training/sacrifice",
+    skewer: "https://lichess.org/training/skewer",
+    trappedPiece: "https://lichess.org/training/trappedPiece",
+    
+    // Advanced Motifs
+    attraction: "https://lichess.org/training/attraction",
+    clearance: "https://lichess.org/training/clearance",
+    defensiveMove: "https://lichess.org/training/defensiveMove",
+    deflection: "https://lichess.org/training/deflection",
+    interference: "https://lichess.org/training/interference",
+    intermezzo: "https://lichess.org/training/intermezzo",
+    quietMove: "https://lichess.org/training/quietMove",
+    xRayAttack: "https://lichess.org/training/xRayAttack",
+    zugzwang: "https://lichess.org/training/zugzwang",
+    
+    // Mates & Checkmates
+    mate: "https://lichess.org/training/mate",
+    mateIn1: "https://lichess.org/training/mateIn1",
+    mateIn2: "https://lichess.org/training/mateIn2",
+    mateIn3: "https://lichess.org/training/mateIn3",
+    mateIn4: "https://lichess.org/training/mateIn4",
+    mateIn5: "https://lichess.org/training/mateIn5",
+    anastasiaMate: "https://lichess.org/training/anastasiaMate",
+    arabianMate: "https://lichess.org/training/arabianMate",
+    backRankMate: "https://lichess.org/training/backRankMate",
+    bodenMate: "https://lichess.org/training/bodenMate",
+    doubleBishopMate: "https://lichess.org/training/doubleBishopMate",
+    dovetailMate: "https://lichess.org/training/dovetailMate",
+    hookMate: "https://lichess.org/training/hookMate",
+    killBoxMate: "https://lichess.org/training/killBoxMate",
+    vukovicMate: "https://lichess.org/training/vukovicMate",
+    smotheredMate: "https://lichess.org/training/smotheredMate",
+    
+    // Special Moves
+    castling: "https://lichess.org/training/castling",
+    enPassant: "https://lichess.org/training/enPassant",
+    promotion: "https://lichess.org/training/promotion",
+    underPromotion: "https://lichess.org/training/underPromotion",
+    
+    // Goals
+    equality: "https://lichess.org/training/equality",
+    advantage: "https://lichess.org/training/advantage",
+    crushing: "https://lichess.org/training/crushing",
+    
+    // Lengths
+    oneMove: "https://lichess.org/training/oneMove",
+    short: "https://lichess.org/training/short",
+    long: "https://lichess.org/training/long",
+    veryLong: "https://lichess.org/training/veryLong",
+    
+    // Origin
+    master: "https://lichess.org/training/master",
+    masterVsMaster: "https://lichess.org/training/masterVsMaster",
+    superGM: "https://lichess.org/training/superGM",
+    playerGames: "https://lichess.org/training/playerGames"
+  };
+
   const handleThemeClick = (slug: string) => {
-    navigate(`/tactics/${slug}`);
+    const url = themeUrls[slug];
+    if (url) {
+      window.open(url, '_blank');
+    }
   };
 
   return (
