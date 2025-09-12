@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -101,6 +101,45 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["message_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      gcash_payments: {
+        Row: {
+          ai_verification_result: Json | null
+          created_at: string
+          id: string
+          payment_date: string | null
+          reference_number: string | null
+          screenshot_url: string | null
+          transaction_id: string | null
+          updated_at: string
+          user_id: string
+          verification_status: string
+        }
+        Insert: {
+          ai_verification_result?: Json | null
+          created_at?: string
+          id?: string
+          payment_date?: string | null
+          reference_number?: string | null
+          screenshot_url?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+          user_id: string
+          verification_status?: string
+        }
+        Update: {
+          ai_verification_result?: Json | null
+          created_at?: string
+          id?: string
+          payment_date?: string | null
+          reference_number?: string | null
+          screenshot_url?: string | null
+          transaction_id?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_status?: string
         }
         Relationships: []
       }
