@@ -177,7 +177,7 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-chess-dark-maroon">
+            <Button asChild variant="outline" className="border-white text-chess-deep-red font-bold hover:bg-white hover:text-chess-dark-maroon">
               <Link to="/auth">Sign In</Link>
             </Button>
           )}
