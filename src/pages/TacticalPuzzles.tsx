@@ -262,16 +262,10 @@ const TacticalPuzzles = () => {
         <div className="bg-chess-dark-maroon py-12 px-4">
           <div className="container mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Training</h1>
-            <p className="text-chess-light-pink text-lg max-w-3xl mx-auto mb-4">
+            <p className="text-chess-light-pink text-lg max-w-3xl mx-auto">
               Choose from a variety of puzzle themes to sharpen your tactical skills. 
-              Click any theme to start training with interactive puzzles on Lichess.
+              Click any theme to start training with interactive puzzles.
             </p>
-            {/* Notice about preview limitations */}
-            <div className="bg-chess-deep-red/20 border border-chess-deep-red/30 rounded-lg p-4 max-w-2xl mx-auto">
-              <p className="text-chess-light-pink text-sm">
-                <strong>Note:</strong> Links open on Lichess.org in a new tab. If blocked in preview, try using the deployed version of this app.
-              </p>
-            </div>
           </div>
         </div>
 
