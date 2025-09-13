@@ -271,24 +271,20 @@ const TacticalPuzzles = () => {
                   {category.themes.map((theme) => (
                     <AnimatedButton
                       key={theme.slug}
-                      asChild
                       variant="chess"
                       className="h-auto p-4 text-left focus:ring-2 focus:ring-chess-deep-red focus:ring-offset-2"
                       showRipple={true}
+                      onClick={() => {
+                        window.open(themeUrls[theme.slug], '_blank', 'noopener,noreferrer');
+                      }}
+                      aria-label={`Start ${theme.title} puzzles on ChessGo.in`}
                     >
-                      <a
-                        href={themeUrls[theme.slug]}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Start ${theme.title} puzzles on ChessGo.in`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium">
-                            {theme.title}
-                          </span>
-                          <ChevronRight className="h-4 w-4 transition-colors" />
-                        </div>
-                      </a>
+                      <div className="flex items-center justify-between w-full">
+                        <span className="font-medium">
+                          {theme.title}
+                        </span>
+                        <ChevronRight className="h-4 w-4 transition-colors" />
+                      </div>
                     </AnimatedButton>
                   ))}
                 </div>
