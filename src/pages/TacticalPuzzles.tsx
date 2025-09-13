@@ -16,233 +16,227 @@ interface ThemeCategory {
 
 const TacticalPuzzles = () => {
   
-  // Comprehensive list of Lichess puzzle themes organized by categories
+  // Comprehensive list of ChessGo.in puzzle themes organized by categories
   const themeCategories: ThemeCategory[] = [
     {
-      title: "Recommended",
+      title: "Checkmates",
       themes: [
-        { slug: "mix", title: "Healthy mix" }
-      ]
-    },
-    {
-      title: "Phases",
-      themes: [
-        { slug: "opening", title: "Opening" },
-        { slug: "middlegame", title: "Middlegame" },
-        { slug: "endgame", title: "Endgame" },
-        { slug: "rookEndgame", title: "Rook endgame" },
-        { slug: "bishopEndgame", title: "Bishop endgame" },
-        { slug: "pawnEndgame", title: "Pawn endgame" },
-        { slug: "knightEndgame", title: "Knight endgame" },
-        { slug: "queenEndgame", title: "Queen endgame" },
-        { slug: "queenRookEndgame", title: "Queen and Rook endgame" }
+        { slug: "mateInOneMove", title: "Mate in one move" },
+        { slug: "mateInTwoMoves", title: "Mate in two moves" },
+        { slug: "mateInThreeMoves", title: "Mate in three moves" },
+        { slug: "mateInFourMoves", title: "Mate in four moves" },
+        { slug: "mateIn5OrMoreMoves", title: "Mate in 5 or more moves" },
+        { slug: "backRankMate", title: "Back Rank Mate" },
+        { slug: "smotheredMate", title: "Smothered Mate" },
+        { slug: "anastasiaMate", title: "Anastasia mate" },
+        { slug: "arabianMate", title: "Arabian mate" },
+        { slug: "bodensMate", title: "Bodens mate" },
+        { slug: "doubleBishopMate", title: "Double‑bishop mate" },
+        { slug: "dovetailMate", title: "Dovetail mate" },
+        { slug: "hookMate", title: "Hook mate" }
       ]
     },
     {
       title: "Openings",
       themes: [
-        { slug: "sicilianDefense", title: "Sicilian Defense" },
+        { slug: "opening", title: "Opening" },
         { slug: "frenchDefense", title: "French Defense" },
-        { slug: "queensPawnGame", title: "Queen's Pawn Game" },
-        { slug: "italianGame", title: "Italian Game" },
-        { slug: "caroKannDefense", title: "Caro-Kann Defense" },
-        { slug: "scandinavianDefense", title: "Scandinavian Defense" },
-        { slug: "queensGambitDeclined", title: "Queen's Gambit Declined" },
-        { slug: "englishOpening", title: "English Opening" },
         { slug: "ruyLopez", title: "Ruy Lopez" },
-        { slug: "scotchGame", title: "Scotch Game" },
+        { slug: "sicilianDefense", title: "Sicilian Defense" },
+        { slug: "caroKannDefense", title: "Caro‑Kann Defense" },
         { slug: "indianDefense", title: "Indian Defense" },
-        { slug: "philidorDefense", title: "Philidor Defense" }
+        { slug: "italianGame", title: "Italian Game" },
+        { slug: "queensGambitDeclined", title: "Queens Gambit Declined" },
+        { slug: "queensPawnGame", title: "Queens Pawn Game" },
+        { slug: "englishOpening", title: "English Opening" },
+        { slug: "russianGame", title: "Russian Game" },
+        { slug: "philidorDefense", title: "Philidor Defense" },
+        { slug: "scandinavianDefense", title: "Scandinavian Defense" },
+        { slug: "scotchGame", title: "Scotch Game" },
+        { slug: "modernDefense", title: "Modern Defense" },
+        { slug: "fourKnightsDefense", title: "Four Knights Defense" },
+        { slug: "kingsGambitAccepted", title: "Kings Gambit Accepted" },
+        { slug: "pircDefense", title: "Pirc Defense" },
+        { slug: "damianoDefense", title: "Damiano Defense" },
+        { slug: "rapportJobavaSystem", title: "Rapport Jobava System" },
+        { slug: "viennaGame", title: "Vienna Game" }
       ]
     },
     {
-      title: "Motifs",
+      title: "Endgames",
       themes: [
-        { slug: "advancedPawn", title: "Advanced pawn" },
-        { slug: "attackingF2F7", title: "Attacking f2 or f7" },
-        { slug: "capturingDefender", title: "Capture the defender" },
-        { slug: "discoveredAttack", title: "Discovered attack" },
-        { slug: "doubleCheck", title: "Double check" },
-        { slug: "exposedKing", title: "Exposed king" },
-        { slug: "fork", title: "Fork" },
-        { slug: "hangingPiece", title: "Hanging piece" },
-        { slug: "kingsideAttack", title: "Kingside attack" },
-        { slug: "pin", title: "Pin" },
-        { slug: "queensideAttack", title: "Queenside attack" },
-        { slug: "sacrifice", title: "Sacrifice" },
-        { slug: "skewer", title: "Skewer" },
-        { slug: "trappedPiece", title: "Trapped piece" }
-      ]
-    },
-    {
-      title: "Advanced Motifs",
-      themes: [
-        { slug: "attraction", title: "Attraction" },
-        { slug: "clearance", title: "Clearance" },
-        { slug: "defensiveMove", title: "Defensive move" },
-        { slug: "deflection", title: "Deflection" },
-        { slug: "interference", title: "Interference" },
-        { slug: "intermezzo", title: "Intermezzo" },
-        { slug: "quietMove", title: "Quiet move" },
-        { slug: "xRayAttack", title: "X-Ray attack" },
-        { slug: "zugzwang", title: "Zugzwang" }
-      ]
-    },
-    {
-      title: "Mates & Checkmates",
-      themes: [
-        { slug: "mate", title: "Checkmate" },
-        { slug: "mateIn1", title: "Mate in 1" },
-        { slug: "mateIn2", title: "Mate in 2" },
-        { slug: "mateIn3", title: "Mate in 3" },
-        { slug: "mateIn4", title: "Mate in 4" },
-        { slug: "mateIn5", title: "Mate in 5 or more" },
-        { slug: "anastasiaMate", title: "Anastasia's mate" },
-        { slug: "arabianMate", title: "Arabian mate" },
-        { slug: "backRankMate", title: "Back rank mate" },
-        { slug: "bodenMate", title: "Boden's mate" },
-        { slug: "doubleBishopMate", title: "Double bishop mate" },
-        { slug: "dovetailMate", title: "Dovetail mate" },
-        { slug: "hookMate", title: "Hook mate" },
-        { slug: "killBoxMate", title: "Kill box mate" },
-        { slug: "vukovicMate", title: "Vuković mate" },
-        { slug: "smotheredMate", title: "Smothered mate" }
-      ]
-    },
-    {
-      title: "Special Moves",
-      themes: [
-        { slug: "castling", title: "Castling" },
-        { slug: "enPassant", title: "En passant" },
+        { slug: "endgame", title: "Endgame" },
         { slug: "promotion", title: "Promotion" },
-        { slug: "underPromotion", title: "Underpromotion" }
+        { slug: "zugzwang", title: "Zugzwang" },
+        { slug: "pawnEndgame", title: "Pawn Endgame" },
+        { slug: "rookEndgame", title: "Rook Endgame" },
+        { slug: "queenEndgame", title: "Queen Endgame" },
+        { slug: "queenRookEndgame", title: "Queen Rook Endgame" },
+        { slug: "advancedPawn", title: "Advanced Pawn" },
+        { slug: "bishopEndgame", title: "Bishop Endgame" },
+        { slug: "knightEndgame", title: "Knight Endgame" },
+        { slug: "attackingF2F7", title: "Attacking f2‑f7" }
+      ]
+    },
+    {
+      title: "Tactics",
+      themes: [
+        { slug: "pin", title: "Pin" },
+        { slug: "fork", title: "Fork (Double Attack)" },
+        { slug: "skewer", title: "Skewer" },
+        { slug: "discoveredAttack", title: "Discovered Attack" },
+        { slug: "doubleCheck", title: "Double Check" },
+        { slug: "attraction", title: "Attraction" },
+        { slug: "xRayAttack", title: "X‑Ray Attack" },
+        { slug: "defensiveMove", title: "Defensive Move" },
+        { slug: "deflection", title: "Deflection" },
+        { slug: "hangingPiece", title: "Hanging Piece" },
+        { slug: "sacrifice", title: "Sacrifice" },
+        { slug: "interference", title: "Interference" },
+        { slug: "trappedPiece", title: "Trapped Piece" },
+        { slug: "capturingDefender", title: "Capturing Defender" },
+        { slug: "clearance", title: "Clearance" },
+        { slug: "exposedKing", title: "Exposed King" },
+        { slug: "kingSideAttack", title: "Kingside Attack" },
+        { slug: "queenSideAttack", title: "Queenside Attack" },
+        { slug: "quietMove", title: "Quiet Move" },
+        { slug: "intermezzo", title: "Intermezzo" },
+        { slug: "middleGame", title: "Middle Game" }
+      ]
+    },
+    {
+      title: "Special moves",
+      themes: [
+        { slug: "enPassant", title: "En Passant" },
+        { slug: "underPromotion", title: "Underpromotion" },
+        { slug: "castling", title: "Castling" },
+        { slug: "promotionSpecial", title: "Promotion" }
+      ]
+    },
+    {
+      title: "Length of puzzle",
+      themes: [
+        { slug: "short", title: "Short" },
+        { slug: "oneMove", title: "One Move" },
+        { slug: "long", title: "Long" },
+        { slug: "veryLong", title: "Very Long" }
       ]
     },
     {
       title: "Goals",
       themes: [
-        { slug: "equality", title: "Equality" },
+        { slug: "mate", title: "Checkmate" },
         { slug: "advantage", title: "Advantage" },
-        { slug: "crushing", title: "Crushing" }
+        { slug: "crushing", title: "Crushing" },
+        { slug: "equality", title: "Equality" }
       ]
     },
     {
-      title: "Lengths",
+      title: "Other",
       themes: [
-        { slug: "oneMove", title: "One-move puzzle" },
-        { slug: "short", title: "Short puzzle" },
-        { slug: "long", title: "Long puzzle" },
-        { slug: "veryLong", title: "Very long puzzle" }
-      ]
-    },
-    {
-      title: "Origin",
-      themes: [
-        { slug: "master", title: "Master games" },
-        { slug: "masterVsMaster", title: "Master vs Master games" },
-        { slug: "superGM", title: "Super GM games" },
-        { slug: "playerGames", title: "Player games" }
+        { slug: "master", title: "Master Games" },
+        { slug: "mixed", title: "Mixed" }
       ]
     }
   ];
 
-  // Mapping of theme slugs to Lichess training URLs
+  // URL mappings for each puzzle theme pointing to ChessGo.in
   const themeUrls: Record<string, string> = {
-    // Recommended
-    mix: "https://lichess.org/training/mix",
-    
-    // Phases
-    opening: "https://lichess.org/training/opening",
-    middlegame: "https://lichess.org/training/middlegame",
-    endgame: "https://lichess.org/training/endgame",
-    rookEndgame: "https://lichess.org/training/rookEndgame",
-    bishopEndgame: "https://lichess.org/training/bishopEndgame",
-    pawnEndgame: "https://lichess.org/training/pawnEndgame",
-    knightEndgame: "https://lichess.org/training/knightEndgame",
-    queenEndgame: "https://lichess.org/training/queenEndgame",
-    queenRookEndgame: "https://lichess.org/training/queenRookEndgame",
+    // Checkmates
+    mateInOneMove: "https://www.chessgo.in/puzzles/mate-in-one-move",
+    mateInTwoMoves: "https://www.chessgo.in/puzzles/mate-in-two-moves",
+    mateInThreeMoves: "https://www.chessgo.in/puzzles/mate-in-three-moves",
+    mateInFourMoves: "https://www.chessgo.in/puzzles/mate-in-four-moves",
+    mateIn5OrMoreMoves: "https://www.chessgo.in/puzzles/mate-in-5-or-more-moves",
+    backRankMate: "https://www.chessgo.in/puzzles/back-rank-mate",
+    smotheredMate: "https://www.chessgo.in/puzzles/smothered-mate",
+    anastasiaMate: "https://www.chessgo.in/puzzles/anastasia-mate",
+    arabianMate: "https://www.chessgo.in/puzzles/arabian-mate",
+    bodensMate: "https://www.chessgo.in/puzzles/bodens-mate",
+    doubleBishopMate: "https://www.chessgo.in/puzzles/double-bishop-mate",
+    dovetailMate: "https://www.chessgo.in/puzzles/dovetail-mate",
+    hookMate: "https://www.chessgo.in/puzzles/hook-mate",
     
     // Openings
-    sicilianDefense: "https://lichess.org/training/sicilianDefense",
-    frenchDefense: "https://lichess.org/training/frenchDefense",
-    queensPawnGame: "https://lichess.org/training/queensPawnGame",
-    italianGame: "https://lichess.org/training/italianGame",
-    caroKannDefense: "https://lichess.org/training/caroKannDefense",
-    scandinavianDefense: "https://lichess.org/training/scandinavianDefense",
-    queensGambitDeclined: "https://lichess.org/training/queensGambitDeclined",
-    englishOpening: "https://lichess.org/training/englishOpening",
-    ruyLopez: "https://lichess.org/training/ruyLopez",
-    scotchGame: "https://lichess.org/training/scotchGame",
-    indianDefense: "https://lichess.org/training/indianDefense",
-    philidorDefense: "https://lichess.org/training/philidorDefense",
+    opening: "https://www.chessgo.in/puzzles/opening",
+    frenchDefense: "https://www.chessgo.in/puzzles/french-defense",
+    ruyLopez: "https://www.chessgo.in/puzzles/ruy-lopez",
+    sicilianDefense: "https://www.chessgo.in/puzzles/sicilian-defense",
+    caroKannDefense: "https://www.chessgo.in/puzzles/caro-kann-defense",
+    indianDefense: "https://www.chessgo.in/puzzles/indian-defense",
+    italianGame: "https://www.chessgo.in/puzzles/italian-game",
+    queensGambitDeclined: "https://www.chessgo.in/puzzles/queens-gambit-declined",
+    queensPawnGame: "https://www.chessgo.in/puzzles/queens-pawn-game",
+    englishOpening: "https://www.chessgo.in/puzzles/english-opening",
+    russianGame: "https://www.chessgo.in/puzzles/russian-game",
+    philidorDefense: "https://www.chessgo.in/puzzles/philidor-defense",
+    scandinavianDefense: "https://www.chessgo.in/puzzles/scandinavian-defense",
+    scotchGame: "https://www.chessgo.in/puzzles/scotch-game",
+    modernDefense: "https://www.chessgo.in/puzzles/modern-defense",
+    fourKnightsDefense: "https://www.chessgo.in/puzzles/four-knights-defense",
+    kingsGambitAccepted: "https://www.chessgo.in/puzzles/kings-gambit-accepted",
+    pircDefense: "https://www.chessgo.in/puzzles/pirc-defense",
+    damianoDefense: "https://www.chessgo.in/puzzles/damiano-defense",
+    rapportJobavaSystem: "https://www.chessgo.in/puzzles/rapport-jobava-system",
+    viennaGame: "https://www.chessgo.in/puzzles/vienna-game",
     
-    // Motifs
-    advancedPawn: "https://lichess.org/training/advancedPawn",
-    attackingF2F7: "https://lichess.org/training/attackingF2F7",
-    capturingDefender: "https://lichess.org/training/capturingDefender",
-    discoveredAttack: "https://lichess.org/training/discoveredAttack",
-    doubleCheck: "https://lichess.org/training/doubleCheck",
-    exposedKing: "https://lichess.org/training/exposedKing",
-    fork: "https://lichess.org/training/fork",
-    hangingPiece: "https://lichess.org/training/hangingPiece",
-    kingsideAttack: "https://lichess.org/training/kingsideAttack",
-    pin: "https://lichess.org/training/pin",
-    queensideAttack: "https://lichess.org/training/queensideAttack",
-    sacrifice: "https://lichess.org/training/sacrifice",
-    skewer: "https://lichess.org/training/skewer",
-    trappedPiece: "https://lichess.org/training/trappedPiece",
+    // Endgames
+    endgame: "https://www.chessgo.in/puzzles/endgame",
+    promotion: "https://www.chessgo.in/puzzles/promotion",
+    zugzwang: "https://www.chessgo.in/puzzles/zugzwang",
+    pawnEndgame: "https://www.chessgo.in/puzzles/pawn-endgame",
+    rookEndgame: "https://www.chessgo.in/puzzles/rook-endgame",
+    queenEndgame: "https://www.chessgo.in/puzzles/queen-endgame",
+    queenRookEndgame: "https://www.chessgo.in/puzzles/queen-rook-endgame",
+    advancedPawn: "https://www.chessgo.in/puzzles/advanced-pawn",
+    bishopEndgame: "https://www.chessgo.in/puzzles/bishop-endgame",
+    knightEndgame: "https://www.chessgo.in/puzzles/knight-endgame",
+    attackingF2F7: "https://www.chessgo.in/puzzles/attacking-f2-f7",
     
-    // Advanced Motifs
-    attraction: "https://lichess.org/training/attraction",
-    clearance: "https://lichess.org/training/clearance",
-    defensiveMove: "https://lichess.org/training/defensiveMove",
-    deflection: "https://lichess.org/training/deflection",
-    interference: "https://lichess.org/training/interference",
-    intermezzo: "https://lichess.org/training/intermezzo",
-    quietMove: "https://lichess.org/training/quietMove",
-    xRayAttack: "https://lichess.org/training/xRayAttack",
-    zugzwang: "https://lichess.org/training/zugzwang",
+    // Tactics
+    pin: "https://www.chessgo.in/puzzles/pin",
+    fork: "https://www.chessgo.in/puzzles/fork",
+    skewer: "https://www.chessgo.in/puzzles/skewer",
+    discoveredAttack: "https://www.chessgo.in/puzzles/discovered-attack",
+    doubleCheck: "https://www.chessgo.in/puzzles/double-check",
+    attraction: "https://www.chessgo.in/puzzles/attraction",
+    xRayAttack: "https://www.chessgo.in/puzzles/x-ray-attack",
+    defensiveMove: "https://www.chessgo.in/puzzles/defensive-move",
+    deflection: "https://www.chessgo.in/puzzles/deflection",
+    hangingPiece: "https://www.chessgo.in/puzzles/hanging-piece",
+    sacrifice: "https://www.chessgo.in/puzzles/sacrifice",
+    interference: "https://www.chessgo.in/puzzles/interference",
+    trappedPiece: "https://www.chessgo.in/puzzles/trapped-piece",
+    capturingDefender: "https://www.chessgo.in/puzzles/capturing-defender",
+    clearance: "https://www.chessgo.in/puzzles/clearance",
+    exposedKing: "https://www.chessgo.in/puzzles/exposed-king",
+    kingSideAttack: "https://www.chessgo.in/puzzles/king-side-attack",
+    queenSideAttack: "https://www.chessgo.in/puzzles/queen-side-attack",
+    quietMove: "https://www.chessgo.in/puzzles/quiet-move",
+    intermezzo: "https://www.chessgo.in/puzzles/intermezzo",
+    middleGame: "https://www.chessgo.in/puzzles/middle-game",
     
-    // Mates & Checkmates
-    mate: "https://lichess.org/training/mate",
-    mateIn1: "https://lichess.org/training/mateIn1",
-    mateIn2: "https://lichess.org/training/mateIn2",
-    mateIn3: "https://lichess.org/training/mateIn3",
-    mateIn4: "https://lichess.org/training/mateIn4",
-    mateIn5: "https://lichess.org/training/mateIn5",
-    anastasiaMate: "https://lichess.org/training/anastasiaMate",
-    arabianMate: "https://lichess.org/training/arabianMate",
-    backRankMate: "https://lichess.org/training/backRankMate",
-    bodenMate: "https://lichess.org/training/bodenMate",
-    doubleBishopMate: "https://lichess.org/training/doubleBishopMate",
-    dovetailMate: "https://lichess.org/training/dovetailMate",
-    hookMate: "https://lichess.org/training/hookMate",
-    killBoxMate: "https://lichess.org/training/killBoxMate",
-    vukovicMate: "https://lichess.org/training/vukovicMate",
-    smotheredMate: "https://lichess.org/training/smotheredMate",
+    // Special moves
+    enPassant: "https://www.chessgo.in/puzzles/en-passant",
+    underPromotion: "https://www.chessgo.in/puzzles/under-promotion",
+    castling: "https://www.chessgo.in/puzzles/castling",
+    promotionSpecial: "https://www.chessgo.in/puzzles/promotion",
     
-    // Special Moves
-    castling: "https://lichess.org/training/castling",
-    enPassant: "https://lichess.org/training/enPassant",
-    promotion: "https://lichess.org/training/promotion",
-    underPromotion: "https://lichess.org/training/underPromotion",
+    // Length of puzzle
+    short: "https://www.chessgo.in/puzzles/short",
+    oneMove: "https://www.chessgo.in/puzzles/one-move",
+    long: "https://www.chessgo.in/puzzles/long",
+    veryLong: "https://www.chessgo.in/puzzles/very-long",
     
     // Goals
-    equality: "https://lichess.org/training/equality",
-    advantage: "https://lichess.org/training/advantage",
-    crushing: "https://lichess.org/training/crushing",
+    mate: "https://www.chessgo.in/puzzles/mate",
+    advantage: "https://www.chessgo.in/puzzles/advantage",
+    crushing: "https://www.chessgo.in/puzzles/crushing",
+    equality: "https://www.chessgo.in/puzzles/equality",
     
-    // Lengths
-    oneMove: "https://lichess.org/training/oneMove",
-    short: "https://lichess.org/training/short",
-    long: "https://lichess.org/training/long",
-    veryLong: "https://lichess.org/training/veryLong",
-    
-    // Origin
-    master: "https://lichess.org/training/master",
-    masterVsMaster: "https://lichess.org/training/masterVsMaster",
-    superGM: "https://lichess.org/training/superGM",
-    playerGames: "https://lichess.org/training/playerGames"
+    // Other
+    master: "https://www.chessgo.in/puzzles/master",
+    mixed: "https://www.chessgo.in/puzzles/mixed"
   };
 
   return (
@@ -255,11 +249,11 @@ const TacticalPuzzles = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Training</h1>
             <p className="text-chess-light-pink text-lg max-w-3xl mx-auto mb-4">
               Choose from a variety of puzzle themes to sharpen your tactical skills. 
-              Click any theme to start training with interactive puzzles on Lichess.
+              Click any theme to start training with interactive puzzles on ChessGo.in.
             </p>
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-2xl mx-auto">
               <p className="text-chess-light-pink text-sm">
-                <strong>Note:</strong> Links open Lichess.org in a new tab. If blocked in preview, they work perfectly when deployed.
+                <strong>Note:</strong> Links open ChessGo.in in a new tab for seamless puzzle training.
               </p>
             </div>
           </div>
@@ -286,7 +280,7 @@ const TacticalPuzzles = () => {
                         href={themeUrls[theme.slug]}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`Start ${theme.title} puzzles on Lichess`}
+                        aria-label={`Start ${theme.title} puzzles on ChessGo.in`}
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-medium">
