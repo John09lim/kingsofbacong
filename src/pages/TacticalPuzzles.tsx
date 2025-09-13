@@ -1,5 +1,4 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { ChevronRight } from 'lucide-react';
@@ -16,7 +15,6 @@ interface ThemeCategory {
 }
 
 const TacticalPuzzles = () => {
-  const navigate = useNavigate();
   
   // Comprehensive list of Lichess puzzle themes organized by categories
   const themeCategories: ThemeCategory[] = [
@@ -247,26 +245,6 @@ const TacticalPuzzles = () => {
     playerGames: "https://lichess.org/training/playerGames"
   };
 
-  const handleThemeClick = (slug: string) => {
-    const url = themeUrls[slug];
-    if (url) {
-      // Try to open in new tab with proper security attributes
-      const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-      
-      // Fallback if popup was blocked
-      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-        // Create a temporary link element and click it
-        const link = document.createElement('a');
-        link.href = url;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -299,18 +277,24 @@ const TacticalPuzzles = () => {
                   {category.themes.map((theme) => (
                     <AnimatedButton
                       key={theme.slug}
-                      onClick={() => handleThemeClick(theme.slug)}
+                      asChild
                       variant="chess"
                       className="h-auto p-4 text-left focus:ring-2 focus:ring-chess-deep-red focus:ring-offset-2"
-                      aria-label={`Start ${theme.title} puzzles`}
                       showRipple={true}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">
-                          {theme.title}
-                        </span>
-                        <ChevronRight className="h-4 w-4 transition-colors" />
-                      </div>
+                      <a
+                        href={themeUrls[theme.slug]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Start ${theme.title} puzzles on Lichess`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">
+                            {theme.title}
+                          </span>
+                          <ChevronRight className="h-4 w-4 transition-colors" />
+                        </div>
+                      </a>
                     </AnimatedButton>
                   ))}
                 </div>
