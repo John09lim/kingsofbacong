@@ -78,6 +78,11 @@ const Hero = () => {
             >
               Analyze a Game
             </button>
+            <Link to="/improvement">
+              <button className="chess-btn bg-white text-chess-deep-red hover:bg-chess-light-pink animate-fade-in">
+                Start Improving
+              </button>
+            </Link>
           </div>
         </div>
         <div className="md:w-1/2 flex justify-center animate-fade-in">

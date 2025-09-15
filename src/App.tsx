@@ -15,6 +15,7 @@ import Resources from './pages/Resources';
 import Community from './pages/Community';
 import Profile from './pages/Profile';
 import MonthlyCalendar from './pages/MonthlyCalendar';
+import ChessImprovement from './pages/ChessImprovement';
 import { Toaster } from "@/components/ui/toaster";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ function App() {
           <Route path="/community" element={<Community />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/calendar" element={<MonthlyCalendar />} />
+          <Route path="/improvement" element={<ChessImprovement />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster />
