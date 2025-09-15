@@ -370,45 +370,72 @@ const TacticalPuzzles = () => {
     master: "https://www.chessgo.in/puzzles/master",
     mixed: "https://www.chessgo.in/puzzles/mixed"
   };
-  return <div className="min-h-screen flex flex-col">
+  return (
+    <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
         {/* Hero Section */}
-        <div className="bg-chess-dark-maroon py-12 px-4">
-          <div className="container mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Tactical Training</h1>
-            <p className="text-chess-light-pink text-lg max-w-3xl mx-auto mb-4">
-              Choose from a variety of puzzle themes to sharpen your tactical skills. 
-              Click any theme to start training with interactive puzzles on ChessGo.in.
+        <div className="relative overflow-hidden bg-gradient-to-br from-chess-dark-maroon via-chess-deep-red to-chess-dark-maroon py-16 px-4">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="container mx-auto text-center relative z-10">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+              Tactical Training
+            </h1>
+            <p className="text-chess-light-pink text-xl max-w-4xl mx-auto mb-8 leading-relaxed">
+              Master chess tactics with our comprehensive collection of themed puzzles. 
+              Choose from <span className="font-semibold text-white">75+ puzzle categories</span> to sharpen your tactical vision and improve your game.
             </p>
-            
+            <div className="flex items-center justify-center gap-2 text-chess-soft-pink">
+              <span className="text-sm">Interactive puzzles powered by ChessGo.in</span>
+            </div>
           </div>
         </div>
 
         {/* Themes Grid */}
-        <div className="container mx-auto px-4 py-12">
-          <div className="space-y-12">
-            {themeCategories.map(category => <section key={category.title} className="space-y-6">
-                <h2 className="text-2xl font-bold text-foreground border-b border-border pb-2">
-                  {category.title}
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {category.themes.map(theme => <AnimatedButton key={theme.slug} variant="chess" className="h-auto p-4 text-left focus:ring-2 focus:ring-chess-deep-red focus:ring-offset-2" showRipple={true} onClick={() => {
-                window.open(themeUrls[theme.slug], '_blank', 'noopener,noreferrer');
-              }} aria-label={`Start ${theme.title} puzzles on ChessGo.in`}>
-                      <div className="flex items-center justify-between w-full">
-                        <span className="font-medium">
-                          {theme.title}
-                        </span>
-                        <ChevronRight className="h-4 w-4 transition-colors" />
-                      </div>
-                    </AnimatedButton>)}
-                </div>
-              </section>)}
+        <div className="bg-gradient-to-b from-background to-muted/30">
+          <div className="container mx-auto px-4 py-16">
+            <div className="space-y-16">
+              {themeCategories.map((category, categoryIndex) => (
+                <section key={category.title} className="space-y-8">
+                  <div className="text-center">
+                    <h2 className="text-3xl font-bold text-foreground mb-4">
+                      {category.title}
+                    </h2>
+                    <div className="w-24 h-1 bg-gradient-to-r from-chess-deep-red to-chess-dark-maroon mx-auto rounded-full"></div>
+                  </div>
+                  <div 
+                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                    style={{ animationDelay: `${categoryIndex * 100}ms` }}
+                  >
+                    {category.themes.map((theme, themeIndex) => (
+                      <AnimatedButton
+                        key={theme.slug}
+                        variant="outline"
+                        className="group relative h-auto p-6 text-left border-2 border-border hover:border-chess-deep-red hover:bg-chess-deep-red/5 transition-all duration-300 rounded-lg shadow-sm hover:shadow-lg bg-card"
+                        showRipple={true}
+                        onClick={() => {
+                          window.open(themeUrls[theme.slug], '_blank', 'noopener,noreferrer');
+                        }}
+                        aria-label={`Start ${theme.title} puzzles on ChessGo.in`}
+                        style={{ animationDelay: `${themeIndex * 50}ms` }}
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <span className="font-medium text-sm md:text-base group-hover:text-chess-deep-red transition-colors duration-300">
+                            {theme.title}
+                          </span>
+                          <ChevronRight className="h-4 w-4 transition-all duration-300 group-hover:translate-x-1 group-hover:text-chess-deep-red" />
+                        </div>
+                      </AnimatedButton>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
           </div>
         </div>
       </main>
       <Footer />
-    </div>;
+    </div>
+  );
 };
 export default TacticalPuzzles;
