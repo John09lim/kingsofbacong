@@ -72,6 +72,12 @@ const Hero = () => {
             >
               Explore Resources
             </button>
+            <button 
+              onClick={() => window.open('https://wintrchess.com/analysis', '_blank')}
+              className="chess-btn-outline border-white text-white hover:bg-white hover:text-chess-deep-red animate-fade-in"
+            >
+              Analyze a Game
+            </button>
           </div>
         </div>
         <div className="md:w-1/2 flex justify-center animate-fade-in">
