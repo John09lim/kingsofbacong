@@ -68,47 +68,48 @@ const Footer = () => {
             <div className="space-y-3">
               <div>
                 <Link 
-                  to="/openings"
-                  className="text-white hover:text-chess-light-pink transition-colors font-medium block"
+                  to="/chess-training"
+                  className="text-white hover:text-chess-light-pink transition-colors font-medium block mb-2"
                 >
-                  Opening Studies
+                  View All Training Areas
                 </Link>
-                <p className="text-chess-light-pink text-xs mt-1">
-                  Learn fundamental opening principles and popular opening systems
+                <p className="text-chess-light-pink text-xs mb-3">
+                  Comprehensive overview of all chess training modules
                 </p>
               </div>
-              <div>
-                <Link 
-                  to="/middlegame"
-                  className="text-white hover:text-chess-light-pink transition-colors font-medium block"
-                >
-                  Middlegame Strategies
-                </Link>
-                <p className="text-chess-light-pink text-xs mt-1">
-                  Develop positional understanding and tactical awareness
-                </p>
-              </div>
-              <div>
-                <Link 
-                  to="/endgame"
-                  className="text-white hover:text-chess-light-pink transition-colors font-medium block"
-                >
-                  Endgame Techniques
-                </Link>
-                <p className="text-chess-light-pink text-xs mt-1">
-                  Master essential endgame patterns and techniques
-                </p>
-              </div>
-              <div>
-                <Link 
-                  to="/tactics"
-                  className="text-white hover:text-chess-light-pink transition-colors font-medium block"
-                >
-                  Tactical Puzzles
-                </Link>
-                <p className="text-chess-light-pink text-xs mt-1">
-                  Sharpen your tactical vision with daily puzzle challenges
-                </p>
+              <div className="space-y-2 pl-2 border-l border-chess-light-pink/30">
+                <div>
+                  <Link 
+                    to="/openings"
+                    className="text-chess-light-pink hover:text-white transition-colors text-sm block"
+                  >
+                    Opening Studies
+                  </Link>
+                </div>
+                <div>
+                  <Link 
+                    to="/middlegame"
+                    className="text-chess-light-pink hover:text-white transition-colors text-sm block"
+                  >
+                    Middlegame Strategies
+                  </Link>
+                </div>
+                <div>
+                  <Link 
+                    to="/endgame"
+                    className="text-chess-light-pink hover:text-white transition-colors text-sm block"
+                  >
+                    Endgame Techniques
+                  </Link>
+                </div>
+                <div>
+                  <Link 
+                    to="/tactics"
+                    className="text-chess-light-pink hover:text-white transition-colors text-sm block"
+                  >
+                    Tactical Puzzles
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

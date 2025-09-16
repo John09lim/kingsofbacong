@@ -11,6 +11,7 @@ import TacticalPuzzles from './pages/TacticalPuzzles';
 import ThemePuzzlePage from './pages/ThemePuzzlePage';
 import Auth from './pages/Auth';
 import Training from './pages/Training';
+import ChessTrainingOverview from './pages/ChessTrainingOverview';
 import Resources from './pages/Resources';
 import Community from './pages/Community';
 import Profile from './pages/Profile';
@@ -33,6 +34,7 @@ function App() {
           <Route path="/tactics" element={<TacticalPuzzles />} />
           <Route path="/tactics/:theme" element={<ThemePuzzlePage />} />
           <Route path="/training" element={<Training />} />
+          <Route path="/chess-training" element={<ChessTrainingOverview />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/community" element={<Community />} />
           <Route path="/profile" element={<Profile />} />
