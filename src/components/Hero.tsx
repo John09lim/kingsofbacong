@@ -79,7 +79,7 @@ const Hero = () => {
               Analyze Your Games
             </button>
             <Link to="/improvement">
-              <button className="chess-btn bg-white text-chess-deep-red hover:bg-chess-light-pink animate-fade-in px-6 py-3">
+              <button className="chess-btn-outline border-white text-white hover:bg-white hover:text-chess-deep-red animate-fade-in px-6 py-3">
                 Begin Skill Improvement
               </button>
             </Link>
