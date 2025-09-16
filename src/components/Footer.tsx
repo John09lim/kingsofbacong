@@ -61,49 +61,56 @@ const Footer = () => {
           </div>
           
           <div>
-            <h3 className="font-bold text-lg mb-4">Training</h3>
-            <ul className="space-y-2">
-              <li>
-                <a 
-                  href="https://lichess.org/study/qVA8CAKj/wt37Zl80" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-chess-light-pink hover:text-white transition-colors"
+            <h3 className="font-bold text-lg mb-4">Chess Training</h3>
+            <p className="text-chess-light-pink text-sm mb-4">
+              Master chess through our comprehensive training modules designed for all skill levels.
+            </p>
+            <div className="space-y-3">
+              <div>
+                <Link 
+                  to="/openings"
+                  className="text-white hover:text-chess-light-pink transition-colors font-medium block"
                 >
                   Opening Studies
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://lichess.org/training/middlegame" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-chess-light-pink hover:text-white transition-colors"
+                </Link>
+                <p className="text-chess-light-pink text-xs mt-1">
+                  Learn fundamental opening principles and popular opening systems
+                </p>
+              </div>
+              <div>
+                <Link 
+                  to="/middlegame"
+                  className="text-white hover:text-chess-light-pink transition-colors font-medium block"
                 >
                   Middlegame Strategies
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://lichess.org/training/endgame" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-chess-light-pink hover:text-white transition-colors"
+                </Link>
+                <p className="text-chess-light-pink text-xs mt-1">
+                  Develop positional understanding and tactical awareness
+                </p>
+              </div>
+              <div>
+                <Link 
+                  to="/endgame"
+                  className="text-white hover:text-chess-light-pink transition-colors font-medium block"
                 >
                   Endgame Techniques
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://lichess.org/training" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-chess-light-pink hover:text-white transition-colors"
+                </Link>
+                <p className="text-chess-light-pink text-xs mt-1">
+                  Master essential endgame patterns and techniques
+                </p>
+              </div>
+              <div>
+                <Link 
+                  to="/tactics"
+                  className="text-white hover:text-chess-light-pink transition-colors font-medium block"
                 >
                   Tactical Puzzles
-                </a>
-              </li>
-            </ul>
+                </Link>
+                <p className="text-chess-light-pink text-xs mt-1">
+                  Sharpen your tactical vision with daily puzzle challenges
+                </p>
+              </div>
+            </div>
           </div>
           
           <div>
